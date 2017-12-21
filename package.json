@@ -1,0 +1,12 @@
+{
+  "name": "iamlisp",
+  "version": "0.0.0",
+  "description": "Another one my lisp interpreter written on ES6",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Roman Lakhtadyr <roman.lakhtadyr@gmail.com>",
+  "license": "ISC"
+}
