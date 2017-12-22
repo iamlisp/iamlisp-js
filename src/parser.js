@@ -15,6 +15,24 @@ const parens = new Set([
 ]);
 const punctuators = new Set([' ', '\t', '\r', '\n']);
 
+const looksLikeBoolean = (exp) => (
+  ['true', 'false'].includes(exp)
+);
+
+const looksLikeNumber = (exp) => (
+  !isNaN(parseFloat(exp))
+);
+
+const interpretValue = (value) => {
+  if (looksLikeBoolean(value)) {
+    return value === 'true';
+  }
+  if (looksLikeNumber(value)) {
+    return parseFloat(value);
+  }
+  return new Symbol(value);
+}
+
 module.exports = (code) => {
   let offset = 0;
 
@@ -47,7 +65,7 @@ module.exports = (code) => {
       throw new Error('Unused escape token');
     }
 
-    return new Symbol(sym);
+    return interpretValue(sym);
   };
 
   const parseList = (endOfListToken) => {
