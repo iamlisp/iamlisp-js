@@ -4,6 +4,7 @@ const Macro = require('./Macro');
 const parse = require('./parser');
 const specialForms = require('./forms');
 const SpecialForm = require('./forms/SpecialForm');
+const { mergeArguments } = require('./util');
 
 class Env {
   constructor(map = new Map(), parent) {
@@ -61,7 +62,7 @@ const evaluateList = (list, env) => {
     const argValues = tail.map(arg => evaluate(arg, env));
     const mergedArguments = mergeArguments(argNames, argValues);
 
-    const expandedBody = expandMacro(mergedArguments, headForm.body);
+    const expandedBody = headForm.expand(mergedArguments);
 
     return expandedBody.reduce((result, exp) => evaluate(exp, env), undefined);
   }
@@ -81,24 +82,6 @@ const evaluate = (expression, env) => {
     return evaluateMap(expression, env);
   }
   return expression;
-};
-
-const mergeArguments = (argNames, argValues) => {
-  const map = new Map();
-  for (let i = 0; i < argNames.length; i += 1) {
-    map.set(argNames[i], argValues[i]);
-  }
-  return map;
-};
-
-const expandMacro = (args, body) => {
-  if (Array.isArray(body)) {
-    return body.map(exp => expandMacro(args, exp));
-  }
-  if (body instanceof Symbol && args.has(body.name)) {
-      return args.get(body.name);
-  }
-  return body;
 };
 
 module.exports.makeEvaluator = () => {
