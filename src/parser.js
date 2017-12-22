@@ -1,15 +1,16 @@
-const delimiters = new Set([' ', '\t', '\r', '\n']);
 const listLeftToken = '(';
 const listRightToken = ')';
 const mapLeftToken = '{';
 const mapRightToken = '}';
 const escapeToken = '\\';
+
 const terminators = new Set([
   listLeftToken,
   listRightToken,
   mapLeftToken,
   mapRightToken,
 ]);
+const delimiters = new Set([' ', '\t', '\r', '\n']);
 
 module.exports = (code) => {
   let offset = 0;
@@ -19,8 +20,6 @@ module.exports = (code) => {
   const isEof = () => offset >= code.length;
 
   const nextChar = () => offset += 1;
-
-  const prevChar = () => offset -= 1;
 
   const parseSymbol = () => {
     let sym = '';
