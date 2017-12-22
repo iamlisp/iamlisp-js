@@ -25,4 +25,28 @@ module.exports = {
   '<=': new SpecialForm((env, evaluate, args) => binCmp((x, y) => x <= y, exp => evaluate(exp, env), args)),
   '=': new SpecialForm((env, evaluate, args) => binCmp((x, y) => x === y, exp => evaluate(exp, env), args)),
   '!=': new SpecialForm((env, evaluate, args) => binCmp((x, y) => x !== y, exp => evaluate(exp, env), args)),
+
+  'or': new SpecialForm((env, evaluate, args) => {
+    for (const arg of args) {
+      const value = evaluate(arg, env);
+      if (value) {
+        return value;
+      }
+    }
+    return undefined;
+  }),
+
+  'and': new SpecialForm((env, evaluate, args) => {
+    for (const arg of args) {
+      const value = evaluate(arg, env);
+      if (!value) {
+        return false;
+      }
+    }
+    return true;
+  }),
+
+  'not': new SpecialForm((env, evaluate, [arg]) => {
+    return !evaluate(arg, env);
+  }),
 };
