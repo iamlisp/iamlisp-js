@@ -59,8 +59,9 @@ const evaluateList = (list, env) => {
   if (headForm instanceof Macro) {
     const argNames = headForm.args.map(arg => arg.name);
     const argValues = tail.map(arg => evaluate(arg, env));
+    const mergedArguments = mergeArguments(argNames, argValues);
 
-    const expandedBody = expandMacro(argNames, argValues, headForm.body);
+    const expandedBody = expandMacro(mergedArguments, headForm.body);
 
     return expandedBody.reduce((result, exp) => evaluate(exp, env), undefined);
   }
@@ -88,6 +89,18 @@ const mergeArguments = (argNames, argValues) => {
     map.set(argNames[i], argValues[i]);
   }
   return map;
+};
+
+const expandMacro = (args, body) => {
+  if (Array.isArray(body)) {
+    return body.map(exp => expandMacro(args, exp));
+  }
+  if (body instanceof Symbol) {
+    if (args.has(body.name)) {
+      return args.get(body.name);
+    }
+  }
+  return body;
 };
 
 module.exports.makeEvaluator = () => {
