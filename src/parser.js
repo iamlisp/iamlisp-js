@@ -1,16 +1,19 @@
+const Symbol = require('./Symbol');
+const { chunkToObject } = require('./util');
+
 const listLeftToken = '(';
 const listRightToken = ')';
 const mapLeftToken = '{';
 const mapRightToken = '}';
 const escapeToken = '\\';
 
-const terminators = new Set([
+const parens = new Set([
   listLeftToken,
   listRightToken,
   mapLeftToken,
   mapRightToken,
 ]);
-const delimiters = new Set([' ', '\t', '\r', '\n']);
+const punctuators = new Set([' ', '\t', '\r', '\n']);
 
 module.exports = (code) => {
   let offset = 0;
@@ -28,7 +31,7 @@ module.exports = (code) => {
     while (!isEof()) {
       const char = currentChar();
 
-      if (!escape && (delimiters.has(char) || terminators.has(char))) {
+      if (!escape && (punctuators.has(char) || parens.has(char))) {
         break;
       }
 
@@ -46,28 +49,25 @@ module.exports = (code) => {
       throw new Error('Unused escape token');
     }
 
-    return sym;
+    return new Symbol(sym);
   };
 
-  const parseList = (bracketless) => {
+  const parseList = (endListToken) => {
     let body = [];
     
     while (!isEof()) {
       const char = currentChar();
       
-      if (delimiters.has(char)) {
+      if (punctuators.has(char)) {
         // Ignore delimiters
       } else if (char === listLeftToken) {
         nextChar();
-        body.push(parseList(false));
-      } else if (char === listRightToken) {
-        if (bracketless) {
-          throw new Error('Unexpected list close');
-        }
-        return body;
+        body.push(parseList(listRightToken));
       } else if (char === mapLeftToken) {
         nextChar();
         body.push(parseMap());
+      } else if (endListToken && char === endListToken) {
+        return body;
       } else {
         body.push(parseSymbol());
         continue;
@@ -76,15 +76,17 @@ module.exports = (code) => {
       nextChar();
     }
 
-    if (!bracketless) {
+    if (endListToken) {
       throw new Error('Unclosed list');
     }
 
     return body;
   };
   
-  const parseMap = () => {};
+  const parseMap = () => {
+    return chunkToObject(parseList(mapRightToken));
+  };
 
-  return parseList(true);
+  return parseList();
   
 };
