@@ -1,5 +1,7 @@
 const Symbol = require('./Symbol');
 const parse = require('./parser');
+const specialForms = require('./forms');
+const SpecialForm = require('./forms/SpecialForm');
 
 class Env {
   constructor(parent) {
@@ -24,7 +26,12 @@ class Env {
   }
 }
 
-const evaluateSymbol = ({ name }, env) => env.get(name);
+const evaluateSymbol = ({ name }, env) => {
+  if (name in specialForms) {
+    return specialForms[name];
+  }
+  return env.get(name);
+};
 
 const evaluateList = (list, env) => {
   if (list.length === 0) {
@@ -32,7 +39,10 @@ const evaluateList = (list, env) => {
   }
   const [head, ...tail] = list;
   const headForm = evaluate(head, env);
-  return headForm(env, tail);
+  if (headForm instanceof SpecialForm) {
+    return headForm.perform(env, evaluate, tail);
+  }
+  throw new Error('Cound not execute');
 };
 
 const evaluate = (expression, env) => {
@@ -48,11 +58,10 @@ const evaluate = (expression, env) => {
   return expression;
 };
 
-module.exports = () => {
+module.exports.makeEvaluator = () => {
   const env = new Env();
 
   env.set('foo', 'boo');
-  env.set('+', (env, args) => args.reduce((acc, arg) => acc + evaluate(arg, env), 0));
 
   return (code) => {
     return parse(code).reduce((result, exp) => evaluate(exp, env), undefined);
