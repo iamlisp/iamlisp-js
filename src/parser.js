@@ -4,6 +4,12 @@ const listRightToken = ')';
 const mapLeftToken = '{';
 const mapRightToken = '}';
 const escapeToken = '\\';
+const terminators = new Set([
+  listLeftToken,
+  listRightToken,
+  mapLeftToken,
+  mapRightToken,
+]);
 
 module.exports = (code) => {
   let offset = 0;
@@ -14,6 +20,8 @@ module.exports = (code) => {
 
   const nextChar = () => offset += 1;
 
+  const prevChar = () => offset -= 1;
+
   const parseSymbol = () => {
     let sym = '';
     let escape = false;
@@ -21,7 +29,7 @@ module.exports = (code) => {
     while (!isEof()) {
       const char = currentChar();
 
-      if (!escape && delimiters.has(char)) {
+      if (!escape && (delimiters.has(char) || terminators.has(char))) {
         break;
       }
 
@@ -36,7 +44,7 @@ module.exports = (code) => {
     }
 
     if (escape) {
-      throw new Error(`Unused escape token`);
+      throw new Error('Unused escape token');
     }
 
     return sym;
@@ -63,6 +71,7 @@ module.exports = (code) => {
         body.push(parseMap());
       } else {
         body.push(parseSymbol());
+        continue;
       }
 
       nextChar();
