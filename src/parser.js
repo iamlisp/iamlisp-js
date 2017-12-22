@@ -3,6 +3,7 @@ const listLeftToken = '(';
 const listRightToken = ')';
 const mapLeftToken = '{';
 const mapRightToken = '}';
+const escapeToken = '\\';
 
 module.exports.default = (code) => {
   let offset = 0;
@@ -13,7 +14,33 @@ module.exports.default = (code) => {
 
   const nextChar = () => offset += 1;
 
-  const parseSymbol = () => {};
+  const parseSymbol = () => {
+    let sym = '';
+    let escape = false;
+
+    while (!isEof()) {
+      const char = currentChar();
+
+      if (!escape && delimiters.has(char)) {
+        break;
+      }
+
+      if (char === escapeToken) {
+        escape = true;
+      } else {
+        sym += char;
+        escape = false;
+      }
+
+      nextChar();
+    }
+
+    if (escape) {
+      throw new Error(`Unused escape token`);
+    }
+
+    return sym;
+  };
 
   const parseList = () => {};
   
