@@ -1,5 +1,6 @@
 const Symbol = require('./Symbol');
 const Lambda = require('./Lambda');
+const Macro = require('./Macro');
 const parse = require('./parser');
 const specialForms = require('./forms');
 const SpecialForm = require('./forms/SpecialForm');
@@ -54,6 +55,16 @@ const evaluateList = (list, env) => {
 
     return headForm.body.reduce((result, exp) => evaluate(exp, lambdaEnv), undefined);
   }
+
+  if (headForm instanceof Macro) {
+    const argNames = headForm.args.map(arg => arg.name);
+    const argValues = tail.map(arg => evaluate(arg, env));
+
+    const expandedBody = expandMacro(argNames, argValues, headForm.body);
+
+    return expandedBody.reduce((result, exp) => evaluate(exp, env), undefined);
+  }
+
 
   throw new Error(`Cound not execute - ${headForm}`);
 };
