@@ -1,11 +1,12 @@
 const Symbol = require('./Symbol');
+const Lambda = require('./Lambda');
 const parse = require('./parser');
 const specialForms = require('./forms');
 const SpecialForm = require('./forms/SpecialForm');
 
 class Env {
-  constructor(parent) {
-    this.map = new Map();
+  constructor(map = new Map(), parent) {
+    this.map = map;
     this.parent = parent;
   }
 
@@ -39,10 +40,22 @@ const evaluateList = (list, env) => {
   }
   const [head, ...tail] = list;
   const headForm = evaluate(head, env);
+
   if (headForm instanceof SpecialForm) {
     return headForm.perform(env, evaluate, tail);
   }
-  throw new Error('Cound not execute');
+
+  if (headForm instanceof Lambda) {
+    const argNames = headForm.args.map(arg => arg.name);
+    const argValues = tail.map(arg => evaluate(arg, env));
+
+    const mergedArguments = mergeArguments(argNames, argValues);
+    const lambdaEnv = new Env(mergedArguments, headForm.env);
+
+    return headForm.body.reduce((result, exp) => evaluate(exp, lambdaEnv), undefined);
+  }
+
+  throw new Error(`Cound not execute - ${headForm}`);
 };
 
 const evaluate = (expression, env) => {
@@ -56,6 +69,14 @@ const evaluate = (expression, env) => {
     return evaluateMap(expression, env);
   }
   return expression;
+};
+
+const mergeArguments = (argNames, argValues) => {
+  const map = new Map();
+  for (let i = 0; i < argNames.length; i += 1) {
+    map.set(argNames[i], argValues[i]);
+  }
+  return map;
 };
 
 module.exports.makeEvaluator = () => {
