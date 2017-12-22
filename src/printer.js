@@ -3,6 +3,9 @@ const Macro = require('./Macro');
 const Lambda = require('./Lambda');
 
 const print = (exp) => {
+  if (typeof exp === 'string') {
+    return `"${exp.replace('"', '\\"')}"`;
+  }
   if (exp instanceof Symbol) {
     return exp.name;
   }

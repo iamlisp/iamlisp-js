@@ -1,19 +1,24 @@
 const Symbol = require('./Symbol');
 const { chunkToMap } = require('./util');
 
-const listLeftToken = '(';
-const listRightToken = ')';
-const mapLeftToken = '{';
-const mapRightToken = '}';
-const escapeToken = '\\';
+const TOKEN_SPACE = ' ';
+const TOKEN_TAB = '\t';
+const TOKEN_CR = '\r';
+const TOKEN_LF = '\n';
+const TOKEN_LEFT_LIST = '(';
+const TOKEN_RIGHT_LIST = ')';
+const TOKEN_STRING = '"';
+const TOKEN_ESCAPE = '\\';
 
-const parens = new Set([
-  listLeftToken,
-  listRightToken,
-  mapLeftToken,
-  mapRightToken,
+const punctuators = new Set([
+  TOKEN_SPACE,
+  TOKEN_TAB,
+  TOKEN_CR,
+  TOKEN_LF,
+  TOKEN_LEFT_LIST,
+  TOKEN_RIGHT_LIST,
+  TOKEN_STRING,
 ]);
-const punctuators = new Set([' ', '\t', '\r', '\n']);
 
 const looksLikeBoolean = (exp) => (
   ['true', 'false'].includes(exp)
@@ -47,11 +52,11 @@ module.exports = (code) => {
     while (!isEof()) {
       const char = currentChar();
 
-      if (!escape && (punctuators.has(char) || parens.has(char))) {
+      if (!escape && (punctuators.has(char))) {
         break;
       }
 
-      if (char === escapeToken) {
+      if (char === TOKEN_ESCAPE) {
         escape = true;
       } else {
         sym += char;
@@ -68,22 +73,46 @@ module.exports = (code) => {
     return interpretValue(sym);
   };
 
-  const parseList = (endOfListToken) => {
-    let body = new Array();
-    
+  const parseString = () => {
+    let body = '';
+    let escape = false;
+
     while (!isEof()) {
       const char = currentChar();
-      
-      if (punctuators.has(char)) {
-        // Ignore delimiters
-      } else if (char === listLeftToken) {
+
+      if (!escape && char === TOKEN_STRING) {
+        return body;
+      }
+
+      if (char === TOKEN_ESCAPE) {
+        escape = true;
+      } else {
+        body += char;
+        escape = false;
+      }
+
+      nextChar();
+    }
+
+    throw new Error('Unclosed string literal');
+  };
+
+  const parseList = (endOfListToken) => {
+    let body = new Array();
+
+    while (!isEof()) {
+      const char = currentChar();
+
+      if (char === TOKEN_LEFT_LIST) {
         nextChar();
-        body.push(parseList(listRightToken));
-      } else if (char === mapLeftToken) {
-        nextChar();
-        body.push(chunkToMap(parseList(mapRightToken)));
+        body.push(parseList(TOKEN_RIGHT_LIST));
       } else if (endOfListToken && char === endOfListToken) {
         return body;
+      } else if (char === TOKEN_STRING) {
+        nextChar();
+        body.push(parseString());
+      } else if (punctuators.has(char)) {
+        // Ignore delimiters
       } else {
         body.push(parseSymbol());
         continue;
@@ -93,12 +122,12 @@ module.exports = (code) => {
     }
 
     if (endOfListToken) {
-      throw new Error('Unclosed list');
+      throw new Error('Unclosed list expression');
     }
 
     return body;
   };
 
   return parseList();
-  
+
 };
