@@ -1,5 +1,5 @@
 const Symbol = require('./Symbol');
-const { chunkToObject } = require('./util');
+const { chunkToMap } = require('./util');
 
 const listLeftToken = '(';
 const listRightToken = ')';
@@ -19,9 +19,7 @@ module.exports = (code) => {
   let offset = 0;
 
   const currentChar = () => code[offset];
-
   const isEof = () => offset >= code.length;
-
   const nextChar = () => offset += 1;
 
   const parseSymbol = () => {
@@ -52,7 +50,7 @@ module.exports = (code) => {
     return new Symbol(sym);
   };
 
-  const parseList = (endListToken) => {
+  const parseList = (endOfListToken) => {
     let body = [];
     
     while (!isEof()) {
@@ -65,8 +63,8 @@ module.exports = (code) => {
         body.push(parseList(listRightToken));
       } else if (char === mapLeftToken) {
         nextChar();
-        body.push(parseMap());
-      } else if (endListToken && char === endListToken) {
+        body.push(chunkToMap(parseList(mapRightToken)));
+      } else if (endOfListToken && char === endOfListToken) {
         return body;
       } else {
         body.push(parseSymbol());
@@ -76,15 +74,11 @@ module.exports = (code) => {
       nextChar();
     }
 
-    if (endListToken) {
+    if (endOfListToken) {
       throw new Error('Unclosed list');
     }
 
     return body;
-  };
-  
-  const parseMap = () => {
-    return chunkToObject(parseList(mapRightToken));
   };
 
   return parseList();

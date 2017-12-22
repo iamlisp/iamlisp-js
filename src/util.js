@@ -1,9 +1,13 @@
-chunkToObject = ([key, value, ...rest]) => {
-  if (key === undefined) {
-    return {};
+chunkToMap = (arr) => {
+  let map = new Map();
+
+  while (arr.length > 0) {
+    const key = arr.shift();
+    const value = arr.shift();
+    map.set(key, value);
   }
 
-  return { [key]: value, ...chunkToObject(rest) };
+  return map;
 };
 
-module.exports = { chunkToObject };
+module.exports = { chunkToMap };
