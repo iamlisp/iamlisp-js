@@ -5,7 +5,7 @@ const mapLeftToken = '{';
 const mapRightToken = '}';
 const escapeToken = '\\';
 
-module.exports.default = (code) => {
+module.exports = (code) => {
   let offset = 0;
 
   const currentChar = () => code[offset];
@@ -42,34 +42,41 @@ module.exports.default = (code) => {
     return sym;
   };
 
-  const parseList = () => {};
-  
-  const parseMap = () => {};
-
-  const parseCode = () => {
-    const list = [];
+  const parseList = (bracketless) => {
+    let body = [];
     
     while (!isEof()) {
       const char = currentChar();
       
       if (delimiters.has(char)) {
-        continue;
+        // Ignore delimiters
+      } else if (char === listLeftToken) {
+        nextChar();
+        body.push(parseList(false));
+      } else if (char === listRightToken) {
+        if (bracketless) {
+          throw new Error('Unexpected list close');
+        }
+        return body;
+      } else if (char === mapLeftToken) {
+        nextChar();
+        body.push(parseMap());
+      } else {
+        body.push(parseSymbol());
       }
 
-      if (char === listLeftToken) {
-        list.push(parseList());
-      }
-
-      if (char === mapLeftToken) {
-        list.push(parseMap());
-      }
-
-      list.push(parseSymbol());
+      nextChar();
     }
 
-    return list;
-  };
+    if (!bracketless) {
+      throw new Error('Unclosed list');
+    }
 
-  parseCode();
+    return body;
+  };
+  
+  const parseMap = () => {};
+
+  return parseList(true);
   
 };
