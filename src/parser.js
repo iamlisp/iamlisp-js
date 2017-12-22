@@ -51,7 +51,7 @@ module.exports = (code) => {
   };
 
   const parseList = (endOfListToken) => {
-    let body = [];
+    let body = new Array();
     
     while (!isEof()) {
       const char = currentChar();
