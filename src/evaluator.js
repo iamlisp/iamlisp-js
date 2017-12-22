@@ -95,10 +95,8 @@ const expandMacro = (args, body) => {
   if (Array.isArray(body)) {
     return body.map(exp => expandMacro(args, exp));
   }
-  if (body instanceof Symbol) {
-    if (args.has(body.name)) {
+  if (body instanceof Symbol && args.has(body.name)) {
       return args.get(body.name);
-    }
   }
   return body;
 };
