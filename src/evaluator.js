@@ -40,6 +40,7 @@ const evaluateList = (list, env) => {
   if (list.length === 0) {
     return [];
   }
+
   const [head, ...tail] = list;
   const headForm = evaluate(head, env);
 
@@ -67,7 +68,6 @@ const evaluateList = (list, env) => {
     return expandedBody.reduce((result, exp) => evaluate(exp, env), undefined);
   }
 
-
   throw new Error(`Cound not execute - ${headForm}`);
 };
 
@@ -86,10 +86,5 @@ const evaluate = (expression, env) => {
 
 module.exports.makeEvaluator = () => {
   const env = new Env();
-
-  env.set('foo', 'boo');
-
-  return (code) => {
-    return parse(code).reduce((result, exp) => evaluate(exp, env), undefined);
-  };
+  return code => parse(code).map(expr => evaluate(expr, env));
 };
