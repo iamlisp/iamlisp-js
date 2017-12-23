@@ -2,11 +2,6 @@ const parse = require('./src/parser');
 const evaluate = require('./src/evaluator').makeEvaluator();
 const print = require('./src/printer');
 
-console.log(parse('hello world'));
-console.log(parse('hello\\ world'));
-console.log(parse('(hello world)'));
-console.log(parse('{ hello world }'));
-
 console.log(evaluate('(+ 1 2 3)'));
 console.log(evaluate('(< 1 2 3)'));
 console.log(evaluate('(> 1 2 3)'));
@@ -18,3 +13,5 @@ console.log(print(evaluate('(macro (x y) (+ x y))')));
 console.log(evaluate('(def hello 12) hello'));
 
 console.log(print(evaluate('((+ _ 2) 3)')));
+console.log(print(evaluate("'(1 2 3)")));
+console.log(print(evaluate("(list 1 2 3)")));

@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const Symbol = require('./Symbol');
 const Lambda = require('./Lambda');
 const Macro = require('./Macro');
@@ -6,8 +5,6 @@ const parse = require('./parser');
 const specialForms = require('./forms');
 const SpecialForm = require('./forms/SpecialForm');
 const { mergeArguments } = require('./util');
-
-const PLACEHOLDER = '_';
 
 class Env {
   constructor(map = new Map(), parent) {
@@ -25,7 +22,7 @@ class Env {
     }
 
     if (!this.parent) {
-      throw new Error(`Symbol ${key} is not bound`);
+      throw new Error(`Symbol "${key}" is not defined`);
     }
 
     return this.parent.get(key);
@@ -86,28 +83,12 @@ const evaluate = (expression, env) => {
     return evaluateSymbol(expression, env);
   }
   if (Array.isArray(expression)) {
-    const expr = wrapPlaceholderExpression(expression);
-    return evaluateList(expr, env);
+    return evaluateList(expression, env);
   }
   if (expression instanceof Map) {
     return evaluateMap(expression, env);
   }
   return expression;
-};
-
-const wrapPlaceholderExpression = (expr) => {
-  const args = [];
-
-  const result = expr.map(x => {
-    if (x instanceof Symbol && x.name === PLACEHOLDER) {
-      const argName = new Symbol(`__${_.size(args)}`);
-      args.push(argName);
-      return argName;
-    }
-    return x;
-  });
-
-  return _.size(args) > 0 ? [new Symbol('lambda'), args, result] : result;
 };
 
 module.exports.makeEvaluator = () => {

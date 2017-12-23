@@ -3,7 +3,7 @@ const SpecialForm = require('./SpecialForm');
 const Lambda = require('../Lambda');
 const Macro = require('../Macro');
 const Symbol = require('../Symbol');
-const { mergeArguments } = require('../util');
+const { mergeArguments, chunkToMap } = require('../util');
 
 
 module.exports = {
@@ -35,5 +35,14 @@ module.exports = {
       }
       env.set(sym.name, evaluate(value, env));
     });
+  }),
+  'quote': new SpecialForm((env, evaluate, [arg]) => {
+    return arg;
+  }),
+  'list': new SpecialForm((env, evaluate, args) => {
+    return args.map(arg => evaluate(arg, env));
+  }),
+  'map': new SpecialForm((env, evaluate, args) => {
+    return chunkToMap(args.map(arg => evaluate(arg, env)));
   }),
 };

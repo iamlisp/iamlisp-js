@@ -18,4 +18,6 @@ const mergeArguments = (argNames, argValues) => {
   return map;
 };
 
-module.exports = { chunkToMap, mergeArguments };
+const pipe = funcs => value => funcs.reduce((value, func) => func(value), value);
+
+module.exports = { chunkToMap, mergeArguments, pipe };

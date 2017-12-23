@@ -1,5 +1,6 @@
 const Symbol = require('./Symbol');
 const { chunkToMap } = require('./util');
+const filter = require('./plugins');
 
 const TOKEN_LIST_OPEN = '(';
 const TOKEN_LIST_CLOSE = ')';
@@ -66,7 +67,7 @@ module.exports = (code) => {
       throw new Error('Unused escape token');
     }
 
-    return interpretValue(sym);
+    return interpretValue(filter(sym));
   };
 
   const parseString = () => {
@@ -77,7 +78,7 @@ module.exports = (code) => {
       const char = currentChar();
 
       if (!escape && char === TOKEN_QUOTE) {
-        return body;
+        return filter(body);
       }
 
       if (char === TOKEN_ESCAPE) {
@@ -100,7 +101,7 @@ module.exports = (code) => {
       const char = currentChar();
 
       if (char === TOKEN_LIST_CLOSE) {
-        return body;
+        return filter(body);
       } else if (char === TOKEN_LIST_OPEN) {
         nextChar();
         body.push(parseList());
@@ -144,7 +145,7 @@ module.exports = (code) => {
       nextChar();
     }
 
-    return expressions;
+    return filter(expressions);
   };
 
   return parseProgram();
