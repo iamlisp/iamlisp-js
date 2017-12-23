@@ -13,5 +13,4 @@ console.log(print(evaluate('(macro (x y) (+ x y))')));
 console.log(evaluate('(def hello 12) hello'));
 
 console.log(print(evaluate('((+ _ 2) 3)')));
-console.log(print(evaluate("'(1 2 3)")));
 console.log(print(evaluate("(list 1 2 3)")));
