@@ -55,7 +55,7 @@ const evaluateList = (list, env) => {
     const mergedArguments = mergeArguments(argNames, argValues);
     const lambdaEnv = new Env(mergedArguments, headForm.env);
 
-    return headForm.body.reduce((result, exp) => evaluate(exp, lambdaEnv), undefined);
+    return evaluateEach(headForm.body, lambdaEnv);
   }
 
   if (headForm instanceof Macro) {
@@ -65,10 +65,17 @@ const evaluateList = (list, env) => {
 
     const expandedBody = headForm.expand(mergedArguments);
 
-    return expandedBody.reduce((result, exp) => evaluate(exp, env), undefined);
+    return evaluateEach(expandedBody, env);
   }
 
   throw new Error(`Cound not execute - ${headForm}`);
+};
+
+const evaluateEach = (expressions, env) => {
+  return expressions.reduce((result, exp) => {
+    env.set('$', result);
+    return evaluate(exp, env);
+  }, undefined);
 };
 
 const evaluate = (expression, env) => {
@@ -86,5 +93,5 @@ const evaluate = (expression, env) => {
 
 module.exports.makeEvaluator = () => {
   const env = new Env();
-  return code => parse(code).map(expr => evaluate(expr, env));
+  return code => evaluateEach(parse(code), env);
 };

@@ -1,23 +1,19 @@
 const Symbol = require('./Symbol');
 const { chunkToMap } = require('./util');
 
-const TOKEN_SPACE = ' ';
-const TOKEN_TAB = '\t';
-const TOKEN_CR = '\r';
-const TOKEN_LF = '\n';
-const TOKEN_LEFT_LIST = '(';
-const TOKEN_RIGHT_LIST = ')';
-const TOKEN_STRING = '"';
+const TOKEN_LIST_OPEN = '(';
+const TOKEN_LIST_CLOSE = ')';
+const TOKEN_QUOTE = '"';
 const TOKEN_ESCAPE = '\\';
 
 const punctuators = new Set([
-  TOKEN_SPACE,
-  TOKEN_TAB,
-  TOKEN_CR,
-  TOKEN_LF,
-  TOKEN_LEFT_LIST,
-  TOKEN_RIGHT_LIST,
-  TOKEN_STRING,
+  ' ',
+  '\t',
+  '\n',
+  '\r',
+  TOKEN_LIST_OPEN,
+  TOKEN_LIST_CLOSE,
+  TOKEN_QUOTE,
 ]);
 
 const looksLikeBoolean = (exp) => (
@@ -80,7 +76,7 @@ module.exports = (code) => {
     while (!isEof()) {
       const char = currentChar();
 
-      if (!escape && char === TOKEN_STRING) {
+      if (!escape && char === TOKEN_QUOTE) {
         return body;
       }
 
@@ -97,18 +93,18 @@ module.exports = (code) => {
     throw new Error('Unclosed string literal');
   };
 
-  const parseList = (endOfListToken) => {
+  const parseList = () => {
     let body = new Array();
 
     while (!isEof()) {
       const char = currentChar();
 
-      if (char === TOKEN_LEFT_LIST) {
-        nextChar();
-        body.push(parseList(TOKEN_RIGHT_LIST));
-      } else if (endOfListToken && char === endOfListToken) {
+      if (char === TOKEN_LIST_CLOSE) {
         return body;
-      } else if (char === TOKEN_STRING) {
+      } else if (char === TOKEN_LIST_OPEN) {
+        nextChar();
+        body.push(parseList());
+      } else if (char === TOKEN_QUOTE) {
         nextChar();
         body.push(parseString());
       } else if (punctuators.has(char)) {
@@ -121,13 +117,36 @@ module.exports = (code) => {
       nextChar();
     }
 
-    if (endOfListToken) {
-      throw new Error('Unclosed list expression');
-    }
-
-    return body;
+    throw new Error('Unclosed list expression');
   };
 
-  return parseList();
+  const parseProgram = () => {
+    let expressions = [];
+
+    while (!isEof()) {
+      const char = currentChar();
+
+      if (char === TOKEN_LIST_CLOSE) {
+        throw new Error('Unexpected list close');
+      } else if (char === TOKEN_LIST_OPEN) {
+        nextChar();
+        expressions.push(parseList());
+      } else if (char === TOKEN_QUOTE) {
+        nextChar();
+        expressions.push(parseString());
+      } else if (punctuators.has(char)) {
+        // Ignore delimiters
+      } else {
+        expressions.push(parseSymbol());
+        continue;
+      }
+
+      nextChar();
+    }
+
+    return expressions;
+  };
+
+  return parseProgram();
 
 };
