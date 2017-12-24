@@ -6,6 +6,7 @@ const parse = require('./parser');
 const specialForms = require('./forms');
 const SpecialForm = require('./forms/SpecialForm');
 const { mergeArguments } = require('./util');
+const initModules = require('./modules');
 
 class Env {
   constructor(map = new Map(), parent) {
@@ -51,6 +52,19 @@ const callMethod = (method, env, obj, args) => {
     return arg;
   });
   return obj[method.name].apply(obj, methodArgs);
+};
+
+const callFunction = (func, env, args) => {
+  const funcArgs = args.map(arg => {
+    if (arg instanceof Lambda) {
+      return convertLambdaToFunction(arg, env);
+    }
+    if (arg instanceof Macro) {
+      return convertMacroToFunction(arg, env);
+    }
+    return arg;
+  });
+  return func.apply(null, funcArgs);
 };
 
 const callLambda = (lambda, env, argValues) => {
@@ -106,6 +120,11 @@ const evaluateList = (list, env) => {
     return callMethod(headForm, env, obj, args);
   }
 
+  if (typeof headForm === 'function') {
+    const args = tail.map(exp => evaluate(exp, env));
+    return callFunction(headForm, env, args);
+  }
+
   throw new Error(`Cound not execute - ${headForm}`);
 };
 
@@ -131,5 +150,6 @@ const evaluate = (expression, env) => {
 
 module.exports.makeEvaluator = () => {
   const env = new Env();
+  initModules(env);
   return exprs => evaluateEach(exprs, env);
 };
