@@ -61,3 +61,4 @@ assert.equal(debug.eval("(.map '(1 2 3) (* _ 2))"), '(2 4 6)');
 assert.equal(debug.eval("(.map '(1 2 3) (macro (x) (* x 2)))"), '(2 4 6)');
 assert.equal(debug.eval('(macroexpand (macro (x) (* x 3)) 2)'), '((* 2 3))');
 
+assert.equal(debug.eval('(import "std")'), '"OK"');

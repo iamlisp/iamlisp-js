@@ -26,7 +26,7 @@ module.exports = class Env {
 
   import(moduleEnv, moduleName) {
     for (const [name, value] of moduleEnv.entries) {
-      this.env.set(`${moduleName}/${name}`, value);
+      this.set(`${moduleName}/${name}`, value);
     }
   }
 }

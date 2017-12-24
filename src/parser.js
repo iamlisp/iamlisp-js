@@ -76,8 +76,6 @@ module.exports = (code) => {
   };
 
   const parseExpression = () => {
-    skipDelimiters();
-
     if (currentChar() === chars.DOUBLE_QUOTE) {
       nextChar();
       return parseString();
@@ -88,10 +86,11 @@ module.exports = (code) => {
     }
     if (currentChar() === chars.SINGLE_QUOTE) {
       nextChar();
+      skipDelimiters();
       return [new Symbol('quote'), parseExpression()];
     }
     if (reserved.has(currentChar())) {
-      throw new Error(`Unexpected token - ${currentChar()}`);
+      throw new Error(`Unexpected token - '${currentChar()}'`);
     }
     return parseSymbol();
   };
@@ -108,6 +107,8 @@ module.exports = (code) => {
       }
 
       expr.push(filter(parseExpression()));
+
+      skipDelimiters();
     }
 
     throw new Error('Unclosed list expression');
@@ -119,6 +120,7 @@ module.exports = (code) => {
     while (!isEof()) {
       skipDelimiters();
       expr.push(filter(parseExpression()));
+      skipDelimiters();
     }
 
     return expr;
