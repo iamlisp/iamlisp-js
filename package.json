@@ -4,12 +4,13 @@
   "description": "Another one my lisp interpreter written on ES6",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node tests/test.js"
   },
   "keywords": [],
   "author": "Roman Lakhtadyr <roman.lakhtadyr@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "assert": "^1.4.1",
     "lodash": "^4.17.4"
   }
 }

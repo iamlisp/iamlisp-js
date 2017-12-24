@@ -33,7 +33,7 @@ module.exports = {
         return value;
       }
     }
-    return undefined;
+    return false;
   }),
 
   'and': new SpecialForm((env, evaluate, args) => {
