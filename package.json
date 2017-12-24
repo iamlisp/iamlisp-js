@@ -1,8 +1,10 @@
 {
   "name": "iamlisp",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Another one my lisp interpreter written on ES6",
-  "main": "src/index.js",
+  "bin": {
+    "iamlisp": "./bin/iamlisp.js"
+  },
   "scripts": {
     "test": "node tests/test.js"
   },
