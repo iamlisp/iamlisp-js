@@ -6,7 +6,7 @@ const print = require('../src/printer');
 
 const debug = {
   parse: code => parse(code).map(print).join(' '),
-  eval: code => print(evaluate(code)),
+  eval: code => print(evaluate(parse(code))),
 };
 
 // Parser tests

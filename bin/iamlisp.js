@@ -16,7 +16,9 @@ const readCode = () => new Promise((resolve => {
   rl.question('> ', input => resolve(input));
 }));
 
-const evalCode = (code) => evaluate(code);
+const parseCode = (code) => parse(code);
+
+const evalExpr = (expr) => evaluate(expr);
 
 const printResult = (result) => console.log(print(result));
 
@@ -25,7 +27,8 @@ const printError = (err) => console.error(err);
 const iter = () => {
   Promise.resolve()
     .then(readCode)
-    .then(evalCode)
+    .then(parseCode)
+    .then(evalExpr)
     .then(printResult)
     .catch(printError)
     .then(iter);

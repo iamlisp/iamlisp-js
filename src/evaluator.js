@@ -131,5 +131,5 @@ const evaluate = (expression, env) => {
 
 module.exports.makeEvaluator = () => {
   const env = new Env();
-  return code => evaluateEach(parse(code), env);
+  return exprs => evaluateEach(exprs, env);
 };
