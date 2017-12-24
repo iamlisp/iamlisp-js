@@ -1,4 +1,5 @@
 const { createInterface } = require('readline');
+const { version } = require('../package.json');
 const parse = require('../src/parser');
 const evaluate = require('../src/evaluator').makeEvaluator();
 const print = require('../src/printer');
@@ -27,5 +28,7 @@ const iter = () => {
     .catch(printError)
     .then(iter);
 };
+
+console.log('I Am Lisp Interpreter. Version %s', version);
 
 iter();

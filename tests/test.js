@@ -24,6 +24,8 @@ assert.equal(debug.parse("' (1 2 3)"), '(quote (1 2 3))');
 
 // Parser plugins tests
 assert.equal(debug.parse('(* _ 2)'), '(lambda (__0) (* __0 2))');
+assert.equal(debug.parse('(-> foo bar baz)'), '(lambda (__arg) (baz (bar (foo __arg))))');
+assert.equal(debug.parse('(<- foo bar baz)'), '(lambda (__arg) (foo (bar (baz __arg))))');
 
 // Evaluator tests
 assert.equal(debug.eval('(+ 1 2 3)'), 6);
@@ -58,3 +60,4 @@ assert.equal(debug.eval('((+ _ 1) 2)'), 3);
 assert.equal(debug.eval("(.map '(1 2 3) (* _ 2))"), '(2 4 6)');
 assert.equal(debug.eval("(.map '(1 2 3) (macro (x) (* x 2)))"), '(2 4 6)');
 assert.equal(debug.eval('(macroexpand (macro (x) (* x 3)) 2)'), '((* 2 3))');
+
