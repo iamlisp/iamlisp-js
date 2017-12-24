@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { createInterface } = require('readline');
 const { version } = require('../package.json');
 const parse = require('../src/parser');
