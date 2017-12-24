@@ -47,7 +47,7 @@ module.exports = (code) => {
       nextChar();
     }
 
-    return interpretValue(filter(sym));
+    return interpretValue(sym);
   };
 
   const parseString = () => {
@@ -59,7 +59,7 @@ module.exports = (code) => {
 
       if (!escape && char === chars.DOUBLE_QUOTE) {
         nextChar();
-        return filter(body);
+        return body;
       }
 
       if (char === chars.BACKSLASH) {
@@ -97,31 +97,31 @@ module.exports = (code) => {
   };
 
   const parseList = () => {
-    let body = [];
+    let expr = [];
 
     while (!isEof()) {
       skipDelimiters();
 
       if (currentChar() === chars.RIGHT_PAREN) {
         nextChar();
-        return filter(body);
+        return expr;
       }
 
-      body.push(parseExpression());
+      expr.push(filter(parseExpression()));
     }
 
     throw new Error('Unclosed list expression');
   };
 
   const parseProgram = () => {
-    let expressions = [];
+    let expr = [];
 
     while (!isEof()) {
       skipDelimiters();
-      expressions.push(parseExpression());
+      expr.push(filter(parseExpression()));
     }
 
-    return filter(expressions);
+    return expr;
   };
 
   return parseProgram();

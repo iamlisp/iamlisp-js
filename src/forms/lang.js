@@ -24,7 +24,7 @@ module.exports = {
     if (!(macro instanceof Macro)) {
       throw new Error('First argument should be a macro');
     }
-    const mergedArgs = mergeArguments(macro.args, args);
+    const mergedArgs = mergeArguments(macro.args.map(arg => arg.name), args);
     return macro.expand(mergedArgs);
   }),
   'def': new SpecialForm((env, evaluate, args) => {

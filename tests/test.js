@@ -12,6 +12,7 @@ const debug = {
 // Parser tests
 assert.equal(debug.parse('foo'), 'foo');
 assert.equal(debug.parse('true 47 3.14'), 'true 47 3.14');
+
 assert.equal(debug.parse('"foo" "foo \\" bar"'), '"foo" "foo \\" bar"');
 assert.equal(debug.parse('(foo)'), '(foo)');
 assert.equal(debug.parse('(foo bar)'), '(foo bar)');
@@ -53,3 +54,7 @@ assert.equal(debug.eval('(def hello 12) hello'), 12);
 
 assert.equal(debug.eval('(list 1 2 3)'), '(1 2 3)');
 assert.equal(debug.eval('((+ _ 1) 2)'), 3);
+
+assert.equal(debug.eval("(.map '(1 2 3) (* _ 2))"), '(2 4 6)');
+assert.equal(debug.eval("(.map '(1 2 3) (macro (x) (* x 2)))"), '(2 4 6)');
+assert.equal(debug.eval('(macroexpand (macro (x) (* x 3)) 2)'), '((* 2 3))');

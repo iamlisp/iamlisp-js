@@ -3,6 +3,8 @@ const Symbol = require('../Symbol');
 
 const PLACEHOLDER = '_';
 
+const makeLambda = (args, expr) => [new Symbol('lambda'), args, expr];
+
 module.exports = (expr) => {
   if (!Array.isArray(expr)) {
     return expr;
@@ -19,5 +21,5 @@ module.exports = (expr) => {
     return x;
   });
 
-  return size(args) > 0 ? [new Symbol('lambda'), args, newExpr] : newExpr;
+  return size(args) > 0 ? makeLambda(args, newExpr) : newExpr;
 };

@@ -1,6 +1,7 @@
 const Symbol = require('./Symbol');
 const Lambda = require('./Lambda');
 const Macro = require('./Macro');
+const MethodCall = require('./MethodCall');
 const parse = require('./parser');
 const specialForms = require('./forms');
 const SpecialForm = require('./forms/SpecialForm');
@@ -29,9 +30,52 @@ class Env {
   }
 }
 
+const convertLambdaToFunction = (lambda, env) => (...args) => {
+  return callLambda(lambda, env, args);
+};
+
+
+const convertMacroToFunction = (macro, env) => (...args) => {
+  return callMacro(macro, env, args);
+};
+
+
+const callMethod = (method, env, obj, args) => {
+  const methodArgs = args.map(arg => {
+    if (arg instanceof Lambda) {
+      return convertLambdaToFunction(arg, env);
+    }
+    if (arg instanceof Macro) {
+      return convertMacroToFunction(arg, env);
+    }
+    return arg;
+  });
+  return obj[method.name].apply(obj, methodArgs);
+};
+
+const callLambda = (lambda, env, argValues) => {
+  const argNames = lambda.args.map(arg => arg.name);
+  const mergedArguments = mergeArguments(argNames, argValues);
+  const lambdaEnv = new Env(mergedArguments, lambda.env);
+
+  return evaluateEach(lambda.body, lambdaEnv);
+};
+
+const callMacro = (macro, env, argValues) => {
+  const argNames = macro.args.map(arg => arg.name);
+  const mergedArguments = mergeArguments(argNames, argValues);
+
+  const expandedBody = macro.expand(mergedArguments);
+
+  return evaluateEach(expandedBody, env);
+};
+
 const evaluateSymbol = ({ name }, env) => {
   if (name in specialForms) {
     return specialForms[name];
+  }
+  if (name[0] === '.') {
+    return new MethodCall(name.substr(1));
   }
   return env.get(name);
 };
@@ -49,23 +93,17 @@ const evaluateList = (list, env) => {
   }
 
   if (headForm instanceof Lambda) {
-    const argNames = headForm.args.map(arg => arg.name);
-    const argValues = tail.map(arg => evaluate(arg, env));
-
-    const mergedArguments = mergeArguments(argNames, argValues);
-    const lambdaEnv = new Env(mergedArguments, headForm.env);
-
-    return evaluateEach(headForm.body, lambdaEnv);
+    const evaledArgs = tail.map(arg => evaluate(arg, env));
+    return callLambda(headForm, env, evaledArgs);
   }
 
   if (headForm instanceof Macro) {
-    const argNames = headForm.args.map(arg => arg.name);
-    const argValues = tail.map(arg => evaluate(arg, env));
-    const mergedArguments = mergeArguments(argNames, argValues);
+    return callLambda(headForm, env, tail);
+  }
 
-    const expandedBody = headForm.expand(mergedArguments);
-
-    return evaluateEach(expandedBody, env);
+  if (headForm instanceof MethodCall) {
+    const [obj, ...args] = tail.map(exp => evaluate(exp, env));
+    return callMethod(headForm, env, obj, args);
   }
 
   throw new Error(`Cound not execute - ${headForm}`);
