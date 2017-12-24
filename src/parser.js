@@ -1,21 +1,7 @@
+const { reserved, chars, delimiters } = require('./chars');
 const Symbol = require('./Symbol');
 const { chunkToMap } = require('./util');
 const filter = require('./plugins');
-
-const TOKEN_LIST_OPEN = '(';
-const TOKEN_LIST_CLOSE = ')';
-const TOKEN_QUOTE = '"';
-const TOKEN_ESCAPE = '\\';
-
-const punctuators = new Set([
-  ' ',
-  '\t',
-  '\n',
-  '\r',
-  TOKEN_LIST_OPEN,
-  TOKEN_LIST_CLOSE,
-  TOKEN_QUOTE,
-]);
 
 const looksLikeBoolean = (exp) => (
   ['true', 'false'].includes(exp)
@@ -42,29 +28,23 @@ module.exports = (code) => {
   const isEof = () => offset >= code.length;
   const nextChar = () => offset += 1;
 
+  const skipDelimiters = () => {
+    while (!isEof() && delimiters.has(currentChar())) {
+      nextChar();
+    }
+  };
+
   const parseSymbol = () => {
     let sym = '';
-    let escape = false;
 
     while (!isEof()) {
-      const char = currentChar();
-
-      if (!escape && (punctuators.has(char))) {
+      if (reserved.has(currentChar())) {
         break;
       }
 
-      if (char === TOKEN_ESCAPE) {
-        escape = true;
-      } else {
-        sym += char;
-        escape = false;
-      }
+      sym += currentChar();
 
       nextChar();
-    }
-
-    if (escape) {
-      throw new Error('Unused escape token');
     }
 
     return interpretValue(filter(sym));
@@ -77,11 +57,12 @@ module.exports = (code) => {
     while (!isEof()) {
       const char = currentChar();
 
-      if (!escape && char === TOKEN_QUOTE) {
+      if (!escape && char === chars.DOUBLE_QUOTE) {
+        nextChar();
         return filter(body);
       }
 
-      if (char === TOKEN_ESCAPE) {
+      if (char === chars.BACKSLASH) {
         escape = true;
       } else {
         body += char;
@@ -91,31 +72,42 @@ module.exports = (code) => {
       nextChar();
     }
 
-    throw new Error('Unclosed string literal');
+    throw new Error('Not closed string literal');
+  };
+
+  const parseExpression = () => {
+    skipDelimiters();
+
+    if (currentChar() === chars.DOUBLE_QUOTE) {
+      nextChar();
+      return parseString();
+    }
+    if (currentChar() === chars.LEFT_PAREN) {
+      nextChar();
+      return parseList();
+    }
+    if (currentChar() === chars.SINGLE_QUOTE) {
+      nextChar();
+      return [new Symbol('quote'), parseExpression()];
+    }
+    if (reserved.has(currentChar())) {
+      throw new Error(`Unexpected token - ${currentChar()}`);
+    }
+    return parseSymbol();
   };
 
   const parseList = () => {
-    let body = new Array();
+    let body = [];
 
     while (!isEof()) {
-      const char = currentChar();
+      skipDelimiters();
 
-      if (char === TOKEN_LIST_CLOSE) {
+      if (currentChar() === chars.RIGHT_PAREN) {
+        nextChar();
         return filter(body);
-      } else if (char === TOKEN_LIST_OPEN) {
-        nextChar();
-        body.push(parseList());
-      } else if (char === TOKEN_QUOTE) {
-        nextChar();
-        body.push(parseString());
-      } else if (punctuators.has(char)) {
-        // Ignore delimiters
-      } else {
-        body.push(parseSymbol());
-        continue;
       }
 
-      nextChar();
+      body.push(parseExpression());
     }
 
     throw new Error('Unclosed list expression');
@@ -125,24 +117,8 @@ module.exports = (code) => {
     let expressions = [];
 
     while (!isEof()) {
-      const char = currentChar();
-
-      if (char === TOKEN_LIST_CLOSE) {
-        throw new Error('Unexpected list close');
-      } else if (char === TOKEN_LIST_OPEN) {
-        nextChar();
-        expressions.push(parseList());
-      } else if (char === TOKEN_QUOTE) {
-        nextChar();
-        expressions.push(parseString());
-      } else if (punctuators.has(char)) {
-        // Ignore delimiters
-      } else {
-        expressions.push(parseSymbol());
-        continue;
-      }
-
-      nextChar();
+      skipDelimiters();
+      expressions.push(parseExpression());
     }
 
     return filter(expressions);
