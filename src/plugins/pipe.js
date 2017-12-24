@@ -16,7 +16,6 @@ const expandPipe = (xs) => {
 module.exports = (expr) => {
   if (
     Array.isArray(expr) &&
-    size(expr) > 1 &&
     head(expr) instanceof Symbol &&
     head(expr).name === PIPE
   ) {
@@ -25,7 +24,6 @@ module.exports = (expr) => {
 
   if (
     Array.isArray(expr) &&
-    size(expr) > 1 &&
     head(expr) instanceof Symbol &&
     head(expr).name === COMPOSE
   ) {
