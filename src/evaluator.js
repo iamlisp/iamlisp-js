@@ -129,8 +129,8 @@ const evaluateList = (list, env) => {
 
 const evaluateEach = (expressions, env) => {
   return expressions.reduce((result, exp) => {
-    env.set('$', result);
-    return evaluate(exp, env);
+    env.set('$', evaluate(exp, env));
+    return env.get('$');
   }, undefined);
 };
 
