@@ -45,4 +45,9 @@ module.exports = {
   'map': new SpecialForm((env, evaluate, args) => {
     return chunkToMap(args.map(arg => evaluate(arg, env)));
   }),
+  'new': new SpecialForm((env, evaluate, [className, ...args]) => {
+    const Class = evaluate(className, env);
+    const evaluatedArguments = args.map(arg => evaluate(arg, env));
+    return new Class(...evaluatedArguments);
+  }),
 };

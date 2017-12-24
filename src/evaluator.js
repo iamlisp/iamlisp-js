@@ -6,7 +6,6 @@ const parse = require('./parser');
 const specialForms = require('./forms');
 const SpecialForm = require('./forms/SpecialForm');
 const { mergeArguments } = require('./util');
-const initModules = require('./modules');
 
 class Env {
   constructor(map = new Map(), parent) {
@@ -31,15 +30,23 @@ class Env {
   }
 }
 
+const getJS = (name) => {
+  if (typeof global === 'object') {
+    return global[name];
+  }
+  if (typeof window === 'object') {
+    return window[name];
+  }
+  throw new Error('Unknown environment');
+};
+
 const convertLambdaToFunction = (lambda, env) => (...args) => {
   return callLambda(lambda, env, args);
 };
 
-
 const convertMacroToFunction = (macro, env) => (...args) => {
   return callMacro(macro, env, args);
 };
-
 
 const callMethod = (method, env, obj, args) => {
   const methodArgs = args.map(arg => {
@@ -51,7 +58,13 @@ const callMethod = (method, env, obj, args) => {
     }
     return arg;
   });
-  return obj[method.name].apply(obj, methodArgs);
+  const methodFunction = obj[method.name];
+
+  if (typeof methodFunction !== 'function') {
+    throw new TypeError(`${methodFunction} is not a function`);
+  }
+
+  return methodFunction.apply(obj, methodArgs);
 };
 
 const callFunction = (func, env, args) => {
@@ -64,6 +77,11 @@ const callFunction = (func, env, args) => {
     }
     return arg;
   });
+
+  if (typeof func !== 'function') {
+    throw new TypeError(`${func} is not a function`);
+  }
+
   return func.apply(null, funcArgs);
 };
 
@@ -90,6 +108,9 @@ const evaluateSymbol = ({ name }, env) => {
   }
   if (name[0] === '.') {
     return new MethodCall(name.substr(1));
+  }
+  if (name.substr(0, 3) === 'js/') {
+    return getJS(name.substr(3));
   }
   return env.get(name);
 };
@@ -150,6 +171,5 @@ const evaluate = (expression, env) => {
 
 module.exports.makeEvaluator = () => {
   const env = new Env();
-  initModules(env);
   return exprs => evaluateEach(exprs, env);
 };
