@@ -54,7 +54,7 @@ module.exports = {
   }),
   'import': new SpecialForm((env, evaluate, [path, nameSymbol]) => {
     const evaluatedPath = evaluate(path, env);
-    const modulePath = `lib/${evaluatedPath}.iamlisp`;
+    const modulePath = `${__dirname}/../../lib/${evaluatedPath}.iamlisp`;
 
     if (typeof evaluatedPath !== 'string') {
       throw new TypeError('Module path should be a string');
