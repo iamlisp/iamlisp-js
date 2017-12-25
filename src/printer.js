@@ -13,10 +13,10 @@ const print = (exp) => {
     return `(${exp.map(print).join(' ')})`;
   }
   if (exp instanceof Macro) {
-    return `(macro ${print(exp.args)} ${exp.body.map(print)})`;
+    return `(macro ${print(exp.args)} ${exp.body.map(print).join(' ')})`;
   }
   if (exp instanceof Lambda) {
-    return `(lambda ${print(exp.args)} ${exp.body.map(print)})`;
+    return `(lambda ${print(exp.args)} ${exp.body.map(print).join(' ')})`;
   }
   return exp;
 };

@@ -5,8 +5,10 @@ const SpecialForm = require('./SpecialForm');
 const Lambda = require('../Lambda');
 const Macro = require('../Macro');
 const Symbol = require('../Symbol');
-const { mergeArguments, chunkToMap, pipe } = require('../util');
+const { chunkToMap, pipe } = require('../util');
 const Env = require('../Env');
+const expand = require('../evaluator/expand');
+const mergeArgs = require('../evaluator/mergeArgs');
 
 module.exports = {
   'lambda': new SpecialForm((env, evaluate, [args, ...body]) => {
@@ -26,8 +28,9 @@ module.exports = {
     if (!(macro instanceof Macro)) {
       throw new Error('First argument should be a macro');
     }
-    const mergedArgs = mergeArguments(macro.args.map(arg => arg.name), args);
-    return macro.expand(mergedArgs);
+    const argNames = macro.args.map(arg => arg.name);
+    const mergedArgs = mergeArgs(argNames, args);
+    return expand(macro.body, mergedArgs);
   }),
   'def': new SpecialForm((env, evaluate, args) => {
     const chunks = chunk(args, 2);

@@ -7,7 +7,9 @@ const MethodCall = require('./MethodCall');
 const parse = require('./parser');
 const specialForms = require('./forms');
 const SpecialForm = require('./forms/SpecialForm');
-const { mergeArguments, subtitude } = require('./util');
+const { subtitude } = require('./util');
+const expand = require('./evaluator/expand');
+const mergeArgs = require('./evaluator/mergeArgs');
 
 const getJS = (name) => {
   if (typeof global === 'object') {
@@ -69,12 +71,13 @@ const callLambda = (lambda, env, argValues) => {
   const argValuesSize = size(argValues);
 
   if (size(argNames) > argValuesSize) {
-    const mergedArguments = mergeArguments(argNames.slice(0, argValuesSize), argValues);
+    const unusedArgNames = argNames.slice(0, argValuesSize);
+    const mergedArguments = mergeArgs(unusedArgNames, argValues);
     const restArgNames = lambda.args.slice(argValuesSize);
 
-    return new Lambda(restArgNames, subtitude(lambda.body, mergedArguments), lambda.env);
+    return new Lambda(restArgNames, expand(lambda.body, mergedArguments), lambda.env);
   } else {
-    const mergedArguments = mergeArguments(argNames, argValues);
+    const mergedArguments = mergeArgs(argNames, argValues);
     const lambdaEnv = new Env(mergedArguments, lambda.env);
   
     return evaluateEach(lambda.body, lambdaEnv);  
@@ -84,9 +87,9 @@ const callLambda = (lambda, env, argValues) => {
 
 const callMacro = (macro, env, argValues) => {
   const argNames = macro.args.map(arg => arg.name);
-  const mergedArguments = mergeArguments(argNames, argValues);
+  const mergedArguments = mergeArgs(argNames, argValues);
 
-  const expandedBody = macro.expand(mergedArguments);
+  const expandedBody = expand(macro.body, mergedArguments);
 
   return evaluateEach(expandedBody, env);
 };

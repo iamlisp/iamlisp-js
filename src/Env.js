@@ -1,16 +1,16 @@
 module.exports = class Env {
-  constructor(map = new Map(), parent) {
+  constructor(map = {}, parent) {
     this.map = map;
     this.parent = parent;
   }
 
   set(key, value) {
-    this.map.set(key, value);
+    this.map[key] = value;
   }
 
   get(key) {
-    if (this.map.has(key)) {
-      return this.map.get(key);
+    if (key in this.map) {
+      return this.map[key];
     }
 
     if (!this.parent) {
@@ -20,13 +20,13 @@ module.exports = class Env {
     return this.parent.get(key);
   }
 
-  get entries() {
-    return this.map.entries();
+  get keys() {
+    return Object.keys(this.map);
   }
 
   import(moduleEnv, moduleName) {
-    for (const [name, value] of moduleEnv.entries) {
-      this.set(`${moduleName}/${name}`, value);
+    for (const key of moduleEnv.keys) {
+      this.set(`${moduleName}/${key}`,  moduleEnv.get(key));
     }
   }
 }
