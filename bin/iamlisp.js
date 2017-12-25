@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const { size } = require('lodash');
+const styles = require('ansi-styles');
 const { pipe } = require('../src/util');
 const { readFileSync } = require('fs');
 const { createInterface } = require('readline');
@@ -12,7 +13,7 @@ const print = require('../src/printer');
 const readFile = file => readFileSync(file, 'UTF-8');
 const parseCode = code => parse(code);
 const evalExpr = expr => evaluate(expr);
-const printResult = result => console.log(print(result));
+const printResult = result => console.log(`${styles.green.open}${print(result)}${styles.green.close}`);
 const printError = err => console.error(err);
 
 const startRepl = async () => {
