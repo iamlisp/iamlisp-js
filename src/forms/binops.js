@@ -19,6 +19,12 @@ module.exports = {
   '-': new SpecialForm((env, evaluate, args) => binOp((x, y) => x - y, exp => evaluate(exp, env), args)),
   '/': new SpecialForm((env, evaluate, args) => binOp((x, y) => x / y, exp => evaluate(exp, env), args)),
 
+  'pow': new SpecialForm((env, evaluate, args) => binOp((x, y) => Math.pow(x, y), exp => evaluate(exp, env), args)),
+  'sqrt': new SpecialForm((env, evaluate, args) => binOp((x, y) => Math.sqrt(x, y), exp => evaluate(exp, env), args)),
+
+  'max': new SpecialForm((env, evaluate, args) => binOp((x, y) => Math.max(x, y), exp => evaluate(exp, env), args)),
+  'min': new SpecialForm((env, evaluate, args) => binOp((x, y) => Math.min(x, y), exp => evaluate(exp, env), args)),
+
   '>': new SpecialForm((env, evaluate, args) => binCmp((x, y) => x > y, exp => evaluate(exp, env), args)),
   '<': new SpecialForm((env, evaluate, args) => binCmp((x, y) => x < y, exp => evaluate(exp, env), args)),
   '>=': new SpecialForm((env, evaluate, args) => binCmp((x, y) => x >= y, exp => evaluate(exp, env), args)),
