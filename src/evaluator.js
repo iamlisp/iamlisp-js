@@ -1,3 +1,4 @@
+const { size } = require('lodash');
 const Env = require('./Env');
 const Symbol = require('./Symbol');
 const Lambda = require('./Lambda');
@@ -6,7 +7,7 @@ const MethodCall = require('./MethodCall');
 const parse = require('./parser');
 const specialForms = require('./forms');
 const SpecialForm = require('./forms/SpecialForm');
-const { mergeArguments } = require('./util');
+const { mergeArguments, subtitude } = require('./util');
 
 const getJS = (name) => {
   if (typeof global === 'object') {
@@ -65,10 +66,20 @@ const callFunction = (func, env, args) => {
 
 const callLambda = (lambda, env, argValues) => {
   const argNames = lambda.args.map(arg => arg.name);
-  const mergedArguments = mergeArguments(argNames, argValues);
-  const lambdaEnv = new Env(mergedArguments, lambda.env);
+  const argValuesSize = size(argValues);
 
-  return evaluateEach(lambda.body, lambdaEnv);
+  if (size(argNames) > argValuesSize) {
+    const mergedArguments = mergeArguments(argNames.slice(0, argValuesSize), argValues);
+    const restArgNames = lambda.args.slice(argValuesSize);
+
+    return new Lambda(restArgNames, subtitude(lambda.body, mergedArguments), lambda.env);
+  } else {
+    const mergedArguments = mergeArguments(argNames, argValues);
+    const lambdaEnv = new Env(mergedArguments, lambda.env);
+  
+    return evaluateEach(lambda.body, lambdaEnv);  
+  }
+
 };
 
 const callMacro = (macro, env, argValues) => {

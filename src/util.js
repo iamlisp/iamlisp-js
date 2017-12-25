@@ -1,3 +1,5 @@
+const Symbol = require('./Symbol');
+
 const chunkToMap = (arr) => {
   let map = new Map();
 
@@ -20,4 +22,17 @@ const mergeArguments = (argNames, argValues) => {
 
 const pipe = funcs => value => funcs.reduce((value, func) => func(value), value);
 
-module.exports = { chunkToMap, mergeArguments, pipe };
+const subtitude = (expr, map) => {
+  const _sub = (expr) => {
+    if (Array.isArray(expr)) {
+      return expr.map(_sub);
+    }
+    if (expr instanceof Symbol && map.has(expr.name)) {
+      return map.get(expr.name);
+    }
+    return expr;
+  };
+  return _sub(expr);
+};
+
+module.exports = { chunkToMap, mergeArguments, pipe, subtitude };
