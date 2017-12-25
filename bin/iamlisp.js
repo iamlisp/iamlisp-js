@@ -1,39 +1,47 @@
 #!/usr/bin/env node
 
+const { size } = require('lodash');
+const { pipe } = require('../src/util');
+const { readFileSync } = require('fs');
 const { createInterface } = require('readline');
 const { version } = require('../package.json');
 const parse = require('../src/parser');
 const evaluate = require('../src/evaluator').makeEvaluator();
 const print = require('../src/printer');
 
-const rl = createInterface({
-  input: process.stdin,
-  output: process.stderr,
-  terminal: true,
-});
+const readFile = file => readFileSync(file, 'UTF-8');
+const parseCode = code => parse(code);
+const evalExpr = expr => evaluate(expr);
+const printResult = result => console.log(print(result));
+const printError = err => console.error(err);
 
-const readCode = () => new Promise((resolve => {
-  rl.question('> ', input => resolve(input));
-}));
+const startRepl = async () => {
+  const rl = createInterface({
+    input: process.stdin,
+    output: process.stderr,
+    terminal: true,
+  });
+  
+  const readCode = () => new Promise((resolve => {
+    rl.question('> ', input => resolve(input));
+  }));
+  
+  console.log('I Am Lisp Interpreter. Version %s', version);
 
-const parseCode = (code) => parse(code);
-
-const evalExpr = (expr) => evaluate(expr);
-
-const printResult = (result) => console.log(print(result));
-
-const printError = (err) => console.error(err);
-
-const iter = () => {
-  Promise.resolve()
-    .then(readCode)
-    .then(parseCode)
-    .then(evalExpr)
-    .then(printResult)
-    .catch(printError)
-    .then(iter);
+  while (true) {
+    await Promise.resolve()
+      .then(readCode)
+      .then(parseCode)
+      .then(evalExpr)
+      .then(printResult)
+      .catch(printError);
+  }
 };
 
-console.log('I Am Lisp Interpreter. Version %s', version);
+const evaluateFile = pipe([readFile, parseCode, evalExpr]);
 
-iter();
+if (size(process.argv) >= 3) {
+  evaluateFile(process.argv[2]);
+} else {
+  startRepl();
+}
