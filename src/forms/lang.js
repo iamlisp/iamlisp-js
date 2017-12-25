@@ -1,6 +1,4 @@
-const { chunk, last } = require('lodash');
-const { readFileSync } = require('fs');
-const parse = require('../parser');
+const { chunk } = require('lodash');
 const SpecialForm = require('./SpecialForm');
 const Lambda = require('../Lambda');
 const Macro = require('../Macro');
@@ -54,29 +52,5 @@ module.exports = {
     const Class = evaluate(className, env);
     const evaluatedArguments = args.map(arg => evaluate(arg, env));
     return new Class(...evaluatedArguments);
-  }),
-  'import': new SpecialForm((env, evaluate, [path, nameSymbol]) => {
-    const evaluatedPath = evaluate(path, env);
-    const modulePath = `${__dirname}/../../lib/${evaluatedPath}.iamlisp`;
-
-    if (typeof evaluatedPath !== 'string') {
-      throw new TypeError('Module path should be a string');
-    }
-
-    const moduleExpr = pipe([readFileSync, String, parse])(modulePath);
-
-    if (nameSymbol === undefined) {
-      const results = moduleExpr.map(expr => evaluate(expr, env));
-      return last(results);
-    }
-
-    if (nameSymbol instanceof Symbol) {
-      const moduleEnv = new Env(new Map(), env);
-      const results = moduleExpr.map(expr => evaluate(expr, moduleEnv));
-      env.import(moduleEnv, nameSymbol.name);
-      return last(results);
-    }
-
-    throw new TypeError('Module name should be a symbol');
   }),
 };
