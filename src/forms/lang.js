@@ -9,6 +9,13 @@ const expand = require('../evaluator/expand');
 const mergeArgs = require('../evaluator/mergeArgs');
 
 module.exports = {
+  'do': new SpecialForm((env, evaluate, expressions) => {
+    return expressions.reduce((prevResult, exp) => {
+      const result = evaluate(exp, env);
+      env.set('$', result);
+      return result;
+    }, undefined);
+  }),
   'lambda': new SpecialForm((env, evaluate, [args, ...body]) => {
     if (!Array.isArray(args) || args.some(arg => !(arg instanceof Symbol))) {
       throw new Error('Lambda arguments should be list of symbols');
@@ -28,7 +35,7 @@ module.exports = {
     }
     const argNames = macro.args.map(arg => arg.name);
     const mergedArgs = mergeArgs(argNames, args);
-    return expand(macro.body, mergedArgs);
+    return [new Symbol('do'), ...expand(macro.body, mergedArgs)];
   }),
   'def': new SpecialForm((env, evaluate, args) => {
     const chunks = chunk(args, 2);
