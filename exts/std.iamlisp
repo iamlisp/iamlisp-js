@@ -1,0 +1,2 @@
+(def print (macro (arg) (.log js/console arg)))
+"OK"

@@ -8,7 +8,7 @@ const SpecialForm = require('./SpecialForm');
 
 const moduleLocations = name => [
   `${process.cwd()}/${name}.iamlisp`,
-  `${__dirname}/../../lib/${name}.iamlisp`,
+  `${__dirname}/../../exts/${name}.iamlisp`,
 ];
 
 module.exports = {

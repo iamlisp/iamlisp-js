@@ -131,7 +131,8 @@ const evaluateList = (list, env) => {
   }
 
   if (headForm instanceof Macro) {
-    return callLambda(headForm, env, tail);
+    const evaledArgs = tail.map(arg => evaluate(arg, env));
+    return callLambda(headForm, env, evaledArgs);
   }
 
   if (headForm instanceof MethodCall) {

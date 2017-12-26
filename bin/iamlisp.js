@@ -7,8 +7,16 @@ const { readFileSync } = require('fs');
 const { createInterface } = require('readline');
 const { version } = require('../package.json');
 const parse = require('../src/parser');
-const evaluate = require('../src/evaluator').makeEvaluator();
+const { makeEvaluator } = require('../src/evaluator');
 const print = require('../src/printer');
+
+const initEvaluator = () => {
+  const evaluate = makeEvaluator();
+  evaluate(parse('(import "std")'));
+  return evaluate;
+};
+
+const evaluate = initEvaluator();
 
 const readFile = file => readFileSync(file, 'UTF-8');
 const parseCode = code => parse(code);
