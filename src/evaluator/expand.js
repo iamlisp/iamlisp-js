@@ -1,4 +1,4 @@
-const { size, head, tail, omit } = require('lodash');
+const { size, head, tail, omit, chunk, flatten } = require('lodash');
 const Symbol = require('../Symbol');
 
 function isExpression(expr) {
@@ -19,14 +19,17 @@ function isShadingExpression(expr) {
 };
 
 function isDefExpression(expr) {
-  return isExpression(expr) && size(expr) == 3 && isSymbol('def', head(expr));
+  return isExpression(expr) && size(expr) > 0 && isSymbol('def', head(expr));
 }
 
 function reduceExpression([acc, args], expr) {
   if (isDefExpression(expr)) {
-    const shadowedSymbol = head(tail(expr));
-    const newArgs = omit(args, shadowedSymbol.name);
-    return [[...acc, expand(expr, newArgs)], newArgs];
+    const defPairs = chunk(tail(expr), 2);
+    const expandedPairs = defPairs.map(([symbol, expr]) => {
+      return [symbol, expand(expr, args)];
+    });
+    const shadowedArgs = defPairs.map(([symbol]) => symbol.name);
+    return [[...acc, [head(expr), ...flatten(expandedPairs)]], omit(args, shadowedArgs)];
   }
 
   if (isShadingExpression(expr)) {

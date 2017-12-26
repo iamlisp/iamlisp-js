@@ -69,8 +69,8 @@ assert.equal(debug.eval(`
     x
     (lambda (x) (* 2 x))
     y
-    (def y 99)
+    (def y (+ y 99))
     y
     z))
   (f 1 2)
-`), '(lambda (z) 1 (lambda (x) (* 2 x)) 2 (def y 99) y z)');
+`), '(lambda (z) 1 (lambda (x) (* 2 x)) 2 (def y (+ 2 99)) y z)');
