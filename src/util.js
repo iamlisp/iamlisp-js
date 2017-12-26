@@ -1,15 +1,18 @@
+const { Map } = require('immutable');
+const { chunk } = require('lodash');
 const Symbol = require('./Symbol');
 
 const chunkToMap = (arr) => {
-  let map = new Map();
-
-  while (arr.length > 0) {
-    const key = arr.shift();
-    const value = arr.shift();
-    map.set(key, value);
-  }
-
-  return map;
+  return chunk(arr, 2)
+    .reduce((acc, [key, value]) => {
+      if (key instanceof Symbol) {
+        return acc.set(key.name, value);
+      }
+      if (typeof key === 'string') {
+        return acc.set(key, value);
+      }
+      throw new TypeError('Key values should be a symbol or string');
+    }, Map());
 };
 
 const pipe = funcs => value => funcs.reduce((value, func) => func(value), value);

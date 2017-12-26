@@ -26,6 +26,7 @@ assert.equal(debug.parse("' (1 2 3)"), '(quote (1 2 3))');
 assert.equal(debug.parse('(* _ 2)'), '(lambda (__0) (* __0 2))');
 assert.equal(debug.parse('(-> foo bar baz)'), '(lambda (__arg) (baz (bar (foo __arg))))');
 assert.equal(debug.parse('(<- foo bar baz)'), '(lambda (__arg) (foo (bar (baz __arg))))');
+// assert.equal(debug.parse('{ "foo": "bar" }'), '{ "foo": "bar" }');
 
 // Evaluator tests
 assert.equal(debug.eval('(+ 1 2 3)'), 6);

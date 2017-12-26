@@ -37,6 +37,9 @@ const callMethod = (method, env, obj, args) => {
     if (arg instanceof Macro) {
       return convertMacroToFunction(arg, env);
     }
+    if (arg instanceof Symbol) {
+      return arg.name;
+    }
     return arg;
   });
   const methodFunction = obj[method.name];
@@ -55,6 +58,9 @@ const callFunction = (func, env, args) => {
     }
     if (arg instanceof Macro) {
       return convertMacroToFunction(arg, env);
+    }
+    if (arg instanceof Symbol) {
+      return arg.name;
     }
     return arg;
   });
