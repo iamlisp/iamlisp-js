@@ -25,11 +25,9 @@ function isDefExpression(expr) {
 function reduceExpression([acc, args], expr) {
   if (isDefExpression(expr)) {
     const defPairs = chunk(tail(expr), 2);
-    const expandedPairs = defPairs.map(([symbol, expr]) => {
-      return [symbol, expand(expr, args)];
-    });
+    const expandedExpr = defPairs.map(([symbol, expr]) => [symbol, expand(expr, args)]);
     const shadowedArgs = defPairs.map(([symbol]) => symbol.name);
-    return [[...acc, [head(expr), ...flatten(expandedPairs)]], omit(args, shadowedArgs)];
+    return [[...acc, [head(expr), ...flatten(expandedExpr)]], omit(args, shadowedArgs)];
   }
 
   if (isShadingExpression(expr)) {
