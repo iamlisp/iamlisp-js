@@ -1,5 +1,5 @@
 {
-  "name": "iamlisp",
+  "name": "@pldin601/iamlisp",
   "version": "0.0.2",
   "description": "Another one my lisp interpreter written on ES6",
   "bin": {
