@@ -29,11 +29,13 @@ assert.equal(debug.parse('(<- foo bar baz)'), '(lambda (__arg) (foo (bar (baz __
 // assert.equal(debug.parse('{ "foo": "bar" }'), '{ "foo": "bar" }');
 
 // Evaluator tests
+// Math operations
 assert.equal(debug.eval('(+ 1 2 3)'), 6);
 assert.equal(debug.eval('(- 6 2 3)'), 1);
 assert.equal(debug.eval('(* 2 3 4)'), 24);
 assert.equal(debug.eval('(/ 24 3 2)'), 4);
 
+// Logical operations
 assert.equal(debug.eval('(< 1 2 3)'), true);
 assert.equal(debug.eval('(< 1 2 0)'), false);
 assert.equal(debug.eval('(> 1 2 3)'), false);
@@ -51,11 +53,17 @@ assert.equal(debug.eval('(and false false)'), false);
 assert.equal(debug.eval('(not true)'), false);
 assert.equal(debug.eval('(not false)'), true);
 
-assert.equal(debug.eval('((lambda (x y) (+ x y)) 2 3)'), 5);
-assert.equal(debug.eval('((lambda (x y) (+ x y)) 2 3)'), 5);
+// Definition
 assert.equal(debug.eval('(def hello 12) hello'), 12);
 
+// Lambda application
+assert.equal(debug.eval('((lambda (x y) (+ x y)) 2 3)'), 5);
+assert.equal(debug.eval('((lambda (x y) (+ x y)) 2 3)'), 5);
+
+// List constructor
 assert.equal(debug.eval('(list 1 2 3)'), '(1 2 3)');
+
+// Placeholders
 assert.equal(debug.eval('((+ _ 1) 2)'), 3);
 
 assert.equal(debug.eval("(.map '(1 2 3) (* _ 2))"), '(2 4 6)');
