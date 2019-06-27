@@ -28,7 +28,7 @@ export default function parse(expr) {
 
     const { interpreted, literal } = interpretLiteral(sym);
 
-    return interpreted ? literal : new Symbl(literal);
+    return interpreted ? literal : new Symbl(sym);
   };
 
   const parseString = () => {
