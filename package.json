@@ -6,7 +6,8 @@
     "iamlisp": "./bin/iamlisp.js"
   },
   "scripts": {
-    "test": "node tests/test.js"
+    "test": "jest",
+    "lint": "eslint src/"
   },
   "keywords": [],
   "author": "Roman Lakhtadyr <roman.lakhtadyr@gmail.com>",
@@ -17,5 +18,12 @@
     "immutable": "^3.8.1",
     "lodash": "^4.17.4",
     "yargs": "^10.0.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "babel-jest": "^24.8.0",
+    "eslint": "^5.16.0",
+    "jest": "^24.8.0"
   }
 }
