@@ -1,18 +1,18 @@
-const Symbol = require('./Symbol');
+import Symbl from "./Symbl";
 
-module.exports = class Macro {
+export default class Macro {
   constructor(args, body) {
     this.args = args;
     this.body = body;
   }
 
   expand(args) {
-    const _expand = (body) => {
+    const _expand = body => {
       if (Array.isArray(body)) {
         return body.map(exp => _expand(exp));
       }
-      if (body instanceof Symbol && args.has(body.name)) {
-          return args.get(body.name);
+      if (body instanceof Symbl && args.has(body.name)) {
+        return args.get(body.name);
       }
       return body;
     };

@@ -1,12 +1,19 @@
 {
-  "name": "@pldin601/iamlisp",
+  "name": "@iamlisp/eval",
   "version": "0.0.2",
-  "description": "Another one my lisp interpreter written on ES6",
+  "description": "Another one my lisp interpreter",
   "bin": {
-    "iamlisp": "./bin/iamlisp.js"
+    "iamlisp": "./bin/cli.js"
   },
+  "main": "dist/index.js",
   "scripts": {
-    "test": "node tests/test.js"
+    "start": "node ./dist/cli/index.js",
+    "dev": "node ./dev.js",
+    "test": "jest",
+    "lint": "eslint src/",
+    "prebuild": "rimraf dist",
+    "build": "babel src/ --out-dir dist --source-maps inline",
+    "prepublish": "npm run build"
   },
   "keywords": [],
   "author": "Roman Lakhtadyr <roman.lakhtadyr@gmail.com>",
@@ -14,8 +21,19 @@
   "dependencies": {
     "ansi-styles": "^3.2.0",
     "assert": "^1.5.0",
+    "continuation-local-storage": "^3.2.1",
     "immutable": "^3.8.1",
     "lodash": "^4.17.4",
     "yargs": "^10.0.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/register": "^7.4.4",
+    "babel-jest": "^24.8.0",
+    "eslint": "^5.16.0",
+    "jest": "^24.8.0",
+    "rimraf": "^2.6.3"
   }
 }

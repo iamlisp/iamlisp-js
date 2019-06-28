@@ -1,28 +1,37 @@
-const Lambda = require('../Lambda');
-const Macro = require('../Macro');
-const Symbol = require('../Symbol');
+import Lambda from "../types/Lambda";
+import Macro from "../types/Macro";
+import Symbl from "../types/Symbl";
+import { convertLambdaToFunction, convertMacroToFunction } from "./helpers";
 
-function callJSMethod(method, object, args) {
-  return object[method].apply(object, castArguments(args));
+export function getJavascriptGlobal(name) {
+  if (typeof global === "object") {
+    return global[name];
+  }
+  if (typeof window === "object") {
+    return window[name];
+  }
+  throw new Error("Unknown environment");
 }
 
-function callJSFunction(func, args) {
-  return func.apply(null, castArguments(args));
+export function callJSMethod(method, object, args, env) {
+  return object[method].apply(object, castArguments(args, env));
 }
 
-function castArguments(args) {
+export function callJSFunction(func, args, env) {
+  return func.apply(null, castArguments(args, env));
+}
+
+function castArguments(args, env) {
   return args.map(arg => {
     if (arg instanceof Lambda) {
-      return convertLambdaToFunction(arg, env);
+      return convertLambdaToFunction(arg);
     }
     if (arg instanceof Macro) {
       return convertMacroToFunction(arg, env);
     }
-    if (arg instanceof Symbol) {
+    if (arg instanceof Symbl) {
       return arg.name;
     }
     return arg;
   });
 }
-
-module.exports = { callJSMethod, callJSFunction };
