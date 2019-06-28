@@ -6,6 +6,7 @@ import Macro from "../../types/Macro";
 import mergeArgs from "../mergeArgs";
 import Symbl from "../../types/Symbl";
 import expand from "../expand";
+import createObject from "../createObject";
 
 const langForms = {
   do: new SpecialForm((env, expressions) => {
@@ -50,8 +51,8 @@ const langForms = {
   }),
   new: new SpecialForm((env, [className, ...args]) => {
     const Class = evaluateExpression(className, env);
-    const evaluatedArguments = args.map(arg => evaluateExpression(arg, env));
-    return new Class(...evaluatedArguments);
+    const resovledArgs = args.map(arg => evaluateExpression(arg, env));
+    return createObject(Class, env, resovledArgs);
   })
 };
 
