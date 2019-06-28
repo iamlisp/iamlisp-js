@@ -1,6 +1,7 @@
 import parse from "./parse";
 import Symbl from "../types/Symbl";
 
+// Test parser
 test.each`
   input                            | output
   ${"foo"}                         | ${[new Symbl("foo")]}
@@ -14,3 +15,24 @@ test.each`
 `('Should correclty parse "$input"', ({ input, output }) => {
   expect(parse(input)).toEqual(output);
 });
+
+// Test plugin "pipe"
+test.each`
+  input             | output
+  ${"(-> foo bar)"} | ${[[new Symbl("lambda"), [new Symbl("__arg")], [new Symbl("bar"), [new Symbl("foo"), new Symbl("__arg")]]]]}
+  ${"(<- foo bar)"} | ${[[new Symbl("lambda"), [new Symbl("__arg")], [new Symbl("foo"), [new Symbl("bar"), new Symbl("__arg")]]]]}
+`('Should correclty parse "$input" with plugin "pipe"', ({ input, output }) => {
+  expect(parse(input)).toEqual(output);
+});
+
+// Test plugin "placeholder"
+test.each`
+  input          | output
+  ${"(+ _ _ _)"} | ${[[new Symbl("lambda"), [new Symbl("__0"), new Symbl("__1"), new Symbl("__2")], [new Symbl("+"), new Symbl("__0"), new Symbl("__1"), new Symbl("__2")]]]}
+  ${"(- _ _)"}   | ${[[new Symbl("lambda"), [new Symbl("__0"), new Symbl("__1")], [new Symbl("-"), new Symbl("__0"), new Symbl("__1")]]]}
+`(
+  'Should correclty parse "$input" with plugin "placeholder"',
+  ({ input, output }) => {
+    expect(parse(input)).toEqual(output);
+  }
+);

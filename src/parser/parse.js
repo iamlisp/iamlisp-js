@@ -2,8 +2,8 @@ import { chunk } from "lodash";
 import createReader from "./reader";
 import { delimiters, reserved, chars } from "./chars";
 import interpretLiteral from "./interpretLiteral";
+import withPlugins from "./plugins";
 import Symbl from "../types/Symbl";
-import withPlugins from "../plugins";
 
 export default function parse(expr) {
   const { currentChar, isEof, nextChar } = createReader(expr);
