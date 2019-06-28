@@ -31,8 +31,7 @@ const langForms = {
     if (!(macro instanceof Macro)) {
       throw new Error("First argument should be a macro");
     }
-    const argNames = macro.args.map(arg => arg.name);
-    const mergedArgs = mergeArgs(argNames, args);
+    const mergedArgs = mergeArgs(macro.args, args);
     return [new Symbl("do"), ...expand(macro.body, mergedArgs)];
   }),
   def: new SpecialForm((env, args) => {
