@@ -36,6 +36,7 @@ const startRepl = async () => {
   }
 };
 
-startRepl().catch(() => {
+startRepl().catch(err => {
+  printError(err);
   process.exit(1);
 });

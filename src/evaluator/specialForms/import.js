@@ -1,4 +1,4 @@
-import { resolve, dirname, join } from "path";
+import { resolve, join } from "path";
 import { find } from "lodash";
 import { existsSync } from "fs";
 import { evaluateExpression, runtimeNs } from "../evaluate";
@@ -41,8 +41,6 @@ const importForms = {
     const importModulePath = resolve(currentModulePath, evaluatedPath);
 
     const resolvedModuleFilepath = resolveModuleFilepath(importModulePath);
-
-    runtimeNs.set("__modulePath", dirname(resolvedModuleFilepath));
 
     importModule(env, resolvedModuleFilepath, namespace);
   })
