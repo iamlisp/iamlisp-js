@@ -1,10 +1,11 @@
 {
-  "name": "@pldin601/iamlisp",
+  "name": "@iamlisp/eval",
   "version": "0.0.2",
-  "description": "Another one my lisp interpreter written on ES6",
+  "description": "Another one my lisp interpreter",
   "bin": {
     "iamlisp": "./bin/cli.js"
   },
+  "main": "dist/index.js",
   "scripts": {
     "start": "node ./dist/cli/index.js",
     "dev": "node ./dev.js",
