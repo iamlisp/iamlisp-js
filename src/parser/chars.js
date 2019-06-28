@@ -1,6 +1,8 @@
 export const chars = {
   LEFT_PAREN: "(",
   RIGHT_PAREN: ")",
+  LEFT_BRACKET: "{",
+  RIGHT_BRACKET: "}",
   DOUBLE_QUOTE: '"',
   SINGLE_QUOTE: "'",
   BACKSLASH: "\\",
