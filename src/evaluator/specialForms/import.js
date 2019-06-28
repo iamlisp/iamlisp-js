@@ -1,45 +1,51 @@
-// import { existsSync } from "fs";
-// import { evaluateExpression } from "../evaluate";
-// import SpecialForm from "../../types/SpecialForm";
-// import parse from "../../parser/parse";
+import { resolve, dirname, join } from "path";
+import { find } from "lodash";
+import { existsSync } from "fs";
+import { evaluateExpression, runtimeNs } from "../evaluate";
+import importModule from "../importModule";
+import Symbl from "../../types/Symbl";
+import SpecialForm from "../../types/SpecialForm";
 
-// const moduleLocations = name => [
-//   `${process.cwd()}/${name}.iamlisp`,
-//   `${__dirname}/../../exts/${name}.iamlisp`
-// ];
+const MODULE_EXTENSION = ".iamlisp";
 
-/**
- * 1. Resolve Module Path
- * 2. Parse Module
- * 3. Evaluate Module
- * 4. Cache Module
- */
+function resolveModuleFilepath(modulePath) {
+  const resolveVariants = [
+    `${modulePath}${MODULE_EXTENSION}`,
+    join(modulePath, `index${MODULE_EXTENSION}`)
+  ];
+
+  const resolvedVariant = find(resolveVariants, existsSync);
+
+  if (typeof resolvedVariant === "undefined") {
+    throw new Error(`Could not resolve module - ${modulePath}`);
+  }
+
+  return resolvedVariant;
+}
 
 const importForms = {
-  // 'import': new SpecialForm((env, [path, nameSymbol]) => {
-  //   const evaluatedPath = evaluateExpression(path, env);
-  //   if (typeof evaluatedPath !== 'string') {
-  //     throw new TypeError('Module path should be a string');
-  //   }
-  //   const locations = moduleLocations(evaluatedPath);
-  //   const modulePath = find(locations, existsSync);
-  //   if (modulePath === undefined) {
-  //     throw new Error(`Module "${evaluatedPath}" does not exist`);
-  //   }
-  //   const moduleCode = readFileSync(modulePath, 'UTF-8');
-  //   const parsedModule = parse(moduleCode);
-  //   const moduleExpr = pipe([path => readFileSync(path, 'UTF-8'), parse])(modulePath);
-  //   if (nameSymbol === undefined) {
-  //     return last(moduleExpr.map(expr => evaluate(expr, env)));
-  //   }
-  //   if (nameSymbol instanceof Symbol) {
-  //     const moduleEnv = new Env({}, env);
-  //     const lastResult = last(moduleExpr.map(expr => evaluate(expr, moduleEnv)));
-  //     env.import(moduleEnv, nameSymbol.name);
-  //     return lastResult;
-  //   }
-  //   throw new TypeError('Module name should be a symbol');
-  // }),
+  import: new SpecialForm((env, [path, namespaceExpr]) => {
+    const evaluatedPath = evaluateExpression(path, env);
+    if (typeof evaluatedPath !== "string") {
+      throw new TypeError("Module path should be a string");
+    }
+
+    let namespace;
+    if (namespaceExpr instanceof Symbl) {
+      namespace = namespaceExpr.name;
+    } else if (typeof namespaceExpr !== "undefined") {
+      throw new Error("Module namespace should be a symbol");
+    }
+
+    const currentModulePath = runtimeNs.get("__modulePath") || process.cwd();
+    const importModulePath = resolve(currentModulePath, evaluatedPath);
+
+    const resolvedModuleFilepath = resolveModuleFilepath(importModulePath);
+
+    runtimeNs.set("__modulePath", dirname(resolvedModuleFilepath));
+
+    importModule(env, resolvedModuleFilepath, namespace);
+  })
 };
 
 export default importForms;

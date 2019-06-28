@@ -25,8 +25,10 @@ export default class Env {
   }
 
   import(moduleEnv, moduleName) {
+    const symbolPrefix =
+      typeof moduleName === "undefined" ? "" : `${moduleName}/`;
     for (const key of moduleEnv.keys) {
-      this.set(`${moduleName}/${key}`, moduleEnv.get(key));
+      this.set(`${symbolPrefix}${key}`, moduleEnv.get(key));
     }
   }
 }

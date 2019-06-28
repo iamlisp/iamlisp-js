@@ -1,14 +1,17 @@
+import { createNamespace } from "continuation-local-storage";
 import invokeLambda from "./invokeLambda";
 import invokeMethod from "./invokeMethod";
 import invokeFunction from "./invokeFunction";
 import specialForms from "./specialForms";
+import invokeMacro from "./invokeMacro";
+import { getJavascriptGlobal } from "./interop";
 import Symbl from "../types/Symbl";
 import MethodCall from "../types/MethodCall";
 import Lambda from "../types/Lambda";
 import Macro from "../types/Macro";
 import SpecialForm from "../types/SpecialForm";
-import invokeMacro from "./invokeMacro";
-import { getJavascriptGlobal } from "./interop";
+
+export const runtimeNs = createNamespace("runtime");
 
 function evaluateList(exprs, env) {
   if (exprs.length === 0) {
@@ -58,13 +61,15 @@ function evaluateSymbol({ name }, env) {
 }
 
 export function evaluateExpression(expr, env) {
-  if (expr instanceof Symbl) {
-    return evaluateSymbol(expr, env);
-  }
-  if (Array.isArray(expr)) {
-    return evaluateList(expr, env);
-  }
-  return expr;
+  return runtimeNs.runAndReturn(() => {
+    if (expr instanceof Symbl) {
+      return evaluateSymbol(expr, env);
+    }
+    if (Array.isArray(expr)) {
+      return evaluateList(expr, env);
+    }
+    return expr;
+  });
 }
 
 export default function evaluate(exprs, env) {
