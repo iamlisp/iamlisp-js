@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "description": "Another one my lisp interpreter",
   "bin": {
-    "iamlisp": "./bin/cli.js"
+    "iamlisp": "./bin/iamlisp.js"
   },
   "main": "dist/index.js",
   "scripts": {
