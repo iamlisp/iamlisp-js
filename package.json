@@ -6,9 +6,13 @@
     "iamlisp": "./bin/cli.js"
   },
   "scripts": {
-    "start": "node ./bin/iamlisp.js",
+    "start": "node ./dist/cli/index.js",
+    "dev": "node ./dev.js",
     "test": "jest",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "prebuild": "rimraf dist",
+    "build": "babel src/ --out-dir dist --source-maps inline",
+    "prepublish": "npm run build"
   },
   "keywords": [],
   "author": "Roman Lakhtadyr <roman.lakhtadyr@gmail.com>",
@@ -21,11 +25,13 @@
     "yargs": "^10.0.3"
   },
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "@babel/register": "^7.4.4",
     "babel-jest": "^24.8.0",
     "eslint": "^5.16.0",
-    "jest": "^24.8.0"
+    "jest": "^24.8.0",
+    "rimraf": "^2.6.3"
   }
 }
