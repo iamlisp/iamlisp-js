@@ -1,4 +1,4 @@
-module.exports = class Env {
+export default class Env {
   constructor(map = {}, parent) {
     this.map = map;
     this.parent = parent;
@@ -26,7 +26,7 @@ module.exports = class Env {
 
   import(moduleEnv, moduleName) {
     for (const key of moduleEnv.keys) {
-      this.set(`${moduleName}/${key}`,  moduleEnv.get(key));
+      this.set(`${moduleName}/${key}`, moduleEnv.get(key));
     }
   }
 }

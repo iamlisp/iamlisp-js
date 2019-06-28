@@ -1,33 +1,39 @@
-const { size, head, tail, omit, chunk, flatten } = require('lodash');
-const Symbol = require('../Symbol');
+import Symbl from "../types/Symbl";
+
+const { size, head, tail, omit, chunk, flatten } = require("lodash");
 
 function isExpression(expr) {
   return Array.isArray(expr);
 }
 
 function isSymbol(name, symbol) {
-  return symbol instanceof Symbol && symbol.name === name;
+  return symbol instanceof Symbl && symbol.name === name;
 }
 
 function isShadingExpression(expr) {
-  return isExpression(expr)
-    && size(expr) > 0
-    && (
-      isSymbol('lambda', head(expr))
-      || isSymbol('macro', head(expr))
-    );
-};
+  return (
+    isExpression(expr) &&
+    size(expr) > 0 &&
+    (isSymbol("lambda", head(expr)) || isSymbol("macro", head(expr)))
+  );
+}
 
 function isDefExpression(expr) {
-  return isExpression(expr) && size(expr) > 0 && isSymbol('def', head(expr));
+  return isExpression(expr) && size(expr) > 0 && isSymbol("def", head(expr));
 }
 
 function reduceExpression([acc, args], expr) {
   if (isDefExpression(expr)) {
     const defPairs = chunk(tail(expr), 2);
-    const expandedExpr = defPairs.map(([symbol, expr]) => [symbol, expand(expr, args)]);
+    const expandedExpr = defPairs.map(([symbol, expr]) => [
+      symbol,
+      expand(expr, args)
+    ]);
     const shadowedArgs = defPairs.map(([symbol]) => symbol.name);
-    return [[...acc, [head(expr), ...flatten(expandedExpr)]], omit(args, shadowedArgs)];
+    return [
+      [...acc, [head(expr), ...flatten(expandedExpr)]],
+      omit(args, shadowedArgs)
+    ];
   }
 
   if (isShadingExpression(expr)) {
@@ -41,21 +47,19 @@ function reduceExpression([acc, args], expr) {
 
 /**
  * Substitudes arguments into expression and returns new expression.
- * 
+ *
  * @param {Object} expr
  * @param {Object} args
  * @returns Object
  */
-function expand(expr, args) {
+export default function expand(expr, args) {
   if (isExpression(expr)) {
     return head(expr.reduce(reduceExpression, [[], args]));
   }
 
-  if (expr instanceof Symbol && expr.name in args) {
+  if (expr instanceof Symbl && expr.name in args) {
     return args[expr.name];
   }
 
   return expr;
 }
-
-module.exports = expand;

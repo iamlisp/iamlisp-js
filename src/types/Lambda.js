@@ -1,4 +1,4 @@
-module.exports = class Lambda {
+export default class Lambda {
   constructor(args, body, env) {
     this.args = args;
     this.body = body;

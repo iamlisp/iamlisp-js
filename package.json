@@ -3,9 +3,10 @@
   "version": "0.0.2",
   "description": "Another one my lisp interpreter written on ES6",
   "bin": {
-    "iamlisp": "./bin/iamlisp.js"
+    "iamlisp": "./bin/cli.js"
   },
   "scripts": {
+    "start": "node ./bin/iamlisp.js",
     "test": "jest",
     "lint": "eslint src/"
   },
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
+    "@babel/register": "^7.4.4",
     "babel-jest": "^24.8.0",
     "eslint": "^5.16.0",
     "jest": "^24.8.0"

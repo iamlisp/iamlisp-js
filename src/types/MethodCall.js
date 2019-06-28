@@ -1,4 +1,4 @@
-module.exports = class Symbol {
+export default class MethodCall {
   constructor(name) {
     this.name = name;
   }
