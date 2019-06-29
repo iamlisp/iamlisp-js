@@ -4,12 +4,8 @@ function isList(expr) {
   return Array.isArray(expr);
 }
 
-function isSymbol(expr) {
-  return expr instanceof Symbl;
-}
-
 export default function expand(expr, args) {
-  if (isSymbol(expr)) {
+  if (expr instanceof Symbl && expr.name in args) {
     return args[expr.name];
   }
 
