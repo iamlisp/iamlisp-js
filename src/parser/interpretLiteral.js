@@ -24,5 +24,5 @@ export default function interpretLiteral(value) {
     literal = null;
   }
 
-  return { interpreted, literal };
+  return [interpreted, literal];
 }

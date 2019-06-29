@@ -1,9 +1,10 @@
 import { chunk } from "lodash";
 import createReader from "./reader";
-import { delimiters, reserved, chars } from "./chars";
+import { delimiters, reserved, chars, punctuators } from "./chars";
 import interpretLiteral from "./interpretLiteral";
 import withPlugins from "./plugins";
 import Symbl from "../types/Symbl";
+import DotPunctuator from "../types/DotPunctuator";
 
 export default function parse(expr) {
   const { currentChar, isEof, nextChar } = createReader(expr);
@@ -27,9 +28,17 @@ export default function parse(expr) {
       nextChar();
     }
 
-    const { interpreted, literal } = interpretLiteral(sym);
+    if (sym === punctuators.DOT) {
+      return DotPunctuator.INSTANCE;
+    }
 
-    return interpreted ? literal : new Symbl(sym);
+    const [interpretedLiteral, literal] = interpretLiteral(sym);
+
+    if (interpretedLiteral) {
+      return literal;
+    }
+
+    return new Symbl(sym);
   };
 
   const parseString = () => {

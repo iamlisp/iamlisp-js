@@ -1,4 +1,0 @@
-(def defmacro (macro (name args *body) (def name (macro args (do-list body)))))
-(defmacro defn (name args *body) (def name (lambda args (do-list body))))
-
-(def identity (lambda (arg) arg))

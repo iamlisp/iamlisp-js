@@ -12,6 +12,11 @@ export const chars = {
   CARRIAGE_RETURN: "\r"
 };
 
+export const punctuators = {
+  DOT: ".",
+  ELLIPSIS: "..."
+};
+
 export const reserved = new Set(Object.values(chars));
 
 export const delimiters = new Set([

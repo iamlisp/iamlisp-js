@@ -10,6 +10,8 @@ import MethodCall from "../types/MethodCall";
 import Lambda from "../types/Lambda";
 import Macro from "../types/Macro";
 import SpecialForm from "../types/SpecialForm";
+import DotPunctuator from "../types/DotPunctuator";
+import evaluateArgs from "./spread/evaluateArgs";
 
 export const runtimeNs = createNamespace("runtime");
 
@@ -26,8 +28,7 @@ function evaluateList(exprs, env) {
   }
 
   if (headForm instanceof Lambda) {
-    const evaledArgs = tail.map(arg => evaluateExpression(arg, env));
-    return invokeLambda(headForm, evaledArgs);
+    return invokeLambda(headForm, evaluateArgs(tail, env));
   }
 
   if (headForm instanceof Macro) {
@@ -35,16 +36,15 @@ function evaluateList(exprs, env) {
   }
 
   if (headForm instanceof MethodCall) {
-    const [obj, ...args] = tail.map(exp => evaluateExpression(exp, env));
+    const [obj, ...args] = evaluateArgs(tail);
     return invokeMethod(headForm, env, obj, args);
   }
 
   if (typeof headForm === "function") {
-    const args = tail.map(exp => evaluateExpression(exp, env));
-    return invokeFunction(headForm, env, args);
+    return invokeFunction(headForm, env, evaluateArgs(tail, env));
   }
 
-  throw new Error(`Cound not execute - ${headForm}`);
+  throw new Error(`${headForm} is not callable`);
 }
 
 function evaluateSymbol({ name }, env) {
@@ -62,13 +62,19 @@ function evaluateSymbol({ name }, env) {
 
 export function evaluateExpression(expr, env) {
   return runtimeNs.runAndReturn(() => {
+    let resExpr;
+
     if (expr instanceof Symbl) {
-      return evaluateSymbol(expr, env);
+      resExpr = evaluateSymbol(expr, env);
+    } else if (Array.isArray(expr)) {
+      resExpr = evaluateList(expr, env);
+    } else if (expr instanceof DotPunctuator) {
+      throw new Error("Syntax error");
+    } else {
+      resExpr = expr;
     }
-    if (Array.isArray(expr)) {
-      return evaluateList(expr, env);
-    }
-    return expr;
+
+    return resExpr;
   });
 }
 

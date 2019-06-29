@@ -1,44 +1,43 @@
 import { isEmpty } from "lodash";
 import Symbl from "../types/Symbl";
+import DotPunctuator from "../types/DotPunctuator";
 
-const REST_PREFIX = "*";
+export default function mergeArgs(argNames, argValues) {
+  let afterDot = false;
 
-function isRestSymbol(expr) {
-  return expr instanceof Symbl && expr.name[0] === REST_PREFIX;
-}
-
-function getRestSymbolName(expr) {
-  return expr.name.slice(1);
-}
-
-export default function mergeArgs(argNameSymbols, argValues) {
   if (!Array.isArray(argValues)) {
     throw new Error(`Wrong type of argument list`);
   }
 
-  let afterRest = false;
   let values = [...argValues];
   let args = {};
 
-  for (const argNameSymbol of argNameSymbols) {
+  for (const argName of argNames) {
+    if (argName instanceof DotPunctuator) {
+      afterDot = true;
+      continue;
+    }
+
+    if (afterDot) {
+      if (Array.isArray(argName)) {
+        throw new Error("Could not use destructuring after dot");
+      }
+      if (argName instanceof Symbl) {
+        args[argName.name] = values;
+        break;
+      }
+    }
+
     if (isEmpty(values)) {
       throw new Error("Not enough arguments");
     }
 
-    if (afterRest) {
-      throw new Error("Rest argument should be the last");
-    }
-
-    if (Array.isArray(argNameSymbol)) {
-      Object.assign(args, mergeArgs(argNameSymbol, values.shift()));
-    } else if (isRestSymbol(argNameSymbol)) {
-      const restSymbolName = getRestSymbolName(argNameSymbol);
-      args[restSymbolName] = [new Symbl("list"), ...values];
-      afterRest = true;
-    } else if (argNameSymbol instanceof Symbl) {
-      args[argNameSymbol.name] = values.shift();
+    if (Array.isArray(argName)) {
+      Object.assign(args, mergeArgs(argName, values.shift()));
+    } else if (argName instanceof Symbl) {
+      args[argName.name] = values.shift();
     } else {
-      throw new Error(`Wrong type of argument - ${typeof argNameSymbol}`);
+      throw new Error(`Wrong type of argument - ${typeof argName}`);
     }
   }
 

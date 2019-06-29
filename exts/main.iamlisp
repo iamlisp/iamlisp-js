@@ -1,0 +1,1 @@
+(def defmacro (macro (name args . body) (def name (macro args . body))))

@@ -10,7 +10,7 @@ export default function importModule(env, moduleFilepath, namespace) {
   if (!(moduleFilepath in moduleCache)) {
     const moduleCode = readFileSync(moduleFilepath, "UTF-8");
     const parsedModule = parse(moduleCode);
-    const moduleEnv = new Env();
+    const moduleEnv = new Env({}, env);
 
     runtimeNs.run(() => {
       runtimeNs.set("__modulePath", dirname(moduleFilepath));

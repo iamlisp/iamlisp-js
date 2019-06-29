@@ -1,5 +1,6 @@
 import parse from "./parse";
 import Symbl from "../types/Symbl";
+import DotPunctuator from "../types/DotPunctuator";
 
 // Test parser
 test.each`
@@ -12,6 +13,8 @@ test.each`
   ${"(+ 1 2 (- 10 5))"}            | ${[[new Symbl("+"), 1, 2, [new Symbl("-"), 10, 5]]]}
   ${"(+ 1 2) (- 10 5)"}            | ${[[new Symbl("+"), 1, 2], [new Symbl("-"), 10, 5]]}
   ${`{foo 1 "bar" 2}`}             | ${[{ foo: 1, bar: 2 }]}
+  ${`(foo . bar)`}                 | ${[[new Symbl("foo"), DotPunctuator.INSTANCE, new Symbl("bar")]]}
+  ${`(foo .bar)`}                  | ${[[new Symbl("foo"), new Symbl(".bar")]]}
 `('Should correclty parse "$input"', ({ input, output }) => {
   expect(parse(input)).toEqual(output);
 });

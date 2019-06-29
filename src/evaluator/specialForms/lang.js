@@ -7,14 +7,24 @@ import mergeArgs from "../mergeArgs";
 import Symbl from "../../types/Symbl";
 import expand from "../expand";
 import createObject from "../createObject";
+import DotPunctuator from "../../types/DotPunctuator";
+import evaluateArgs from "../spread/evaluateArgs";
 
 const langForms = {
+  cons: new SpecialForm((env, [arg, list]) => {
+    const evaluatedList = evaluateExpression(list, env);
+    const evaluatedArg = evaluateExpression(arg, env);
+    return [evaluatedArg, ...evaluatedList];
+  }),
   eval: new SpecialForm((env, exprs) => {
-    const evaluatedExprs = exprs.map(expr => evaluateExpression(expr, env));
+    const evaluatedExprs = evaluateArgs(exprs, env);
     return evaluatedExprs.reduce(
       (prevResult, expr) => evaluateExpression(expr, env),
       undefined
     );
+  }),
+  apply: new SpecialForm((env, [fn, args]) => {
+    return evaluateExpression([fn, ...args], env);
   }),
   concat: new SpecialForm((env, exprs) => {
     return exprs.reduce((list, expr) => {
@@ -22,26 +32,30 @@ const langForms = {
       return list;
     }, []);
   }),
-  do: new SpecialForm((env, exprs) => {
-    return exprs.reduce(
-      (prevResult, expr) => evaluateExpression(expr, env),
-      undefined
-    );
-  }),
-  "do-list": new SpecialForm((env, [exprs]) => {
+  begin: new SpecialForm((env, exprs) => {
     return exprs.reduce(
       (prevResult, expr) => evaluateExpression(expr, env),
       undefined
     );
   }),
   lambda: new SpecialForm((env, [args, ...body]) => {
-    if (!Array.isArray(args) || args.some(arg => !(arg instanceof Symbl))) {
+    if (
+      !Array.isArray(args) ||
+      args.some(
+        arg => !(arg instanceof Symbl) && !(arg instanceof DotPunctuator)
+      )
+    ) {
       throw new Error("Lambda arguments should be list of symbols");
     }
     return new Lambda(args, body, env);
   }),
   macro: new SpecialForm((env, [args, ...body]) => {
-    if (!Array.isArray(args) || args.some(arg => !(arg instanceof Symbl))) {
+    if (
+      !Array.isArray(args) ||
+      args.some(
+        arg => !(arg instanceof Symbl) && !(arg instanceof DotPunctuator)
+      )
+    ) {
       throw new Error("Macro arguments should be list of symbols");
     }
     return new Macro(args, body);
@@ -52,12 +66,14 @@ const langForms = {
       throw new Error("First argument should be a macro");
     }
     const mergedArgs = mergeArgs(macro.args, args);
-    return [new Symbl("do"), ...expand(macro.body, mergedArgs)];
+    const expandedBody = expand(macro.body, mergedArgs);
+
+    return [new Symbl("begin"), ...expandedBody];
   }),
   def: new SpecialForm((env, args) => {
     chunk(args, 2).forEach(([sym, value]) => {
       if (!(sym instanceof Symbl)) {
-        throw new Error("Every odd argument should be a symbol");
+        throw new Error("Could not bound value to non-symbol");
       }
       env.set(sym.name, evaluateExpression(value, env));
     });
@@ -66,12 +82,11 @@ const langForms = {
     return arg;
   }),
   list: new SpecialForm((env, args) => {
-    return args.map(arg => evaluateExpression(arg, env));
+    return evaluateArgs(args, env);
   }),
   new: new SpecialForm((env, [className, ...args]) => {
     const Class = evaluateExpression(className, env);
-    const resovledArgs = args.map(arg => evaluateExpression(arg, env));
-    return createObject(Class, env, resovledArgs);
+    return createObject(Class, env, evaluateArgs(args, env));
   })
 };
 
