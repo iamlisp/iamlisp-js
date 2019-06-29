@@ -1,42 +1,37 @@
-import { isEmpty } from "lodash";
+import { isEmpty, size } from "lodash";
 import Symbl from "../types/Symbl";
 
-const REST_PREFIX = "*";
-
-function isRestSymbol(expr) {
-  return expr instanceof Symbl && expr.name[0] === REST_PREFIX;
-}
 /**
  * Merge argument names with values.
 
- * @param {string[]} argsNames 
+ * @param {Symbl[]} argNames 
  * @param {*[]} argValues 
  */
-export default function mergeArgs(argsNames, argValues) {
-  if (!Array.isArray(argValues)) {
-    throw new Error(`Wrong type of argument list`);
+export default function mergeArgs(argNames, argValues) {
+  const diff = size(argValues) - size(argNames);
+
+  if (diff < 0) {
+    throw new Error("Not enough arguments");
   }
 
-  let afterRest = false;
-  let values = [...argValues];
+  let values;
+  if (diff > 0) {
+    const bucketedArgs = diff + 1;
+    const lastArgValue = argValues.slice(-bucketedArgs);
+    const firstArgsValues = argValues.slice(0, -bucketedArgs);
+    values = [...firstArgsValues, lastArgValue];
+  } else {
+    values = [...argValues];
+  }
+
   let args = {};
 
-  for (const argName of argsNames) {
+  for (const argName of argNames) {
     if (isEmpty(values)) {
       throw new Error("Not enough arguments");
     }
 
-    if (afterRest) {
-      throw new Error("Rest argument should be the last");
-    }
-
-    if (Array.isArray(argName)) {
-      Object.assign(args, mergeArgs(argName, values.shift()));
-    } else if (isRestSymbol(argName)) {
-      const restSymbolName = argName.name.slice(1);
-      args[restSymbolName] = [new Symbl("list"), ...values];
-      afterRest = true;
-    } else if (argName instanceof Symbl) {
+    if (argName instanceof Symbl) {
       args[argName.name] = values.shift();
     } else {
       throw new Error(`Wrong type of argument - ${typeof argName}`);

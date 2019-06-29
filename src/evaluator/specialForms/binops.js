@@ -54,10 +54,10 @@ const binOpForms = {
   "<=": new SpecialForm((env, args) =>
     binCmp((x, y) => x <= y, exp => evaluateExpression(exp, env), args)
   ),
-  "=": new SpecialForm((env, args) =>
+  "eq?": new SpecialForm((env, args) =>
     binCmp((x, y) => x === y, exp => evaluateExpression(exp, env), args)
   ),
-  "!=": new SpecialForm((env, args) =>
+  "ne?": new SpecialForm((env, args) =>
     binCmp((x, y) => x !== y, exp => evaluateExpression(exp, env), args)
   ),
 

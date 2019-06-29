@@ -1,1 +1,1 @@
-(def print (macro (arg) (.log js/console arg)))
+(def print (macro (*args) (.log js/console *args)))

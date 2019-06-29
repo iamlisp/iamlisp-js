@@ -9,10 +9,24 @@ import expand from "../expand";
 import createObject from "../createObject";
 
 const langForms = {
-  do: new SpecialForm((env, expressions) => {
-    return expressions.reduce((prevResult, exp) => {
-      return evaluateExpression(exp, env);
-    }, undefined);
+  eval: new SpecialForm((env, exprs) => {
+    const evaluatedExprs = exprs.map(expr => evaluateExpression(expr, env));
+    return evaluatedExprs.reduce(
+      (prevResult, expr) => evaluateExpression(expr, env),
+      undefined
+    );
+  }),
+  concat: new SpecialForm((env, exprs) => {
+    return exprs.reduce((list, expr) => {
+      list.push(...evaluateExpression(expr, env));
+      return list;
+    }, []);
+  }),
+  do: new SpecialForm((env, exprs) => {
+    return exprs.reduce(
+      (prevResult, expr) => evaluateExpression(expr, env),
+      undefined
+    );
   }),
   lambda: new SpecialForm((env, [args, ...body]) => {
     if (!Array.isArray(args) || args.some(arg => !(arg instanceof Symbl))) {

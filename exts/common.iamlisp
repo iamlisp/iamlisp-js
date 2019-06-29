@@ -1,0 +1,3 @@
+(def identity (lambda (arg) arg))
+(def flat-list (macro (arg) (cond (eq? (typeof arg) "List") arg (list arg))))
+(def apply (macro (fn args) (eval (concat (list fn) (flat-list args)))))
