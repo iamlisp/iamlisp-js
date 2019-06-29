@@ -28,6 +28,12 @@ const langForms = {
       undefined
     );
   }),
+  "do-list": new SpecialForm((env, [exprs]) => {
+    return exprs.reduce(
+      (prevResult, expr) => evaluateExpression(expr, env),
+      undefined
+    );
+  }),
   lambda: new SpecialForm((env, [args, ...body]) => {
     if (!Array.isArray(args) || args.some(arg => !(arg instanceof Symbl))) {
       throw new Error("Lambda arguments should be list of symbols");

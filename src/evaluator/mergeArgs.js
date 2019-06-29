@@ -1,40 +1,44 @@
-import { isEmpty, size } from "lodash";
+import { isEmpty } from "lodash";
 import Symbl from "../types/Symbl";
 
-/**
- * Merge argument names with values.
+const REST_PREFIX = "*";
 
- * @param {Symbl[]} argNames 
- * @param {*[]} argValues 
- */
-export default function mergeArgs(argNames, argValues) {
-  const diff = size(argValues) - size(argNames);
+function isRestSymbol(expr) {
+  return expr instanceof Symbl && expr.name[0] === REST_PREFIX;
+}
 
-  if (diff < 0) {
-    throw new Error("Not enough arguments");
+function getRestSymbolName(expr) {
+  return expr.name.slice(1);
+}
+
+export default function mergeArgs(argNameSymbols, argValues) {
+  if (!Array.isArray(argValues)) {
+    throw new Error(`Wrong type of argument list`);
   }
 
-  let values;
-  if (diff > 0) {
-    const bucketedArgs = diff + 1;
-    const lastArgValue = argValues.slice(-bucketedArgs);
-    const firstArgsValues = argValues.slice(0, -bucketedArgs);
-    values = [...firstArgsValues, lastArgValue];
-  } else {
-    values = [...argValues];
-  }
-
+  let afterRest = false;
+  let values = [...argValues];
   let args = {};
 
-  for (const argName of argNames) {
+  for (const argNameSymbol of argNameSymbols) {
     if (isEmpty(values)) {
       throw new Error("Not enough arguments");
     }
 
-    if (argName instanceof Symbl) {
-      args[argName.name] = values.shift();
+    if (afterRest) {
+      throw new Error("Rest argument should be the last");
+    }
+
+    if (Array.isArray(argNameSymbol)) {
+      Object.assign(args, mergeArgs(argNameSymbol, values.shift()));
+    } else if (isRestSymbol(argNameSymbol)) {
+      const restSymbolName = getRestSymbolName(argNameSymbol);
+      args[restSymbolName] = [new Symbl("list"), ...values];
+      afterRest = true;
+    } else if (argNameSymbol instanceof Symbl) {
+      args[argNameSymbol.name] = values.shift();
     } else {
-      throw new Error(`Wrong type of argument - ${typeof argName}`);
+      throw new Error(`Wrong type of argument - ${typeof argNameSymbol}`);
     }
   }
 
