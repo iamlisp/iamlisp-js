@@ -3,7 +3,6 @@ import Symbl from "../types/Symbl";
 import Macro from "../types/Macro";
 import Lambda from "../types/Lambda";
 import DotPunctuator from "../types/DotPunctuator";
-import EllipsisPunctuator from "../types/EllipsisPunctuator";
 import MethodCall from "../types/MethodCall";
 import { punctuators } from "../parser/chars";
 
@@ -32,9 +31,6 @@ export default function print(exp) {
   }
   if (exp instanceof DotPunctuator) {
     return punctuators.DOT;
-  }
-  if (exp instanceof EllipsisPunctuator) {
-    return punctuators.ELLIPSIS;
   }
   if (exp instanceof MethodCall) {
     return `${punctuators.DOT}${exp.name}`;
