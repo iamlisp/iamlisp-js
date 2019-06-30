@@ -1,6 +1,6 @@
 {
   "name": "@pldin601/iamlisp-eval",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Another one my lisp interpreter",
   "bin": {
     "iamlisp": "./bin/iamlisp.js"
