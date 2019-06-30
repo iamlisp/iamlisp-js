@@ -36,7 +36,7 @@ function evaluateList(exprs, env) {
   }
 
   if (headForm instanceof MethodCall) {
-    const [obj, ...args] = evaluateArgs(tail);
+    const [obj, ...args] = evaluateArgs(tail, env);
     return invokeMethod(headForm, env, obj, args);
   }
 

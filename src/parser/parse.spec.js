@@ -19,15 +19,6 @@ test.each`
   expect(parse(input)).toEqual(output);
 });
 
-// Test plugin "pipe"
-test.each`
-  input             | output
-  ${"(-> foo bar)"} | ${[[new Symbl("lambda"), [new Symbl("__arg")], [new Symbl("bar"), [new Symbl("foo"), new Symbl("__arg")]]]]}
-  ${"(<- foo bar)"} | ${[[new Symbl("lambda"), [new Symbl("__arg")], [new Symbl("foo"), [new Symbl("bar"), new Symbl("__arg")]]]]}
-`('Should correclty parse "$input" with plugin "pipe"', ({ input, output }) => {
-  expect(parse(input)).toEqual(output);
-});
-
 // Test plugin "placeholder"
 test.each`
   input          | output

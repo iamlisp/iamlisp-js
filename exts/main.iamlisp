@@ -1,2 +1,5 @@
 (def defmacro (macro (name args . body) (def name (macro args . body))))
 (defmacro defun (name args . body) (def name (lambda args . body)))
+(defmacro backwards (. body) (eval (cons 'begin (.reverse 'body))))
+(defmacro -> (. fns) (lambda (v) (.reduce 'fns (lambda (v fn) ((eval fn) v)) v)))
+(defmacro <- (. fns) (eval (cons '-> (.reverse 'fns))))
