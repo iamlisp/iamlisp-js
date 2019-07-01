@@ -15,6 +15,15 @@ export default function parse(expr) {
     }
   };
 
+  const parseComment = () => {
+    while (!isEof()) {
+      if (currentChar() === chars.LINE_FEED) {
+        return;
+      }
+      nextChar();
+    }
+  };
+
   const parseSymbol = () => {
     let sym = "";
 
@@ -81,6 +90,9 @@ export default function parse(expr) {
     } else if (currentChar() === chars.LEFT_BRACKET) {
       nextChar();
       expr = parseMap();
+    } else if (currentChar() === chars.SEMICOLON) {
+      nextChar();
+      parseComment();
     } else if (reserved.has(currentChar())) {
       throw new Error(`Unexpected token - '${currentChar()}'`);
     } else {
@@ -141,7 +153,10 @@ export default function parse(expr) {
 
     while (!isEof()) {
       skipDelimiters();
-      expr.push(parseExpression());
+      const parsedExpression = parseExpression();
+      if (parsedExpression !== undefined) {
+        expr.push(parsedExpression);
+      }
       skipDelimiters();
     }
 
