@@ -3,3 +3,7 @@
 (defmacro backwards (. body) (eval (cons 'begin (.reverse 'body))))
 (defmacro -> (. fns) (lambda (v) (.reduce 'fns (lambda (v fn) ((eval fn) v)) v)))
 (defmacro <- (. fns) (eval (cons '-> (.reverse 'fns))))
+
+(def nil '())
+(defmacro null? (l) (eq? l null))
+(defmacro while (condition body) (cond condition (begin body (while condition body)) null))
