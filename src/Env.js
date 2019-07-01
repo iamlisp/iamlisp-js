@@ -31,4 +31,8 @@ export default class Env {
       this.set(`${symbolPrefix}${key}`, moduleEnv.get(key));
     }
   }
+
+  merge(otherMap) {
+    Object.assign(this.map, otherMap);
+  }
 }

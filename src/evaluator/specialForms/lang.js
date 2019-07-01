@@ -1,4 +1,3 @@
-import { chunk } from "lodash";
 import SpecialForm from "../../types/SpecialForm";
 import { evaluateExpression } from "../evaluate";
 import Lambda from "../../types/Lambda";
@@ -69,14 +68,6 @@ const langForms = {
     const expandedBody = expand(macro.body, mergedArgs);
 
     return [new Symbl("begin"), ...expandedBody];
-  }),
-  def: new SpecialForm((env, args) => {
-    chunk(args, 2).forEach(([sym, value]) => {
-      if (!(sym instanceof Symbl)) {
-        throw new Error("Could not bound value to non-symbol");
-      }
-      env.set(sym.name, evaluateExpression(value, env));
-    });
   }),
   quote: new SpecialForm((env, [arg]) => {
     return arg;

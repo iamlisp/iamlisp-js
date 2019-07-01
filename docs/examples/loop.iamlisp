@@ -1,0 +1,5 @@
+; Prints numbers from 100 to 0
+
+(loop (x 100)
+      (print x)
+      (cond (> x 0) (recur (- x 1))))
