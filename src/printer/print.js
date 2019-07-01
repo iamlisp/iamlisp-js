@@ -13,6 +13,9 @@ export default function print(exp) {
   if (exp instanceof Symbl) {
     return exp.name;
   }
+  if (exp === null) {
+    return "null";
+  }
   if (
     Array.isArray(exp) &&
     exp[0] instanceof Symbl &&
