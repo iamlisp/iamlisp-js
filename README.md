@@ -1,6 +1,6 @@
 # iamlisp
 
-Another one my LISP-like langage interpreter hosted on JS.
+Another one my LISP-like language interpreter hosted on JS.
 
 ## Syntax examples
 
@@ -43,6 +43,14 @@ Another one my LISP-like langage interpreter hosted on JS.
 
 (defun fib (n)
   (loop (x 0 y 1 i n)
-    (def fibn (+ x y))
-    (cond (<= i 0) x (recur y fibn (dec i)))))
+    (cond (<= i 0) x (recur y (+ x y) (dec i)))))
+```
+
+### Define variable using list destructuring
+```
+; Nested destructuring
+(def (a (b c)) '(2 '(4 6)))
+
+; Destructuring with rest
+(def (first . rest) '(1 2 3 4 5))
 ```
