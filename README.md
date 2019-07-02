@@ -46,3 +46,12 @@ Another one my LISP-like language interpreter hosted on JS.
     (def fibn (+ x y))
     (cond (<= i 0) x (recur y fibn (dec i)))))
 ```
+
+### Define variable using list destructuring
+```
+; Nested destructuring
+(def (a (b c)) '(2 '(4 6)))
+
+; Destructuring with rest
+(def (first . rest) '(1 2 3 4 5))
+```
