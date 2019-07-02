@@ -1,0 +1,3 @@
+(defun inc (n) (+ n 1))
+(defun dec (n) (- n 1))
+(defmacro zero (n) (eq? n 0))
