@@ -33,7 +33,16 @@ Another one my LISP-like langage interpreter hosted on JS.
 ### Iterative loop
 
 ```
+; Print numbers from 100 to 0
+
 (loop (x 100)
       (print x)
-      (cond (> x 0) (recur (- x 1))))
+      (cond (> x 0) (recur (dec x))))
+
+; Fibonacci using iterative loop
+
+(defun fib (n)
+  (loop (x 0 y 1 i n)
+    (def fibn (+ x y))
+    (cond (<= i 0) x (recur y fibn (dec i)))))
 ```
