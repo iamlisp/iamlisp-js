@@ -1,7 +1,7 @@
 import { resolve, join } from "path";
 import { find } from "lodash";
 import { existsSync } from "fs";
-import { evaluateExpression, runtimeNs } from "../evaluate";
+import { evaluateExpression, evaluatorContext } from "../evaluate";
 import importModule from "../importModule";
 import Symbl from "../../types/Symbl";
 import SpecialForm from "../../types/SpecialForm";
@@ -37,7 +37,8 @@ const importForms = {
       throw new Error("Module namespace should be a symbol");
     }
 
-    const currentModulePath = runtimeNs.get("__modulePath") || process.cwd();
+    const currentModulePath =
+      evaluatorContext.get("__modulePath") || process.cwd();
     const importModulePath = resolve(currentModulePath, evaluatedPath);
 
     const resolvedModuleFilepath = resolveModuleFilepath(importModulePath);

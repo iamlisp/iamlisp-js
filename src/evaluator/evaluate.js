@@ -1,3 +1,5 @@
+import { isEmpty } from "lodash";
+import styles from "ansi-styles";
 import { createNamespace } from "continuation-local-storage";
 import invokeLambda from "./invokeLambda";
 import invokeMethod from "./invokeMethod";
@@ -5,46 +7,59 @@ import invokeFunction from "./invokeFunction";
 import specialForms from "./specialForms";
 import invokeMacro from "./invokeMacro";
 import { getJavascriptGlobal } from "./interop";
+import evaluateArgs from "./spread/evaluateArgs";
 import Symbl from "../types/Symbl";
 import MethodCall from "../types/MethodCall";
 import Lambda from "../types/Lambda";
 import Macro from "../types/Macro";
 import SpecialForm from "../types/SpecialForm";
 import DotPunctuator from "../types/DotPunctuator";
-import evaluateArgs from "./spread/evaluateArgs";
+import print from "../printer/print";
 
-export const runtimeNs = createNamespace("runtime");
+export const evaluatorContext = createNamespace("runtime");
 
-function evaluateList(exprs, env) {
-  if (exprs.length === 0) {
-    return [];
+function evaluateList(exprs, env, strict) {
+  const stackDepth = (evaluatorContext.get("stackDepth") || 0) + 1;
+  evaluatorContext.set("stackDepth", stackDepth);
+  const stackPadding = " ".repeat(stackDepth);
+
+  // eslint-disable-next-line no-console
+  console.log(
+    `${styles.gray.open}>${stackPadding}${print(exprs)}${styles.gray.close}`
+  );
+
+  let result = [];
+
+  if (!isEmpty(exprs)) {
+    const [head, ...tail] = exprs;
+    const headForm = evaluateExpression(
+      head,
+      env,
+      isEmpty(tail) ? strict : true
+    );
+
+    if (headForm instanceof SpecialForm) {
+      result = headForm.perform(env, tail, strict);
+    } else if (headForm instanceof Lambda) {
+      result = invokeLambda(headForm, evaluateArgs(tail, env), strict);
+    } else if (headForm instanceof Macro) {
+      result = invokeMacro(headForm, tail, env, strict);
+    } else if (headForm instanceof MethodCall) {
+      const [obj, ...args] = evaluateArgs(tail, env);
+      result = invokeMethod(headForm, env, obj, args);
+    } else if (typeof headForm === "function") {
+      result = invokeFunction(headForm, env, evaluateArgs(tail, env));
+    } else {
+      throw new Error(`${headForm} is not callable`);
+    }
   }
 
-  const [head, ...tail] = exprs;
-  const headForm = evaluateExpression(head, env);
+  // eslint-disable-next-line no-console
+  console.log(
+    `${styles.gray.open}<${stackPadding}${print(result)}${styles.gray.close}`
+  );
 
-  if (headForm instanceof SpecialForm) {
-    return headForm.perform(env, tail);
-  }
-
-  if (headForm instanceof Lambda) {
-    return invokeLambda(headForm, evaluateArgs(tail, env));
-  }
-
-  if (headForm instanceof Macro) {
-    return invokeMacro(headForm, tail, env);
-  }
-
-  if (headForm instanceof MethodCall) {
-    const [obj, ...args] = evaluateArgs(tail, env);
-    return invokeMethod(headForm, env, obj, args);
-  }
-
-  if (typeof headForm === "function") {
-    return invokeFunction(headForm, env, evaluateArgs(tail, env));
-  }
-
-  throw new Error(`${headForm} is not callable`);
+  return result;
 }
 
 function evaluateSymbol({ name }, env) {
@@ -60,14 +75,14 @@ function evaluateSymbol({ name }, env) {
   return env.get(name);
 }
 
-export function evaluateExpression(expr, env) {
-  return runtimeNs.runAndReturn(() => {
+export function evaluateExpression(expr, env, strict = true) {
+  return evaluatorContext.runAndReturn(() => {
     let resExpr;
 
     if (expr instanceof Symbl) {
       resExpr = evaluateSymbol(expr, env);
     } else if (Array.isArray(expr)) {
-      resExpr = evaluateList(expr, env);
+      resExpr = evaluateList(expr, env, strict);
     } else if (expr instanceof DotPunctuator) {
       throw new Error("Syntax error");
     } else {
@@ -78,9 +93,9 @@ export function evaluateExpression(expr, env) {
   });
 }
 
-export default function evaluate(exprs, env) {
+export default function evaluate(exprs, env, strict = true) {
   return exprs.reduce(
-    (result, expr) => evaluateExpression(expr, env),
+    (result, expr) => evaluateExpression(expr, env, strict),
     undefined
   );
 }

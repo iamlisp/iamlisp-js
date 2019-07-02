@@ -31,9 +31,9 @@ const langForms = {
       return list;
     }, []);
   }),
-  begin: new SpecialForm((env, exprs) => {
+  begin: new SpecialForm((env, exprs, strict) => {
     return exprs.reduce(
-      (prevResult, expr) => evaluateExpression(expr, env),
+      (prevResult, expr) => evaluateExpression(expr, env, strict),
       undefined
     );
   }),

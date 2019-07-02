@@ -5,6 +5,7 @@ import Lambda from "../types/Lambda";
 import DotPunctuator from "../types/DotPunctuator";
 import MethodCall from "../types/MethodCall";
 import { punctuators } from "../parser/chars";
+import LambdaCall from "../types/LambdaCall";
 
 export default function print(exp) {
   if (typeof exp === "string") {
@@ -37,6 +38,9 @@ export default function print(exp) {
   }
   if (exp instanceof MethodCall) {
     return `${punctuators.DOT}${exp.name}`;
+  }
+  if (exp instanceof LambdaCall) {
+    return `#LambdaCall`;
   }
   if (typeof exp === "object") {
     return `{${entries(exp)

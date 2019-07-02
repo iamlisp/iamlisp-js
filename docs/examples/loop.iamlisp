@@ -4,9 +4,20 @@
       (print x)
       (cond (> x 0) (recur (- x 1))))
 
-; Fibonacci using iterative loop
+(defun print-range (from to)
+  (cond 
+    (neq? from to)
+    (begin
+      (print from)
+      (print-range (inc from) to))))
 
-(defun fib (n)
+; Fibonacci using iterative loop and tail call optimization
+
+(defun fib-loop (n)
   (loop (x 0 y 1 i n)
-    (def fibn (+ x y))
-    (cond (<= i 0) x (recur y fibn (dec i)))))
+    (cond (<= i 0) x (recur y (+ x y) (dec i)))))
+
+(defun fib-tail (n) 
+  (defun iter (x y i)
+    (cond (<= i 0) x (iter y (+ x y) (dec i))))
+  (iter 0 1 n))
