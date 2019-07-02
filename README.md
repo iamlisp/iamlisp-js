@@ -1,6 +1,6 @@
 # iamlisp
 
-Another one my LISP-like langage interpreter hosted on JS.
+Another one my LISP-like language interpreter hosted on JS.
 
 ## Syntax examples
 
