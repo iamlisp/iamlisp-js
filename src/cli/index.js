@@ -1,6 +1,7 @@
 import { createInterface } from "readline";
 import styles from "ansi-styles";
 import createEvaluator from "../createEvaluator";
+import calcBalance from "../parser/calcBalance";
 
 const printResult = result => {
   // eslint-disable-next-line no-console
@@ -23,7 +24,21 @@ const startRepl = async () => {
 
   const readRawExpr = () =>
     new Promise(resolve => {
-      rl.question("> ", input => resolve(input));
+      let buffer = "";
+
+      const read = () => {
+        rl.question(buffer ? ". " : "> ", input => {
+          buffer += input;
+          const balance = calcBalance(buffer);
+          if (balance > 0) {
+            read();
+          } else {
+            resolve(buffer);
+          }
+        });
+      };
+
+      read();
     });
 
   // eslint-disable-next-line no-constant-condition
