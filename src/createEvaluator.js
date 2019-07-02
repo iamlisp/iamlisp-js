@@ -6,12 +6,10 @@ import parse from "./parser/parse";
 import importModule from "./evaluator/importModule";
 import getAppDir from "./helpers/getAppDir";
 
-export default function createEvaluator(options) {
+export default function createEvaluator() {
   const env = new Env();
 
   importModule(env, resolve(getAppDir(), "../exts/index.iamlisp"));
 
-  return code => {
-    print(evaluate(parse(code), env, true, options));
-  };
+  return code => print(evaluate(parse(code), env, true));
 }
