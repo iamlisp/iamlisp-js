@@ -43,8 +43,7 @@ Another one my LISP-like language interpreter hosted on JS.
 
 (defun fib (n)
   (loop (x 0 y 1 i n)
-    (def fibn (+ x y))
-    (cond (<= i 0) x (recur y fibn (dec i)))))
+    (cond (<= i 0) x (recur y (+ x y) (dec i)))))
 ```
 
 ### Define variable using list destructuring
