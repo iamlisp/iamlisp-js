@@ -37,13 +37,13 @@ Another one my LISP-like language interpreter hosted on JS.
 
 (loop (x 100)
       (print x)
-      (cond (> x 0) (recur (dec x))))
+      (cond ((> x 0) (recur (dec x)))))
 
 ; Fibonacci using iterative loop
 
 (defun fib (n)
   (loop (x 0 y 1 i n)
-    (cond (<= i 0) x (recur y (+ x y) (dec i)))))
+    (cond ((<= i 0) x) ((recur y (+ x y) (dec i))))))
 ```
 
 ### Define variable using list destructuring
