@@ -1,6 +1,6 @@
 ; https://www.rosettacode.org/wiki/Balanced_brackets
 
-; Determine whether the string consists entirely of pairs of opening/closing
+; Determine whether the string contains pairs of opening/closing
 ; brackets (in that order), none of which mis-nest.
 (defun brackets-balanced? (str)
   (def left-brackets  { "{" 0 "(" 1 "[" 2 })
