@@ -21,7 +21,7 @@
           ((iter (inc index) stack)))))))
   (iter 0 ()))
 
-; 
+; Example
 (brackets-balanced? "{}") ; true
 (brackets-balanced? "{}[]()") ; true
 (brackets-balanced? "{[()]}") ; true
