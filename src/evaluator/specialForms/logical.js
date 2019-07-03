@@ -1,10 +1,9 @@
-import { chunk, size, head } from "lodash";
+import { size, head } from "lodash";
 import SpecialForm from "../../types/SpecialForm";
 import { evaluateExpression } from "../evaluate";
 
 const logicalForms = {
-  cond: new SpecialForm((env, args, strict) => {
-    const pairs = chunk(args, 2);
+  cond: new SpecialForm((env, pairs, strict) => {
     for (const pair of pairs) {
       if (size(pair) === 1) {
         return evaluateExpression(head(pair), env, strict);

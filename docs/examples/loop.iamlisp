@@ -2,17 +2,17 @@
 
 (loop (x 100)
       (print x)
-      (cond (> x 0) (recur (- x 1))))
+      (cond ((> x 0) (recur (- x 1)))))
 
 (defun print-range (from to)
   (cond 
-    (neq? from to)
+    ((neq? from to)
     (begin
       (print from)
-      (print-range (inc from) to))))
+      (print-range (inc from) to)))))
 
 ; Fibonacci using iterative loop and tail call optimization
 
 (defun fib-loop (n)
   (loop (x 0 y 1 i n)
-    (cond (<= i 0) x (recur y (+ x y) (dec i)))))
+    (cond ((<= i 0) x) ((recur y (+ x y) (dec i))))))
