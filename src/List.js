@@ -1,23 +1,26 @@
 export class List {
-  constructor(head, tail) {
+  constructor(head, tail, empty) {
     this.head = head;
     this.tail = tail;
-    this.empty = false;
+    this.empty = empty;
   }
 
   prepend(value) {
-    return new List(value, this);
+    return new Node(value, this);
   }
 }
 
-class EmptyList extends List {
+class Node extends List {
+  constructor(head, tail) {
+    super(head, tail, false);
+  }
+}
+
+export const Nil = new (class extends List {
   constructor() {
-    super(null, null);
-    this.empty = true;
+    super(null, null, true);
   }
-}
-
-export const Nil = new EmptyList();
+})();
 
 export function fromArray(array) {
   return [...array].reverse().reduce((list, item) => list.prepend(item), Nil);

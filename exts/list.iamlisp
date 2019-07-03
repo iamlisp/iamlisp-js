@@ -1,1 +1,20 @@
 (def Nil (list))
+(defun head (l) (get l "head"))
+(defun tail (l) (get l "tail"))
+(defun empty? (l) (get l "empty"))
+
+(defun init (l)
+  (cond ((empty? l) null)
+        ((empty? (tail l)) Nil)
+        ((+: (init (tail l)) (head l)))))
+
+(defun last (l)
+  (cond ((empty? l) null)
+        ((empty? (tail l)) (head l))
+        ((last (tail l)))))
+
+(defun reverse (xs)
+  (defun iter (l res)
+    (cond ((empty? l) res)
+          ((iter (tail l) (+: res (head l))))))
+  (iter xs Nil))

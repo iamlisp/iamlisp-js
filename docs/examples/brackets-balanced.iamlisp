@@ -15,7 +15,7 @@
           ((has left-brackets char)
             (iter (inc index) (cons (get left-brackets char) stack)))
           ((has right-brackets char)
-            (cond ((eq? (get right-brackets char) (head stack))
+            (cond ((eq? (get right-brackets char) (get stack 0))
               (iter (inc index) (.slice stack 1)))
               (false)))
           ((iter (inc index) stack)))))))

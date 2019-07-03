@@ -11,4 +11,3 @@
 
 (defmacro null? (l) (eq? l null))
 (defmacro while (condition body) (cond condition (begin body (while condition body)) null))
-(defmacro head (v) (get v 0))
