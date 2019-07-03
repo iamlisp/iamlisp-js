@@ -6,6 +6,7 @@ import DotPunctuator from "../types/DotPunctuator";
 import MethodCall from "../types/MethodCall";
 import { punctuators } from "../parser/chars";
 import LambdaCall from "../types/LambdaCall";
+import { List } from "../List";
 
 export default function print(exp) {
   if (typeof exp === "string") {
@@ -41,6 +42,20 @@ export default function print(exp) {
   }
   if (exp instanceof LambdaCall) {
     return `#LambdaCall`;
+  }
+  if (exp instanceof List) {
+    if (exp.empty) {
+      return "Nil";
+    }
+
+    const items = [];
+    let list = exp;
+    while (!list.empty) {
+      items.push(list.head);
+      list = list.tail;
+    }
+
+    return `(|${items.map(print).join(" ")}|)`;
   }
   if (typeof exp === "object") {
     return `{${entries(exp)

@@ -5,6 +5,7 @@ import importForms from "./import";
 import typeofForms from "./typeof";
 import logicalForms from "./logical";
 import structural from "./structural";
+import listForms from "./list";
 
 const specialForms = {
   ...langForms,
@@ -13,7 +14,8 @@ const specialForms = {
   ...importForms,
   ...typeofForms,
   ...logicalForms,
-  ...structural
+  ...structural,
+  ...listForms
 };
 
 export default specialForms;

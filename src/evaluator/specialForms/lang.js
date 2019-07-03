@@ -10,11 +10,6 @@ import DotPunctuator from "../../types/DotPunctuator";
 import evaluateArgs from "../spread/evaluateArgs";
 
 const langForms = {
-  cons: new SpecialForm((env, [arg, list]) => {
-    const evaluatedList = evaluateExpression(list, env);
-    const evaluatedArg = evaluateExpression(arg, env);
-    return [evaluatedArg, ...evaluatedList];
-  }),
   eval: new SpecialForm((env, exprs) => {
     const evaluatedExprs = evaluateArgs(exprs, env);
     return evaluatedExprs.reduce(
@@ -72,7 +67,7 @@ const langForms = {
   quote: new SpecialForm((env, [arg]) => {
     return arg;
   }),
-  list: new SpecialForm((env, args) => {
+  array: new SpecialForm((env, args) => {
     return evaluateArgs(args, env);
   }),
   new: new SpecialForm((env, [className, ...args]) => {
