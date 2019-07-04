@@ -25,3 +25,11 @@ export const Nil = new (class extends List {
 export function fromArray(array) {
   return [...array].reverse().reduce((list, item) => list.prepend(item), Nil);
 }
+
+export function assertList(list) {
+  if (!(list instanceof List)) {
+    throw new TypeError(
+      `Argument required to be type of List but ${typeof list} given`
+    );
+  }
+}

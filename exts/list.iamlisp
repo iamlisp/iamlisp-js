@@ -1,7 +1,14 @@
 (def Nil (list))
-(defun head (xs) (get xs "head"))
-(defun tail (xs) (get xs "tail"))
-(defun empty? (xs) (get xs "empty"))
+
+(defun empty? (xs) (eq? xs Nil))
+
+(defun :: (. xss)
+  (defun iter (xs ys)
+    (cond ((empty? xs) ys)
+          ((iter (tail xs) (+: ys (head xs))))))
+  (.reduce xss 
+           (lambda (xs ys) (iter (reverse xs) ys))
+           Nil))
 
 (defun until (from to)
   (defun iter (i res)
@@ -40,3 +47,10 @@
 (defun drop (xs k)
   (cond ((or (zero? k) (empty? xs)) xs)
         ((drop (tail xs) (dec k)))))
+
+(defun splitAt (xs k) (list (take xs k) (drop xs k)))
+
+(defun patch (xs k ys l)
+  (:: (take xs k)
+      ys
+      (drop xs (+ k l))))
