@@ -55,7 +55,7 @@ export default function print(exp) {
       list = list.tail;
     }
 
-    return `(|${items.map(print).join(" ")}|)`;
+    return `#(${items.map(print).join(" ")})`;
   }
   if (typeof exp === "object") {
     return `{${entries(exp)
