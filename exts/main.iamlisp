@@ -5,6 +5,8 @@
 (def neq? !=)
 (def nil '())
 
+(defmacro identity (x) x)
+
 (defmacro backwards (. body) (eval (cons 'begin (.reverse 'body))))
 (defmacro -> (. fns) (lambda (v) (.reduce 'fns (lambda (v fn) ((eval fn) v)) v)))
 (defmacro <- (. fns) (eval (cons '-> (.reverse 'fns))))

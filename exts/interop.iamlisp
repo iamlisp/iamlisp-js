@@ -1,1 +1,1 @@
-(defmacro size (v) (get v "length"))
+(defmacro floor (n) (.floor js/Math n))
