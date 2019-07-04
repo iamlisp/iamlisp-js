@@ -3,6 +3,7 @@ import SpecialForm from "../../types/SpecialForm";
 import Lambda from "../../types/Lambda";
 import Macro from "../../types/Macro";
 import Symbl from "../../types/Symbl";
+import { List } from "../../List";
 
 const typeofForms = {
   typeof: new SpecialForm((env, [expr]) => {
@@ -14,10 +15,25 @@ const typeofForms = {
       return "Macro";
     }
     if (evaluatedExpr instanceof Symbl) {
-      return "Symbl";
+      return "Symbol";
+    }
+    if (evaluatedExpr instanceof List) {
+      return "List";
     }
     if (Array.isArray(evaluatedExpr)) {
-      return "List";
+      return "Array";
+    }
+    if (typeof evaluatedExpr === "string") {
+      return "String";
+    }
+    if (typeof evaluatedExpr === "number") {
+      return "Number";
+    }
+    if (
+      typeof evaluatedExpr === "object" &&
+      evaluatedExpr.constructor.name === "Object"
+    ) {
+      return "Object";
     }
     return `js:${typeof evaluatedExpr}`;
   })

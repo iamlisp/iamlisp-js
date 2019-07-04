@@ -1,0 +1,111 @@
+(def Nil (list))
+
+(defun empty? (xs) (eq? xs Nil))
+
+(defun size (v)
+  (defun list-size (xs) 
+    (defun iter (xs s)
+      (cond ((empty? xs) s) 
+            ((iter (tail xs)(inc s)))))
+    (iter xs 0))
+
+  (def type (typeof v))
+
+  (cond ((or (eq? type "String") (eq? type "Array")) (get v "length"))
+        ((list-size v))))
+
+(defun :: (. xss)
+  (defun iter (xs ys)
+    (cond ((empty? xs) ys)
+          ((iter (tail xs) (+: ys (head xs))))))
+  (.reduce xss 
+           (lambda (xs ys) (iter (reverse xs) ys))
+           Nil))
+
+(defun until (from to)
+  (defun iter (i res)
+    (cond ((eq? i to) (reverse res))
+          ((iter (inc i) (+: res i)))))
+
+  (cond ((> from to) Nil)
+        ((iter from Nil))))
+
+(defun init (xs)
+  (cond ((empty? xs) null)
+        ((empty? (tail xs)) Nil)
+        ((+: (init (tail xs)) (head xs)))))
+
+(defun last (xs)
+  (cond ((empty? xs) null)
+        ((empty? (tail xs)) (head xs))
+        ((last (tail xs)))))
+
+(defun reverse (xs)
+  (defun iter (l res)
+    (cond ((empty? l) res)
+          ((iter (tail l) (+: res (head l))))))
+  (iter xs Nil))
+
+(defun take-rec (xs k)
+  (cond ((or (zero? k) (empty? xs)) xs)
+        ((+: (take-rec (tail xs) (dec k)) (head xs)))))
+
+(defun take (xs k)
+  (defun iter (ys l res)
+    (cond ((or (zero? l) (empty? ys)) (reverse res))
+          ((iter (tail ys) (dec l) (+: res (head ys))))))
+  (iter xs k Nil))
+
+(defun drop (xs k)
+  (cond ((or (zero? k) (empty? xs)) xs)
+        ((drop (tail xs) (dec k)))))
+
+(defun splitAt (xs k) (list (take xs k) (drop xs k)))
+
+(defun patch (xs k ys l)
+  (:: (take xs k)
+      ys
+      (drop xs (+ k l))))
+
+(defun map-rec (xs f)
+  (cond ((empty? xs) Nil)
+        ((+: (map-rec (tail xs) f) (f (head xs))))))
+
+(defun map (xs f)
+  (defun iter (xs res)
+    (cond ((empty? xs) (reverse res))
+          ((iter (tail xs) 
+                 (+: res (f (head xs)))))))
+  (iter xs Nil))
+
+(defun filter (xs f)
+  (defun iter (xs res)
+    (cond ((empty? xs) (reverse res))
+          ((f (head xs)) (iter (tail xs) 
+                         (+: res (head xs)))) 
+          ((iter (tail xs) res))))
+  (iter xs Nil))
+
+(defun reduce (xs f initial)
+  (defun iter (xs res)
+    (cond ((empty? xs) res)
+          ((iter (tail xs)
+                 (f res (head xs))))))
+  (iter xs initial))
+
+(defun flatmap (xs f)
+  (defun iter (xs res)
+    (cond ((empty? xs) res)
+          ((iter (tail xs) (:: res (f (head xs)))))))
+  (iter xs Nil))
+
+(defun mergesort (xs)
+  (defun merge (xs ys)
+    (cond ((empty? xs) ys)
+          ((empty? ys) xs)
+          ((cond ((< (head xs) (head ys)) (+: (merge (tail xs) ys) (head xs)))
+                 ((+: (merge xs (tail ys)) (head ys)))))))
+  (def pivot (// (size xs) 2))
+  (cond ((zero? pivot) xs)
+        ((merge (mergesort (take xs pivot))
+                (mergesort (drop xs pivot))))))

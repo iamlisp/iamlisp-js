@@ -11,3 +11,5 @@
     (cond ((<= i 0) x) ((iter y (+ x y) (dec i)))))
   (iter 0 1 n))
 
+(defmacro even? (n) (zero? (% n 2)))
+(defmacro odd? (n) (not (even? n)))

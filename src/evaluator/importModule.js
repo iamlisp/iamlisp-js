@@ -1,8 +1,9 @@
 import { readFileSync } from "fs";
 import parse from "../parser/parse";
 import Env from "../Env";
-import evaluate, { evaluatorContext } from "./evaluate";
+import evaluate from "./evaluate";
 import { dirname } from "path";
+import evaluatorContext from "./evaluatorContext";
 
 const moduleCache = {};
 

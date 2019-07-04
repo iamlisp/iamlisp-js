@@ -8,13 +8,10 @@ import expand from "../expand";
 import createObject from "../createObject";
 import DotPunctuator from "../../types/DotPunctuator";
 import evaluateArgs from "../spread/evaluateArgs";
+import print from "../../printer/print";
+import evaluatorContext from "../evaluatorContext";
 
 const langForms = {
-  cons: new SpecialForm((env, [arg, list]) => {
-    const evaluatedList = evaluateExpression(list, env);
-    const evaluatedArg = evaluateExpression(arg, env);
-    return [evaluatedArg, ...evaluatedList];
-  }),
   eval: new SpecialForm((env, exprs) => {
     const evaluatedExprs = evaluateArgs(exprs, env);
     return evaluatedExprs.reduce(
@@ -72,12 +69,22 @@ const langForms = {
   quote: new SpecialForm((env, [arg]) => {
     return arg;
   }),
-  list: new SpecialForm((env, args) => {
+  array: new SpecialForm((env, args) => {
     return evaluateArgs(args, env);
   }),
   new: new SpecialForm((env, [className, ...args]) => {
     const Class = evaluateExpression(className, env);
     return createObject(Class, env, evaluateArgs(args, env));
+  }),
+  print: new SpecialForm((env, args) => {
+    const { printFn } = evaluatorContext.get("options");
+    // eslint-disable-next-line no-console
+    printFn(
+      args
+        .map(arg => evaluateExpression(arg, env))
+        .map(print)
+        .join(" ")
+    );
   })
 };
 

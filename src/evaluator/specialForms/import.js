@@ -1,10 +1,11 @@
 import { resolve, join } from "path";
 import { find } from "lodash";
 import { existsSync } from "fs";
-import { evaluateExpression, evaluatorContext } from "../evaluate";
+import { evaluateExpression } from "../evaluate";
 import importModule from "../importModule";
 import Symbl from "../../types/Symbl";
 import SpecialForm from "../../types/SpecialForm";
+import evaluatorContext from "../evaluatorContext";
 
 const MODULE_EXTENSION = ".iamlisp";
 
