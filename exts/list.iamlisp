@@ -3,6 +3,14 @@
 (defun tail (xs) (get xs "tail"))
 (defun empty? (xs) (get xs "empty"))
 
+(defun until (from to)
+  (defun iter (i res)
+    (cond ((eq? i to) (reverse res))
+          ((iter (inc i) (+: res i)))))
+
+  (cond ((> from to) Nil)
+        ((iter from Nil))))
+
 (defun init (xs)
   (cond ((empty? xs) null)
         ((empty? (tail xs)) Nil)
@@ -18,3 +26,17 @@
     (cond ((empty? l) res)
           ((iter (tail l) (+: res (head l))))))
   (iter xs Nil))
+
+(defun take-rec (xs k)
+  (cond ((or (zero? k) (empty? xs)) xs)
+        ((+: (take-rec (tail xs) (dec k)) (head xs)))))
+
+(defun take (xs k)
+  (defun iter (ys l res)
+    (cond ((or (zero? l) (empty? ys)) (reverse res))
+          ((iter (tail ys) (dec l) (+: res (head ys))))))
+  (iter xs k Nil))
+
+(defun drop (xs k)
+  (cond ((or (zero? k) (empty? xs)) xs)
+        ((drop (tail xs) (dec k)))))
