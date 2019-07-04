@@ -1,3 +1,4 @@
+import { size, head } from "lodash";
 import SpecialForm from "../../types/SpecialForm";
 import { evaluateExpression } from "../evaluate";
 
@@ -21,11 +22,21 @@ const binOpForms = {
   "*": new SpecialForm((env, args) =>
     binOp((x, y) => x * y, exp => evaluateExpression(exp, env), args)
   ),
-  "-": new SpecialForm((env, args) =>
-    binOp((x, y) => x - y, exp => evaluateExpression(exp, env), args)
-  ),
+  "-": new SpecialForm((env, args) => {
+    if (size(args) === 1) {
+      return -evaluateExpression(head(args));
+    }
+    return binOp((x, y) => x - y, exp => evaluateExpression(exp, env), args);
+  }),
   "/": new SpecialForm((env, args) =>
     binOp((x, y) => x / y, exp => evaluateExpression(exp, env), args)
+  ),
+  "//": new SpecialForm((env, args) =>
+    binOp(
+      (x, y) => Math.floor(x / y),
+      exp => evaluateExpression(exp, env),
+      args
+    )
   ),
   "%": new SpecialForm((env, args) =>
     binOp((x, y) => x % y, exp => evaluateExpression(exp, env), args)
