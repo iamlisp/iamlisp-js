@@ -93,6 +93,10 @@ const langForms = {
     const evaledMetadata = evaluateExpression(metadata, env);
     evaledArgument[metaSymbol] = evaledMetadata;
     return evaledArgument;
+  }),
+  symbol: new SpecialForm((env, [name]) => {
+    const evaledName = evaluateExpression(name, env);
+    return new Symbl(evaledName);
   })
 };
 

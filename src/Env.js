@@ -32,7 +32,7 @@ export default class Env {
       throw new Error(`Symbol "${key}" is not defined`);
     }
 
-    return this.sett(key, value);
+    return this.parent.sett(key, value);
   }
 
   get keys() {

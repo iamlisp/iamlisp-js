@@ -4,18 +4,22 @@ import mergeArgs from "../mergeArgs";
 
 const isEven = n => n % 2 === 0;
 
-export default function evaluateDefinitions(env, defs, options = {}) {
+export default function evaluateDefinitions(
+  env,
+  defs,
+  { redef = false, evalNames = false } = {}
+) {
   let argName;
   let argValue;
 
   for (let i = 0; i < size(defs); i += 1) {
     const def = defs[i];
     if (isEven(i)) {
-      argName = def;
+      argName = evalNames ? evaluateExpression(def, env) : def;
     } else {
       argValue = evaluateExpression(def, env);
       const mergedArgs = mergeArgs([argName], [argValue]);
-      env.merge(mergedArgs, options.redef === true);
+      env.merge(mergedArgs, redef === true);
     }
   }
 }
