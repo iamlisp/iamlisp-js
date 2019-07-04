@@ -15,6 +15,7 @@ import Macro from "../types/Macro";
 import SpecialForm from "../types/SpecialForm";
 import DotPunctuator from "../types/DotPunctuator";
 import print from "../printer/print";
+import { List, toArray } from "../List";
 
 function evaluateList(exprs, env, strict) {
   const stackDepth = (evaluatorContext.get("stackDepth") || 0) + 1;
@@ -33,7 +34,7 @@ function evaluateList(exprs, env, strict) {
   let result = [];
 
   if (!isEmpty(exprs)) {
-    const [head, ...tail] = exprs;
+    const [head, ...tail] = toArray(exprs);
     const headForm = evaluateExpression(
       head,
       env,
@@ -85,6 +86,8 @@ export function evaluateExpression(expr, env, strict = true) {
 
     if (expr instanceof Symbl) {
       resExpr = evaluateSymbol(expr, env);
+    } else if (expr instanceof List) {
+      resExpr = evaluateList(expr, env, strict);
     } else if (Array.isArray(expr)) {
       resExpr = evaluateList(expr, env, strict);
     } else if (expr instanceof DotPunctuator) {

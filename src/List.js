@@ -33,3 +33,19 @@ export function assertList(list) {
     );
   }
 }
+
+export function toArray(arg) {
+  if (Array.isArray(arg)) {
+    return arg;
+  }
+  if (arg instanceof List) {
+    const res = [];
+    let list = arg;
+    while (!list.empty) {
+      res.push(list.head);
+      list = list.tail;
+    }
+    return res;
+  }
+  throw new TypeError(`Could not convert to array`);
+}
