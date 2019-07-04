@@ -54,3 +54,26 @@
   (:: (take xs k)
       ys
       (drop xs (+ k l))))
+
+(defun map-rec (xs f)
+  (cond ((empty? xs) Nil)
+        ((+: (map-rec (tail xs) f) (f (head xs))))))
+
+(defun map (xs f)
+  (defun iter (xs res)
+    (cond ((empty? xs) (reverse res))
+          ((iter (tail xs) (+: res (f (head xs)))))))
+  (iter xs Nil))
+
+(defun filter (xs f)
+  (defun iter (xs res)
+    (cond ((empty? xs) (reverse res))
+          ((f (head xs)) (iter (tail xs) (+: res (head xs)))) 
+          ((iter (tail xs) res))))
+  (iter xs Nil))
+
+(defun reduce (xs f initial)
+  (defun iter (xs res)
+    (cond ((empty? xs) res)
+          ((iter (tail xs) (f res (head xs))))))
+  (iter xs initial))

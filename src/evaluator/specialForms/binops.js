@@ -27,6 +27,9 @@ const binOpForms = {
   "/": new SpecialForm((env, args) =>
     binOp((x, y) => x / y, exp => evaluateExpression(exp, env), args)
   ),
+  "%": new SpecialForm((env, args) =>
+    binOp((x, y) => x % y, exp => evaluateExpression(exp, env), args)
+  ),
 
   pow: new SpecialForm((env, args) =>
     binOp((x, y) => Math.pow(x, y), exp => evaluateExpression(exp, env), args)
