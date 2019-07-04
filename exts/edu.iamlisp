@@ -1,0 +1,6 @@
+(defun permutations (xs)
+  (cond ((or (empty? xs)
+             (empty? (tail xs))) (list xs))
+        ((flatmap (indices xs)
+                  (lambda (i) (map (perm (patch xs i Nil 1))
+                                   (lambda (xss) (+: xss (at xs i)))))))))

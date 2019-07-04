@@ -14,6 +14,11 @@
   (cond ((or (eq? type "String") (eq? type "Array")) (get v "length"))
         ((list-size v))))
 
+(defun at (xs i)
+  (cond ((empty? xs) null)
+        ((zero? i) (head xs))
+        ((at (tail xs) (dec i)))))
+
 (defun :: (. xss)
   (defun iter (xs ys)
     (cond ((empty? xs) ys)
@@ -98,6 +103,8 @@
     (cond ((empty? xs) res)
           ((iter (tail xs) (:: res (f (head xs)))))))
   (iter xs Nil))
+
+(defun indices (xs) (until 0 (size xs)))
 
 (defun mergesort (xs)
   (defun merge (xs ys)
