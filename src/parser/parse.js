@@ -93,6 +93,7 @@ export default function parse(expr) {
     } else if (currentChar() === chars.SEMICOLON) {
       nextChar();
       parseComment();
+      expr = undefined;
     } else if (reserved.has(currentChar())) {
       throw new Error(`Unexpected token - '${currentChar()}'`);
     } else {
@@ -112,7 +113,10 @@ export default function parse(expr) {
         return expr;
       }
 
-      expr.push(parseExpression());
+      const _expr = parseExpression();
+      if (typeof _expr !== "undefined") {
+        expr.push(_expr);
+      }
 
       skipDelimiters();
     }
@@ -140,7 +144,10 @@ export default function parse(expr) {
         }, {});
       }
 
-      expr.push(parseExpression());
+      const _expr = parseExpression();
+      if (typeof _expr !== "undefined") {
+        expr.push(_expr);
+      }
 
       skipDelimiters();
     }
@@ -153,9 +160,9 @@ export default function parse(expr) {
 
     while (!isEof()) {
       skipDelimiters();
-      const parsedExpression = parseExpression();
-      if (parsedExpression !== undefined) {
-        expr.push(parsedExpression);
+      const _expr = parseExpression();
+      if (_expr !== undefined) {
+        expr.push(_expr);
       }
       skipDelimiters();
     }
