@@ -6,6 +6,7 @@ import typeofForms from "./typeof";
 import logicalForms from "./logical";
 import structural from "./structural";
 import listForms from "./list";
+import envForms from "./env";
 
 const specialForms = {
   ...langForms,
@@ -15,7 +16,8 @@ const specialForms = {
   ...typeofForms,
   ...logicalForms,
   ...structural,
-  ...listForms
+  ...listForms,
+  ...envForms
 };
 
 export default specialForms;

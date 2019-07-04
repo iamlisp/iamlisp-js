@@ -1,6 +1,5 @@
-import def from "./def";
 import loop from "./loop";
 
-const structural = { def, loop };
+const structuralForms = { loop };
 
-export default structural;
+export default structuralForms;
