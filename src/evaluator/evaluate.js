@@ -1,6 +1,5 @@
 import { isEmpty } from "lodash";
 import styles from "ansi-styles";
-import { createNamespace } from "continuation-local-storage";
 import invokeLambda from "./invokeLambda";
 import invokeMethod from "./invokeMethod";
 import invokeFunction from "./invokeFunction";
@@ -8,6 +7,7 @@ import specialForms from "./specialForms";
 import invokeMacro from "./invokeMacro";
 import { getJavascriptGlobal } from "./interop";
 import evaluateArgs from "./spread/evaluateArgs";
+import evaluatorContext from "./evaluatorContext";
 import Symbl from "../types/Symbl";
 import MethodCall from "../types/MethodCall";
 import Lambda from "../types/Lambda";
@@ -16,17 +16,19 @@ import SpecialForm from "../types/SpecialForm";
 import DotPunctuator from "../types/DotPunctuator";
 import print from "../printer/print";
 
-export const evaluatorContext = createNamespace("runtime");
-
 function evaluateList(exprs, env, strict) {
   const stackDepth = (evaluatorContext.get("stackDepth") || 0) + 1;
   evaluatorContext.set("stackDepth", stackDepth);
   const stackPadding = " ".repeat(stackDepth);
 
-  // eslint-disable-next-line no-console
-  console.log(
-    `${styles.gray.open}>${stackPadding}${print(exprs)}${styles.gray.close}`
-  );
+  const { debug } = evaluatorContext.get("options");
+
+  if (debug) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `${styles.gray.open}>${stackPadding}${print(exprs)}${styles.gray.close}`
+    );
+  }
 
   let result = [];
 
@@ -54,10 +56,12 @@ function evaluateList(exprs, env, strict) {
     }
   }
 
-  // eslint-disable-next-line no-console
-  console.log(
-    `${styles.gray.open}<${stackPadding}${print(result)}${styles.gray.close}`
-  );
+  if (debug) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `${styles.gray.open}<${stackPadding}${print(result)}${styles.gray.close}`
+    );
+  }
 
   return result;
 }
