@@ -29,6 +29,8 @@
 (defun srange (from to) (cond ((> from to) SNil)
                               ((scons from (srange (inc from) to)))))
 
+(defun srange-from (from) (scons from (srange-from (inc from))))
+
 
 ; Operators
 (defun stake (n sxs) (cond ((and (pos? n) 
