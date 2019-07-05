@@ -66,3 +66,5 @@
                   (iter (scdr sxs) (dec left))))))
   (iter sxs 100)
   (print (+ "[" (.join items " ") "]")))
+
+; (def fibsexp (scons 0 (scons 1 (szipwith + (scdr fibsexp) fibsexp))))
