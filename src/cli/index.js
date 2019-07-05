@@ -10,12 +10,12 @@ const printResult = result => {
 
 const printError = err => {
   // eslint-disable-next-line no-console
-  console.error(err);
+  console.log(`${styles.red.open}${err}${styles.red.close}`);
 };
 
 const startRepl = async () => {
   // eslint-disable-next-line no-console
-  const evaluate = createEvaluator({ printFn: console.log, debug: true });
+  const evaluate = createEvaluator({ printFn: console.log, debug: false });
 
   const rl = createInterface({
     input: process.stdin,

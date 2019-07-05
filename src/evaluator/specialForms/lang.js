@@ -11,8 +11,6 @@ import evaluateArgs from "../spread/evaluateArgs";
 import print from "../../printer/print";
 import evaluatorContext from "../evaluatorContext";
 
-export const metaSymbol = Symbol("meta");
-
 const langForms = {
   eval: new SpecialForm((env, exprs) => {
     const evaluatedExprs = evaluateArgs(exprs, env);
@@ -68,9 +66,6 @@ const langForms = {
 
     return [new Symbl("begin"), ...expandedBody];
   }),
-  quote: new SpecialForm((env, [arg]) => {
-    return arg;
-  }),
   array: new SpecialForm((env, args) => {
     return evaluateArgs(args, env);
   }),
@@ -87,12 +82,6 @@ const langForms = {
         .map(print)
         .join(" ")
     );
-  }),
-  meta: new SpecialForm((env, [argument, metadata]) => {
-    const evaledArgument = evaluateExpression(argument, env);
-    const evaledMetadata = evaluateExpression(metadata, env);
-    evaledArgument[metaSymbol] = evaledMetadata;
-    return evaledArgument;
   }),
   symbol: new SpecialForm((env, [name]) => {
     const evaledName = evaluateExpression(name, env);

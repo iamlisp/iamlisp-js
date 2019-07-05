@@ -4,17 +4,15 @@ import Lambda from "../../types/Lambda";
 import Macro from "../../types/Macro";
 import Symbl from "../../types/Symbl";
 import { List } from "../../List";
-import { metaSymbol } from "./lang";
 
 const typeofForms = {
   typeof: new SpecialForm((env, [expr]) => {
     const evaluatedExpr = evaluateExpression(expr, env);
-    if (
-      typeof evaluatedExpr === "object" &&
-      metaSymbol in evaluatedExpr &&
-      "$type" in evaluatedExpr[metaSymbol]
-    ) {
-      return evaluatedExpr[metaSymbol]["$type"];
+    if (evaluatedExpr === null) {
+      return "Null";
+    }
+    if (evaluatedExpr === undefined) {
+      return "Undefined";
     }
     if (evaluatedExpr instanceof Lambda) {
       return "Lambda";
@@ -41,9 +39,9 @@ const typeofForms = {
       typeof evaluatedExpr === "object" &&
       evaluatedExpr.constructor.name === "Object"
     ) {
-      return "Object";
+      return "Map";
     }
-    return `js:${typeof evaluatedExpr}`;
+    return typeof evaluatedExpr;
   })
 };
 

@@ -77,6 +77,12 @@ export default function parse(expr) {
 
   const parseExpression = () => {
     let expr;
+    skipDelimiters();
+
+    if (isEof()) {
+      throw new Error("Unexpected EOF while expression parsing");
+    }
+
     if (currentChar() === chars.DOUBLE_QUOTE) {
       nextChar();
       expr = parseString();
@@ -85,8 +91,12 @@ export default function parse(expr) {
       expr = parseList();
     } else if (currentChar() === chars.SINGLE_QUOTE) {
       nextChar();
-      skipDelimiters();
+      // skipDelimiters();
       expr = [new Symbl("quote"), parseExpression()];
+    } else if (currentChar() === chars.CARET) {
+      nextChar();
+      // skipDelimiters();
+      expr = [new Symbl("with-meta"), parseExpression(), parseExpression()];
     } else if (currentChar() === chars.LEFT_BRACKET) {
       nextChar();
       expr = parseMap();
@@ -99,6 +109,7 @@ export default function parse(expr) {
     } else {
       expr = parseSymbol();
     }
+    skipDelimiters();
     return withPlugins(expr);
   };
 

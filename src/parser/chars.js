@@ -10,7 +10,8 @@ export const chars = {
   TAB: "\t",
   LINE_FEED: "\n",
   CARRIAGE_RETURN: "\r",
-  SEMICOLON: ";"
+  SEMICOLON: ";",
+  CARET: "^"
 };
 
 export const punctuators = {

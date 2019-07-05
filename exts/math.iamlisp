@@ -8,6 +8,17 @@
 (assert (zero? 0))
 (assert (not (zero? 12)))
 
+(defmacro pos? (n) (>= n 0))
+(assert (pos? 0))
+(assert (pos? 10))
+(assert (not (pos? -12)))
+
+(defmacro neg? (n) (< n 0))
+(assert (neg? -1))
+(assert (neg? -10))
+(assert (not (neg? 12)))
+(assert (not (neg? 0)))
+
 (defmacro even? (n) (zero? (% n 2)))
 (assert (even? 4))
 (assert (not (even? 5)))

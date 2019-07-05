@@ -1,6 +1,6 @@
 (import "core")
 (import "math")
 (import "list")
-(import "io")
 (import "interop")
-(import "edu")
+
+(import "lazy")

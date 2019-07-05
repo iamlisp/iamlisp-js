@@ -101,8 +101,10 @@ export function evaluateExpression(expr, env, strict = true) {
 }
 
 export default function evaluate(exprs, env, strict = true) {
+  const lastIndex = exprs.length;
   return exprs.reduce(
-    (result, expr) => evaluateExpression(expr, env, strict),
+    (result, expr, index) =>
+      evaluateExpression(expr, env, (lastIndex !== index) | strict),
     undefined
   );
 }

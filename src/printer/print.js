@@ -25,6 +25,13 @@ export default function print(exp) {
   ) {
     return `'${print(exp[1])}`;
   }
+  if (
+    Array.isArray(exp) &&
+    exp[0] instanceof Symbl &&
+    exp[0].name === "with-meta"
+  ) {
+    return `^${print(exp[1])} ${print(exp[2])}`;
+  }
   if (Array.isArray(exp)) {
     return `(${exp.map(print).join(" ")})`;
   }

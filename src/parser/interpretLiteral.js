@@ -9,6 +9,8 @@ const looksLikeNumber = exp => {
 
 const looksLikeNull = exp => exp === "null";
 
+const looksLikeUndefined = exp => exp === "undefined";
+
 export default function interpretLiteral(value) {
   let literal;
   let interpreted = false;
@@ -22,6 +24,9 @@ export default function interpretLiteral(value) {
   } else if (looksLikeNull(value)) {
     interpreted = true;
     literal = null;
+  } else if (looksLikeUndefined(value)) {
+    interpreted = true;
+    literal = undefined;
   }
 
   return [interpreted, literal];

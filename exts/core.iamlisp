@@ -3,6 +3,7 @@
 
 (def eq? =)
 (def neq? !=)
+(defmacro defined? (v) (neq? v undefined))
 
 (defun assert (b)
   (cond ((not b) (throw (new js/Error "Assertion Error")))))
@@ -10,8 +11,10 @@
 (defmacro identity (x) x)
 (assert (eq? (identity "Foo") "Foo"))
 
-(defmacro -> (. fns) (lambda (v) (.reduce 'fns (lambda (v fn) ((eval fn) v)) v)))
-(defmacro <- (. fns) (eval (cons '-> (.reverse 'fns))))
+(defmacro -> (val . fns) (.reduce 'fns (lambda (v fn) ((eval fn) v)) val))
+(assert (eq? (-> "c" 
+                 (+ "b" _)
+                 (+ "a" _)) "abc"))
 
 (defmacro null? (l) (eq? l null))
 (assert (null? null))
