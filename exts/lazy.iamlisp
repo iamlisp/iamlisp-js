@@ -10,13 +10,14 @@
 (defun deferred? (sxs) (and (eq? (typeof sxs) "Lambda")
                             (eq? (typeof (get-meta sxs)) "Map")
                             (get "deferred" (get-meta sxs))))
+
 (defun raise (sxs) (cond ((deferred? sxs) (sxs)) (sxs)))
 
-(defmacro scons (x y) (lambda (z) (z x (defer y))))
+(defmacro scons (x y) (list x (defer y)))
 
-(defun scar (xs) (xs (lambda (x y) x)))
+(defun scar (xs) (nth 0 xs))
 
-(defun scdr (xs) (xs (lambda (x y) (raise y))))
+(defun scdr (xs) (raise (nth 1 xs)))
 
 (def SNil (scons null null))
 
@@ -67,4 +68,6 @@
   (iter sxs 100)
   (print (+ "[" (.join items " ") "]")))
 
-; (def fibsexp (scons 0 (scons 1 (szipwith + (scdr fibsexp) fibsexp))))
+(comment 
+  (def fibsexp (scons 0 (scons 1 (szipwith + (scdr fibsexp) fibsexp))))
+  (sprint (stake 12 fibsexp)))
