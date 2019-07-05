@@ -1,6 +1,6 @@
-(import "main")
+(import "core")
+(import "math")
 (import "list")
 (import "io")
-(import "math")
 (import "interop")
 (import "edu")

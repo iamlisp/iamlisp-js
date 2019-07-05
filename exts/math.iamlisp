@@ -1,15 +1,17 @@
 (defmacro inc (n) (+ n 1))
+(assert (eq? (inc 5) 6))
+
 (defmacro dec (n) (- n 1))
+(assert (eq? (dec 5) 4))
+
 (defmacro zero? (n) (eq? n 0))
-
-(defun fib1 (n)
-  (loop (x 0 y 1 i n)
-    (cond ((<= i 0) x) ((recur y (+ x y) (dec i))))))
-
-(defun fib2 (n) 
-  (defun iter (x y i)
-    (cond ((<= i 0) x) ((iter y (+ x y) (dec i)))))
-  (iter 0 1 n))
+(assert (zero? 0))
+(assert (not (zero? 12)))
 
 (defmacro even? (n) (zero? (% n 2)))
+(assert (even? 4))
+(assert (not (even? 5)))
+
 (defmacro odd? (n) (not (even? n)))
+(assert (odd? 5))
+(assert (not (odd? 6)))

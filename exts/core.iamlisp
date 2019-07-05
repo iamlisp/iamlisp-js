@@ -3,13 +3,18 @@
 
 (def eq? =)
 (def neq? !=)
-(def nil '())
+
+(defun assert (b)
+  (cond ((not b) (throw (new js/Error "Assertion Error")))))
 
 (defmacro identity (x) x)
+(assert (eq? (identity "Foo") "Foo"))
 
-(defmacro backwards (. body) (eval (cons 'begin (.reverse 'body))))
 (defmacro -> (. fns) (lambda (v) (.reduce 'fns (lambda (v fn) ((eval fn) v)) v)))
 (defmacro <- (. fns) (eval (cons '-> (.reverse 'fns))))
 
 (defmacro null? (l) (eq? l null))
-(defmacro while (condition body) (cond condition (begin body (while condition body)) null))
+(assert (null? null))
+(assert (not (null? (list))))
+(assert (not (null? "Hello")))
+(assert (not (null? 123)))

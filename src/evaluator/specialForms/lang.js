@@ -97,6 +97,9 @@ const langForms = {
   symbol: new SpecialForm((env, [name]) => {
     const evaledName = evaluateExpression(name, env);
     return new Symbl(evaledName);
+  }),
+  throw: new SpecialForm((env, [throwable]) => {
+    throw evaluateExpression(throwable, env);
   })
 };
 
