@@ -101,7 +101,7 @@ export function evaluateExpression(expr, env, strict = true) {
 }
 
 export default function evaluate(exprs, env, strict = true) {
-  const lastIndex = exprs.length;
+  const lastIndex = exprs.length - 1;
   return exprs.reduce(
     (result, expr, index) =>
       evaluateExpression(expr, env, (lastIndex !== index) | strict),

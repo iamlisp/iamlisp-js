@@ -15,7 +15,7 @@ const printError = err => {
 
 const startRepl = async () => {
   // eslint-disable-next-line no-console
-  const evaluate = createEvaluator({ printFn: console.log, debug: false });
+  const evaluate = createEvaluator({ printFn: console.log, debug: true });
 
   const rl = createInterface({
     input: process.stdin,

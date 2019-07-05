@@ -6,27 +6,27 @@
                                    executed? true)))
       result)))
 
-(defmacro deferred? (sxs) (and (eq? (typeof sxs) "Lambda")
-                               (eq? (typeof (get-meta sxs)) "Map")
-                               (has "deferred" (get-meta sxs))
-                               (get "deferred" (get-meta sxs))))
+(defun deferred? (sxs) (and (eq? (typeof sxs) "Lambda")
+                            (eq? (typeof (get-meta sxs)) "Map")
+                            (has "deferred" (get-meta sxs))
+                            (get "deferred" (get-meta sxs))))
 
-(defmacro raise (sxs) (cond ((deferred? sxs) (sxs)) (sxs)))
+(defun raise (sxs) (cond ((deferred? sxs) (sxs)) (sxs)))
 
 (defmacro scons (x y) (lambda (z) (z x (defer y))))
-(defmacro scar (xs) (xs (lambda (x y) x)))
-(defmacro scdr (xs) (xs (lambda (x y) (raise y))))
+(defun scar (xs) (xs (lambda (x y) x)))
+(defun scdr (xs) (xs (lambda (x y) (raise y))))
 
 (def SNil (scons null null))
-(defmacro sempty? (sxs) (eq? sxs SNil))
+(defun sempty? (sxs) (eq? sxs SNil))
 
-(defmacro srepeat (s) (scons s (srepeat s)))
-(defmacro srange (from to) (cond ((> from to) Nil)
-                               ((scons from (suntil (inc from) to)))))
+(defun srepeat (s) (scons s (srepeat s)))
+(defun srange (from to) (cond ((> from to) SNil)
+                              ((scons from (srange (inc from) to)))))
 
-(defmacro stake (n sxs) (cond ((> n 0) 
-                               (scons (scar sxs) (stake (dec n) (scdr sxs)))) 
-                              (SNil)))
+(defun stake (n sxs) (cond ((> n 0) 
+                            (scons (scar sxs) (stake (dec n) (scdr sxs)))) 
+                           (SNil)))
 
 (defun sprint (sxs)
   (def items ())
