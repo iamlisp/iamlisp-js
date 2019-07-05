@@ -8,7 +8,6 @@
 
 (defun deferred? (sxs) (and (eq? (typeof sxs) "Lambda")
                             (eq? (typeof (get-meta sxs)) "Map")
-                            (has "deferred" (get-meta sxs))
                             (get "deferred" (get-meta sxs))))
 
 (defun raise (sxs) (cond ((deferred? sxs) (sxs)) (sxs)))
