@@ -1,3 +1,4 @@
+; Core abstractions
 (defmacro defer (xs)
   (where (executed? false
           result null)
@@ -9,24 +10,51 @@
 (defun deferred? (sxs) (and (eq? (typeof sxs) "Lambda")
                             (eq? (typeof (get-meta sxs)) "Map")
                             (get "deferred" (get-meta sxs))))
-
 (defun raise (sxs) (cond ((deferred? sxs) (sxs)) (sxs)))
 
 (defmacro scons (x y) (lambda (z) (z x (defer y))))
+
 (defun scar (xs) (xs (lambda (x y) x)))
+
 (defun scdr (xs) (xs (lambda (x y) (raise y))))
 
 (def SNil (scons null null))
+
 (defun sempty? (sxs) (eq? sxs SNil))
 
+
+; Generators
 (defun srepeat (s) (scons s (srepeat s)))
+
 (defun srange (from to) (cond ((> from to) SNil)
                               ((scons from (srange (inc from) to)))))
 
-(defun stake (n sxs) (cond ((> n 0) 
+
+; Operators
+(defun stake (n sxs) (cond ((and (pos? n) 
+                                 (not (sempty? sxs)))
                             (scons (scar sxs) (stake (dec n) (scdr sxs)))) 
                            (SNil)))
 
+(defun sskip (n sxs) (cond ((sempty? sxs) SNil)
+                           ((and (<= n 0)) sxs)
+                           ((sskip (dec n) (scdr sxs)))))
+
+(defun smap (fn sxs) (cond ((sempty? sxs) SNil)
+                           ((scons (fn (scar sxs)) (smap fn (scdr sxs))))))
+
+(defun sfilter (fn sxs) (cond ((sempty? sxs) SNil)
+                              ((fn (scar sxs)) 
+                               (scons (scar sxs) (sfilter fn (scdr sxs))))
+                              ((sfilter fn (scdr sxs)))))
+
+(defun szipwith (fn sxs sys)
+    (cond ((sempty? sxs) SNil)
+          ((sempty? sys) SNil)
+          ((scons (fn (scar sxs) (scar sys))
+                  (szipwith fn (scdr sxs) (scdr sys))))))
+
+; Terminals
 (defun sprint (sxs)
   (def items ())
   (defun iter (sxs left)

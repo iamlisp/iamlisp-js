@@ -8,9 +8,9 @@
 (assert (zero? 0))
 (assert (not (zero? 12)))
 
-(defmacro pos? (n) (>= n 0))
-(assert (pos? 0))
+(defmacro pos? (n) (> n 0))
 (assert (pos? 10))
+(assert (not (pos? 0)))
 (assert (not (pos? -12)))
 
 (defmacro neg? (n) (< n 0))
