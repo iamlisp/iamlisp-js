@@ -26,3 +26,7 @@
 (defmacro odd? (n) (not (even? n)))
 (assert (odd? 5))
 (assert (not (odd? 6)))
+
+(defun abs (x) (if (neg? x) (- x) x))
+(assert (eq? (abs 5) 5))
+(assert (eq? (abs (- 15)) 15))

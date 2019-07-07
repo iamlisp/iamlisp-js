@@ -2,9 +2,12 @@
 (defmacro defun (name args . body) (def name (lambda args . body)))
 (defmacro comment (. body))
 
+(def else true)
 (def eq? =)
 (def neq? !=)
 (defmacro defined? (v) (neq? v undefined))
+(defmacro if (cnd wt wf) (cond (cnd wt) 
+                               (else wf)))
 
 (defun assert (b)
   (cond ((not b) (throw (new js/Error "Assertion Error")))))
