@@ -10,7 +10,7 @@ const printResult = result => {
 
 const printError = err => {
   // eslint-disable-next-line no-console
-  console.log(`${styles.red.open}${err}${styles.red.close}`);
+  console.log(`${styles.red.open}${err.stack}${styles.red.close}`);
 };
 
 const startRepl = async () => {
