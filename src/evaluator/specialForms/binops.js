@@ -24,7 +24,7 @@ const binOpForms = {
   ),
   "-": new SpecialForm((env, args) => {
     if (size(args) === 1) {
-      return -evaluateExpression(head(args));
+      return -evaluateExpression(head(args), env);
     }
     return binOp((x, y) => x - y, exp => evaluateExpression(exp, env), args);
   }),
