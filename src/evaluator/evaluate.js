@@ -15,7 +15,6 @@ import Macro from "../types/Macro";
 import SpecialForm from "../types/SpecialForm";
 import DotPunctuator from "../types/DotPunctuator";
 import print from "../printer/print";
-import { List, toArray } from "../List";
 
 function evaluateList(exprs, env, strict) {
   const stackDepth = (evaluatorContext.get("stackDepth") || 0) + 1;
@@ -34,7 +33,7 @@ function evaluateList(exprs, env, strict) {
   let result = [];
 
   if (!isEmpty(exprs)) {
-    const [head, ...tail] = toArray(exprs);
+    const [head, ...tail] = exprs;
     const headForm = evaluateExpression(
       head,
       env,
@@ -81,23 +80,27 @@ function evaluateSymbol({ name }, env) {
 }
 
 export function evaluateExpression(expr, env, strict = true) {
-  return evaluatorContext.runAndReturn(() => {
-    let resExpr;
+  const nowTime = Date.now();
+  const { startTime = nowTime, timeout } = evaluatorContext.get("options");
+  const deltaTime = nowTime - startTime;
 
-    if (expr instanceof Symbl) {
-      resExpr = evaluateSymbol(expr, env);
-    } else if (expr instanceof List) {
-      resExpr = evaluateList(expr, env, strict);
-    } else if (Array.isArray(expr)) {
-      resExpr = evaluateList(expr, env, strict);
-    } else if (expr instanceof DotPunctuator) {
-      throw new Error("Syntax error");
-    } else {
-      resExpr = expr;
-    }
+  if (deltaTime > timeout) {
+    throw new Error("Evaluation interrupted: timeout");
+  }
 
-    return resExpr;
-  });
+  let resExpr;
+
+  if (expr instanceof Symbl) {
+    resExpr = evaluateSymbol(expr, env);
+  } else if (Array.isArray(expr)) {
+    resExpr = evaluateList(expr, env, strict);
+  } else if (expr instanceof DotPunctuator) {
+    throw new Error("Syntax error");
+  } else {
+    resExpr = expr;
+  }
+
+  return resExpr;
 }
 
 export default function evaluate(exprs, env, strict = true) {

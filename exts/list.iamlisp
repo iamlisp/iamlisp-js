@@ -5,6 +5,17 @@
 (assert (empty? Nil))
 (assert (not (empty? (list 1 2 3))))
 
+(defun foldl (f acc xs)
+  (if (empty? xs)
+      acc
+      (foldl f (f (head xs) acc) (tail xs))))
+
+(defun foldr (f acc xs)
+  (if (empty? xs)
+      acc
+      (f (head xs)
+         (foldr f acc (tail xs)))))
+
 (defun size (v)
   (where (type (typeof v)
           size-attr "length")

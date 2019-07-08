@@ -22,8 +22,11 @@ export default function createEvaluator(options) {
   });
 
   return code => {
-    return withOptions(options, () => {
-      return print(evaluate(parse(code), env, true));
+    const optionsWithStartTime = { ...options, startTime: Date.now() };
+    return withOptions(optionsWithStartTime, () => {
+      const parsedTree = parse(code);
+      const result = evaluate(parsedTree, env, true);
+      return print(result);
     });
   };
 }
