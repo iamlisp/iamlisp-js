@@ -28,6 +28,7 @@
     "continuation-local-storage": "^3.2.1",
     "lodash": "^4.17.4",
     "mem": "^5.1.1",
+    "ws": "^7.0.1",
     "yargs": "^10.0.3"
   },
   "devDependencies": {
