@@ -2,6 +2,9 @@
   "name": "iamlisp",
   "version": "2.2.0",
   "description": "Another one LISP interpreter.",
+  "engines": {
+    "node": "10.x"
+  },
   "bin": {
     "iamlisp": "./bin/iamlisp.js"
   },
