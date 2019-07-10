@@ -66,7 +66,7 @@
                  (dec left)
                  (+: (scar sxs) res)))
           (res)))
-  (iter sxs 100 Nil))
+  (reverse (iter sxs 100 Nil)))
 
 (comment 
   (def fibsexp (scons 0 (scons 1 (szipwith + (scdr fibsexp) fibsexp))))
