@@ -9,6 +9,13 @@ const EVAL_TIMEOUT = process.env.EVAL_TIMEOUT || 30000;
 
 function startServer() {
   const wss = new WebSocket.Server({ port: PORT });
+  const interval = setInterval(
+    () =>
+      wss.clients.forEach(ws => {
+        ws.ping(err => err && ws.terminate());
+      }),
+    30000
+  );
 
   wss.on("connection", ws => {
     const printFn = arg => {
@@ -31,6 +38,11 @@ function startServer() {
       }
     });
   });
+
+  return () => {
+    clearInterval(interval);
+    wss.close();
+  };
 }
 
 startServer();
