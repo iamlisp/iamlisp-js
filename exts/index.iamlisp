@@ -2,5 +2,4 @@
 (import "math")
 (import "list")
 (import "interop")
-
-(import "lazy")
+(import "streams")

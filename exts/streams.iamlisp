@@ -58,16 +58,16 @@
                   (szipwith fn (scdr sxs) (scdr sys))))))
 
 ; Terminals
-(defun sprint (sxs)
-  (def items ())
-  (defun iter (sxs left)
-    (cond ((zero? left) (.push items "..."))
-          ((not (sempty? sxs)) 
-           (begin (.push items (scar sxs))
-                  (iter (scdr sxs) (dec left))))))
-  (iter sxs 100)
-  (print (+ "[" (.join items " ") "]")))
+(defun sto-list (sxs)
+  (defun iter (sxs left res)
+    (cond ((zero? left) (+: "..." res))
+          ((not (sempty? sxs))
+           (iter (scdr sxs)
+                 (dec left)
+                 (+: (scar sxs) res)))
+          (res)))
+  (iter sxs 100 Nil))
 
 (comment 
   (def fibsexp (scons 0 (scons 1 (szipwith + (scdr fibsexp) fibsexp))))
-  (sprint (stake 12 fibsexp)))
+  (sto-list (stake 12 fibsexp)))
