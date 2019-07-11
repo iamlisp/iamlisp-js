@@ -125,9 +125,7 @@ export default function parse(expr) {
       }
 
       const _expr = parseExpression();
-      if (typeof _expr !== "undefined") {
-        expr.push(_expr);
-      }
+      expr.push(_expr);
 
       skipDelimiters();
     }
@@ -156,9 +154,7 @@ export default function parse(expr) {
       }
 
       const _expr = parseExpression();
-      if (typeof _expr !== "undefined") {
-        expr.push(_expr);
-      }
+      expr.push(_expr);
 
       skipDelimiters();
     }
@@ -172,9 +168,7 @@ export default function parse(expr) {
     while (!isEof()) {
       skipDelimiters();
       const _expr = parseExpression();
-      if (_expr !== undefined) {
-        expr.push(_expr);
-      }
+      expr.push(_expr);
       skipDelimiters();
     }
 

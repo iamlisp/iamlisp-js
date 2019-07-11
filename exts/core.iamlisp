@@ -5,9 +5,19 @@
 (def else true)
 (def eq? =)
 (def neq? !=)
-(defmacro defined? (v) (neq? v undefined))
+
+(defmacro undefined?  (v) (eq? (typeof v) "Undefined"))
+(defmacro list?       (v) (eq? (typeof v) "List"))
+(defmacro symbol?     (v) (eq? (typeof v) "Symbol"))
+(defmacro array?      (v) (eq? (typeof v) "Array"))
+(defmacro string?     (v) (eq? (typeof v) "String"))
+(defmacro map?        (v) (eq? (typeof v) "Map"))
+(defmacro null?       (v) (eq? (typeof v) "Null"))
+(defmacro boolean?    (v) (eq? (typeof v) "Boolean"))
+
 (defmacro if (cnd wt wf) (cond (cnd wt) 
                                (else wf)))
+
 
 (defun assert (b)
   (cond ((not b) (throw (new js/Error "Assertion Error")))))
