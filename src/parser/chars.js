@@ -11,7 +11,8 @@ export const chars = {
   LINE_FEED: "\n",
   CARRIAGE_RETURN: "\r",
   SEMICOLON: ";",
-  CARET: "^"
+  CARET: "^",
+  SHARP: "#"
 };
 
 export const punctuators = {

@@ -1,6 +1,6 @@
-import withPlaceholder from "./placeholder";
+import withSharp from "./sharp";
 
-const plugins = [withPlaceholder];
+const plugins = [withSharp];
 
 export default function withPlugins(expr) {
   return plugins.reduce((acc, plugin) => plugin(acc), expr);

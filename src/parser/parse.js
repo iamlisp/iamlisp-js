@@ -104,6 +104,9 @@ export default function parse(expr) {
       nextChar();
       parseComment();
       expr = undefined;
+    } else if (currentChar() === chars.SHARP) {
+      nextChar();
+      expr = [new Symbl("sharp"), parseExpression()];
     } else if (reserved.has(currentChar())) {
       throw new Error(`Unexpected token - '${currentChar()}'`);
     } else {

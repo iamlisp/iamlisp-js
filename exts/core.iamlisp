@@ -27,8 +27,8 @@
 
 (defmacro -> (val . fns) (.reduce 'fns (lambda (v fn) ((eval fn) v)) val))
 (assert (eq? (-> "c" 
-                 (+ "b" _)
-                 (+ "a" _)) "abc"))
+                 #(+ "b" %)
+                 #(+ "a" %)) "abc"))
 
 (defmacro null? (l) (eq? l null))
 (assert (null? null))
