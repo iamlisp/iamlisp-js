@@ -41,7 +41,7 @@
 
 (defun sdrop (n sxs) (cond ((sempty? sxs) SNil)
                            ((and (<= n 0)) sxs)
-                           ((sskip (dec n) (scdr sxs)))))
+                           ((sdrop (dec n) (scdr sxs)))))
 
 (defun smap (fn sxs) (cond ((sempty? sxs) SNil)
                            ((scons (fn (scar sxs)) (smap fn (scdr sxs))))))
