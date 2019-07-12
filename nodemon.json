@@ -1,3 +1,4 @@
 {
-  "watch": ["src/**/*.js", "exts/**/*.*"]
+  "watch": ["src/**/*.js", "exts/**/*.*"],
+  "restartable": false
 }

@@ -5,7 +5,7 @@ import { evaluateExpression } from "../evaluate";
 import importModule from "../importModule";
 import Symbl from "../../types/Symbl";
 import SpecialForm from "../../types/SpecialForm";
-import evaluatorContext from "../evaluatorContext";
+import { MODULES_DIRECTORY } from "../../config";
 
 const MODULE_EXTENSION = ".iamlisp";
 
@@ -38,9 +38,11 @@ const importForms = {
       throw new Error("Module namespace should be a symbol");
     }
 
-    const currentModulePath =
-      evaluatorContext.get("__modulePath") || process.cwd();
-    const importModulePath = resolve(currentModulePath, evaluatedPath);
+    const currentModulePath = env.get("__modulePath");
+    const importModulePath = resolve(
+      evaluatedPath.startsWith(".") ? currentModulePath : MODULES_DIRECTORY,
+      evaluatedPath
+    );
 
     const resolvedModuleFilepath = resolveModuleFilepath(importModulePath);
 

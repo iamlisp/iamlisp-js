@@ -17,6 +17,8 @@ function withOptions(options, fn) {
 export default function createEvaluator(options) {
   const env = new Env();
 
+  env.set("__modulePath", process.cwd());
+
   withOptions(options, () => {
     importModule(env, resolve(getAppDir(), "../exts/index.iamlisp"));
   });

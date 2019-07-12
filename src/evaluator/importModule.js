@@ -1,22 +1,19 @@
 import { readFileSync } from "fs";
-import parse from "../parser/parse";
-import Env from "../Env";
-import evaluate from "./evaluate";
 import { dirname } from "path";
-import evaluatorContext from "./evaluatorContext";
+import evaluate from "./evaluate";
+import Env from "../Env";
+import parse from "../parser/parse";
 
 const moduleCache = {};
 
 export default function importModule(env, moduleFilepath, namespace) {
   if (!(moduleFilepath in moduleCache)) {
+    const modulePath = dirname(moduleFilepath);
     const moduleCode = readFileSync(moduleFilepath, "UTF-8");
     const parsedModule = parse(moduleCode);
-    const moduleEnv = new Env({}, env);
+    const moduleEnv = new Env({ __modulePath: modulePath }, env);
 
-    evaluatorContext.run(() => {
-      evaluatorContext.set("__modulePath", dirname(moduleFilepath));
-      evaluate(parsedModule, moduleEnv);
-    });
+    evaluate(parsedModule, moduleEnv);
 
     moduleCache[moduleFilepath] = moduleEnv;
   }
