@@ -5,7 +5,7 @@ import { evaluateExpression } from "../evaluate";
 import importModule from "../importModule";
 import Symbl from "../../types/Symbl";
 import SpecialForm from "../../types/SpecialForm";
-import { MODULES_DIRECTORY } from "../../config";
+import { MODULES_ROOT_DIRECTORY } from "../../config";
 
 const MODULE_EXTENSION = ".iamlisp";
 
@@ -25,22 +25,25 @@ function resolveModuleFilepath(modulePath) {
 }
 
 const importForms = {
-  import: new SpecialForm((env, [path, namespaceExpr]) => {
+  import: new SpecialForm((env, [path, asSymbol, namespaceStr]) => {
     const evaluatedPath = evaluateExpression(path, env);
     if (typeof evaluatedPath !== "string") {
       throw new TypeError("Module path should be a string");
     }
 
     let namespace;
-    if (namespaceExpr instanceof Symbl) {
-      namespace = namespaceExpr.name;
-    } else if (typeof namespaceExpr !== "undefined") {
-      throw new Error("Module namespace should be a symbol");
+    if (asSymbol instanceof Symbl && asSymbol.name === "as") {
+      if (typeof namespaceStr !== "string") {
+        throw new Error("Module namespace should be of type String");
+      }
+      namespace = namespaceStr;
     }
 
     const currentModulePath = env.get("__modulePath");
     const importModulePath = resolve(
-      evaluatedPath.startsWith(".") ? currentModulePath : MODULES_DIRECTORY,
+      evaluatedPath.startsWith(".")
+        ? currentModulePath
+        : MODULES_ROOT_DIRECTORY,
       evaluatedPath
     );
 
