@@ -39,7 +39,7 @@
                             (scons (scar sxs) (stake (dec n) (scdr sxs)))) 
                            (SNil)))
 
-(defun sskip (n sxs) (cond ((sempty? sxs) SNil)
+(defun sdrop (n sxs) (cond ((sempty? sxs) SNil)
                            ((and (<= n 0)) sxs)
                            ((sskip (dec n) (scdr sxs)))))
 
