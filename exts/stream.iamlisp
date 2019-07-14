@@ -58,7 +58,7 @@
     (cond ((empty? sxs) Nil)
           ((empty? sys) Nil)
           ((cons (fn (car sxs) (car sys))
-                 (szipwith fn (cdr sxs) (cdr sys))))))
+                 (zipwith fn (cdr sxs) (cdr sys))))))
 
 ; Terminals
 (defun to-list (sxs)
@@ -72,5 +72,5 @@
   (list/reverse (iter sxs 100 list/Nil)))
 
 (comment 
-  (def fibsexp (cons 0 (cons 1 (szipwith + (cdr fibsexp) fibsexp))))
+  (def fibsexp (cons 0 (cons 1 (zipwith + (cdr fibsexp) fibsexp))))
   (to-list (take 12 fibsexp)))
