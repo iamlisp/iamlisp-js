@@ -1,6 +1,0 @@
-(defun permutations (xs)
-  (cond ((or (empty? xs)
-             (empty? (tail xs))) (list xs))
-        ((flatmap (lambda (i) (map (lambda (xss) (+: (nth i xs) xss))
-                                   (permutations (patch i Nil 1 xs))))
-                  (indices xs)))))

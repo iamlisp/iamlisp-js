@@ -30,3 +30,7 @@
 (defun abs (x) (if (neg? x) (- x) x))
 (assert (eq? (abs 5) 5))
 (assert (eq? (abs (- 15)) 15))
+
+(defun floor (x) (.floor js/Math x))
+(defun ceil (x) (.ceil js/Math x))
+(defun round (x) (.round js/Math x))

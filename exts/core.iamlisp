@@ -29,9 +29,3 @@
 (assert (eq? (-> "c" 
                  #(+ "b" %)
                  #(+ "a" %)) "abc"))
-
-(defmacro null? (l) (eq? l null))
-(assert (null? null))
-(assert (not (null? (list))))
-(assert (not (null? "Hello")))
-(assert (not (null? 123)))

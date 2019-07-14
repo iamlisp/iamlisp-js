@@ -85,10 +85,6 @@
           ((iter (tail l) (+: (head l) res)))))
   (iter xs Nil))
 
-(defun take-rec (k xs)
-  (cond ((or (zero? k) (empty? xs)) xs)
-        ((+: (head xs) (take-rec (dec k) (tail xs))))))
-
 (defun take (k xs)
   (defun iter (ys l res)
     (cond ((or (zero? l) (empty? ys)) (reverse res))
@@ -144,8 +140,12 @@
   (defun merge (xs ys)
     (cond ((empty? xs) ys)
           ((empty? ys) xs)
-          ((cond ((< (head xs) (head ys)) (+: (head xs) (merge (tail xs) ys)))
-                 ((+: (head ys) (merge xs (tail ys))))))))
+          ((cond ((< (head xs) (head ys))
+                  (+: (head xs)
+                      (merge (tail xs) ys)))
+                 ((+: (head ys)
+                  (merge xs
+                         (tail ys))))))))
   (where (pivot (// (size xs) 2))
          (cond ((zero? pivot) xs)
                ((merge (mergesort (take xs pivot))

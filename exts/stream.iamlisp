@@ -1,0 +1,75 @@
+(import "list" as "list")
+
+; Core abstractions
+(defmacro defer (xs)
+  (where (executed? false
+          result null)
+    ^{"deferred" true} (lambda ()
+      (cond ((not executed?) (set! result xs  
+                                   executed? true)))
+      result)))
+
+(defun deferred? (sxs) (and (eq? (typeof sxs) "Lambda")
+                            (eq? (typeof (get-meta sxs)) "Map")
+                            (get "deferred" (get-meta sxs))))
+
+(defun raise (sxs) (cond ((deferred? sxs) (sxs)) (sxs)))
+
+(defmacro cons (x y) (list x (defer y)))
+
+(defun car (xs) (nth 0 xs))
+
+(defun cdr (xs) (raise (nth 1 xs)))
+
+(def Nil (cons null null))
+
+(defun empty? (sxs) (eq? sxs Nil))
+
+
+; Generators
+(defun repeat (s) (cons s (repeat s)))
+
+(defun range (from to) (cond ((> from to) Nil)
+                              ((cons from (range (inc from) to)))))
+
+(defun range-from (from) (cons from (range-from (inc from))))
+
+
+; Operators
+(defun take (n sxs) (cond ((and (pos? n) 
+                                (not (empty? sxs)))
+                           (cons (scar sxs) (take (dec n) (cdr sxs)))) 
+                          (Nil)))
+
+(defun drop (n sxs) (cond ((empty? sxs) Nil)
+                          ((and (<= n 0)) sxs)
+                          ((drop (dec n) (cdr sxs)))))
+
+(defun map (fn sxs) (cond ((empty? sxs) Nil)
+                          ((cons (fn (car sxs)) (map fn (cdr sxs))))))
+
+(defun filter (fn sxs) (cond ((empty? sxs) Nil)
+                             ((fn (car sxs)) 
+                              (cons (car sxs) (filter fn (cdr sxs))))
+                             ((filter fn (cdr sxs)))))
+
+(defun zipwith (fn sxs sys)
+    (cond ((empty? sxs) Nil)
+          ((empty? sys) Nil)
+          ((cons (fn (car sxs) (car sys))
+                 (szipwith fn (cdr sxs) (cdr sys))))))
+
+; Terminals
+(defun to-list (sxs)
+  (defun iter (sxs left res)
+    (cond ((zero? left) (+: "..." res))
+          ((not (empty? sxs))
+           (iter (cdr sxs)
+                 (dec left)
+                 (+: (car sxs) res)))
+          (res)))
+  (list/reverse (iter sxs 100 list/Nil)))
+
+(comment 
+  (def fibsexp (cons 0 (cons 1 (szipwith + (cdr fibsexp) fibsexp))))
+  (to-list (take 12 fibsexp)))

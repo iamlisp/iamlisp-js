@@ -1,4 +1,7 @@
-import { entries } from "lodash";
+import { entries, uniq } from "lodash";
+import { fromArray } from "./List";
+
+const ENV_KEYS_MAGIC_KEY = "envkeys";
 
 export default class Env {
   constructor(map = {}, parent) {
@@ -13,6 +16,10 @@ export default class Env {
   get(key) {
     if (key in this.map) {
       return this.map[key];
+    }
+
+    if (key === ENV_KEYS_MAGIC_KEY) {
+      return fromArray(this.deepKeys);
     }
 
     if (!this.parent) {
@@ -39,6 +46,13 @@ export default class Env {
     return Object.keys(this.map);
   }
 
+  get deepKeys() {
+    if (!this.parent) {
+      return this.keys;
+    }
+    return uniq([...this.keys, this.parent.deepKeys]);
+  }
+
   import(moduleEnv, moduleName) {
     const symbolPrefix =
       typeof moduleName === "undefined" ? "" : `${moduleName}/`;
@@ -51,4 +65,8 @@ export default class Env {
     const setFn = redef ? this.sett.bind(this) : this.set.bind(this);
     entries(otherMap).forEach(([key, value]) => setFn(key, value));
   }
+
+  // toString() {
+  //   return `Env(${this.keys.join(", ")})`;
+  // }
 }
