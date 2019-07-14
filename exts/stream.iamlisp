@@ -15,11 +15,11 @@
 
 (defun raise (sxs) (cond ((deferred? sxs) (sxs)) (sxs)))
 
-(defmacro cons (x y) (list/list x (defer y)))
+(defmacro cons (x y) (array x (defer y)))
 
-(defun car (xs) (list/nth 0 xs))
+(defun car (xs) (get 0 xs))
 
-(defun cdr (xs) (raise (list/nth 1 xs)))
+(defun cdr (xs) (raise (get 1 xs)))
 
 (def Nil (cons null null))
 
