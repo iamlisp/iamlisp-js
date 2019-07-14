@@ -15,7 +15,7 @@
 
 (defun raise (sxs) (cond ((deferred? sxs) (sxs)) (sxs)))
 
-(defmacro cons (x y) (list x (defer y)))
+(defmacro cons (x y) (list/list x (defer y)))
 
 (defun car (xs) (list/nth 0 xs))
 
