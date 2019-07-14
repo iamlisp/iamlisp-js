@@ -17,9 +17,9 @@
 
 (defmacro cons (x y) (list x (defer y)))
 
-(defun car (xs) (nth 0 xs))
+(defun car (xs) (list/nth 0 xs))
 
-(defun cdr (xs) (raise (nth 1 xs)))
+(defun cdr (xs) (raise (list/nth 1 xs)))
 
 (def Nil (cons null null))
 
@@ -31,8 +31,9 @@
 
 (defun range (from to) (cond ((> from to) Nil)
                               ((cons from (range (inc from) to)))))
+(defun range (from) (cons from (range (inc from))))
 
-(defun range-from (from) (cons from (range-from (inc from))))
+(defun range () (cons from (range 0)))
 
 
 ; Operators
