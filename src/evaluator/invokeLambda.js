@@ -13,7 +13,7 @@ export function canApplyAutoCurrying(lambda) {
 const hasUnboundSymbols = (lambdaArgs, argValues) =>
   lambdaArgs.length > argValues.length;
 
-const getBestOverload = (lambda, argValues) => {
+const getBestVariant = (lambda, argValues) => {
   const argValuesSize = size(argValues);
 
   if (isEmpty(lambda.overloads)) {
@@ -35,35 +35,35 @@ const getBestOverload = (lambda, argValues) => {
 };
 
 export default function invokeLambda(lambda, argValues, strict = true) {
-  const bestOverload = getBestOverload(lambda, argValues);
+  const bestVariant = getBestVariant(lambda, argValues);
   const argValuesSize = size(argValues);
 
-  if (bestOverload === null) {
+  if (bestVariant === null) {
     throw new TypeError(
       `Lambda doesn't contain variant for given number of arguments - ${argValuesSize}`
     );
   }
 
   if (
-    canApplyAutoCurrying(bestOverload) &&
-    hasUnboundSymbols(bestOverload.args, argValues)
+    canApplyAutoCurrying(bestVariant) &&
+    hasUnboundSymbols(bestVariant.args, argValues)
   ) {
     const boundFrame = mergeArgs(
-      bestOverload.args.slice(0, argValuesSize),
+      bestVariant.args.slice(0, argValuesSize),
       argValues
     );
-    const unboundArgNames = bestOverload.args.slice(argValuesSize);
+    const unboundArgNames = bestVariant.args.slice(argValuesSize);
 
     return new Lambda(
       unboundArgNames,
-      bestOverload.body,
-      new Env(boundFrame, bestOverload.env)
+      bestVariant.body,
+      new Env(boundFrame, bestVariant.env)
     );
   }
 
-  const frame = mergeArgs(bestOverload.args, argValues);
+  const frame = mergeArgs(bestVariant.args, argValues);
 
-  let result = new LambdaCall(bestOverload, frame);
+  let result = new LambdaCall(bestVariant, frame);
 
   if (strict) {
     while (result instanceof LambdaCall) {
