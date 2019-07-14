@@ -3,6 +3,7 @@ import createReader from "./reader";
 import { delimiters, reserved, chars, punctuators } from "./chars";
 import interpretLiteral from "./interpretLiteral";
 import withPlugins from "./plugins";
+import { Nil } from "../List";
 import Symbl from "../types/Symbl";
 import DotPunctuator from "../types/DotPunctuator";
 
@@ -117,18 +118,17 @@ export default function parse(expr) {
   };
 
   const parseList = () => {
-    let expr = [];
+    let expr = Nil;
 
     while (!isEof()) {
       skipDelimiters();
 
       if (currentChar() === chars.RIGHT_PAREN) {
         nextChar();
-        return expr;
+        return expr.reverse();
       }
 
-      const _expr = parseExpression();
-      expr.push(_expr);
+      expr.prepend(parseExpression());
 
       skipDelimiters();
     }

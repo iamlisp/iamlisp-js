@@ -8,7 +8,31 @@ export class List {
   prepend(value) {
     return new Node(value, this);
   }
+
+  toArray() {
+    const result = [];
+    let list = this;
+    while (!list.empty) {
+      result.push(list.head);
+      list = list.tail;
+    }
+    return result;
+  }
+
+  reverse() {
+    let result = Nil;
+    let list = this;
+    while (!list.empty) {
+      result = result.prepend(list.head);
+      list = list.tail;
+    }
+    return result;
+  }
 }
+
+List.fromArray = array => {
+  return array.reduce((list, item) => list.prepend(item), Nil).reverse();
+};
 
 class Node extends List {
   constructor(head, tail) {
@@ -21,31 +45,3 @@ export const Nil = new (class extends List {
     super(null, null, true);
   }
 })();
-
-export function fromArray(array) {
-  return [...array].reverse().reduce((list, item) => list.prepend(item), Nil);
-}
-
-export function assertList(list) {
-  if (!(list instanceof List)) {
-    throw new TypeError(
-      `Argument required to be type of List but ${typeof list} given`
-    );
-  }
-}
-
-export function toArray(arg) {
-  if (Array.isArray(arg)) {
-    return arg;
-  }
-  if (arg instanceof List) {
-    const res = [];
-    let list = arg;
-    while (!list.empty) {
-      res.push(list.head);
-      list = list.tail;
-    }
-    return res;
-  }
-  throw new TypeError(`Could not convert to array`);
-}
