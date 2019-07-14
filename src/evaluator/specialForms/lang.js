@@ -9,14 +9,21 @@ import createObject from "../createObject";
 import DotPunctuator from "../../types/DotPunctuator";
 import evaluateArgs from "../spread/evaluateArgs";
 import evaluatorContext from "../evaluatorContext";
+import { Node, Nil } from "../../List";
+import print from "../../printer/print";
 
 const langForms = {
+  "js/ListNode": Node,
+  "js/NilList": Nil,
   eval: new SpecialForm((env, exprs) => {
     const evaluatedExprs = evaluateArgs(exprs, env);
     return evaluatedExprs.reduce(
       (prevResult, expr) => evaluateExpression(expr, env),
       undefined
     );
+  }),
+  pretty: new SpecialForm((env, [expr]) => {
+    return print(evaluateExpression(expr, env));
   }),
   apply: new SpecialForm((env, [fn, args]) => {
     return evaluateExpression([fn, ...args], env);

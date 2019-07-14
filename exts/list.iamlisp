@@ -1,3 +1,13 @@
+(defun list (. xargs)
+  (.reduce (.reverse xargs)
+           #(new js/ListNode %2 %1)
+           js/NilList))
+
+(defun head (xs) (get "head" xs))
+(defun tail (xs) (get "tail" xs))
+(defun list* (x xs) (new js/ListNode x xs))
+(def +: list*)
+
 (def Nil (list))
 (assert (eq? Nil (list)))
 

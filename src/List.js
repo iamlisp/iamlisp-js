@@ -10,7 +10,7 @@ export class List {
   }
 }
 
-class Node extends List {
+export class Node extends List {
   constructor(head, tail) {
     super(head, tail, false);
   }
