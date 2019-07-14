@@ -63,11 +63,11 @@
 ; Terminals
 (defun to-list (sxs)
   (defun iter (sxs left res)
-    (cond ((zero? left) (+: "..." res))
+    (cond ((zero? left) (list/+: "..." res))
           ((not (empty? sxs))
            (iter (cdr sxs)
                  (dec left)
-                 (+: (car sxs) res)))
+                 (list/+: (car sxs) res)))
           (res)))
   (list/reverse (iter sxs 100 list/Nil)))
 
