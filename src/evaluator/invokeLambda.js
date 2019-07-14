@@ -1,3 +1,4 @@
+import { isEmpty, size } from "lodash";
 import mergeArgs from "./mergeArgs";
 import evaluate from "./evaluate";
 import Env from "../Env";
@@ -12,29 +13,57 @@ export function canApplyAutoCurrying(lambda) {
 const hasUnboundSymbols = (lambdaArgs, argValues) =>
   lambdaArgs.length > argValues.length;
 
+const getBestOverload = (lambda, argValues) => {
+  const argValuesSize = size(argValues);
+
+  if (isEmpty(lambda.overloads)) {
+    return lambda;
+  }
+
+  const lambdaWithOverloads = [lambda, ...lambda.overloads];
+
+  // Look for lambda with same number of arguments as number of called values
+  const foundLambda = lambdaWithOverloads.find(
+    l => size(l.args) === argValuesSize
+  );
+
+  if (foundLambda) {
+    return foundLambda;
+  }
+
+  return null;
+};
+
 export default function invokeLambda(lambda, argValues, strict = true) {
-  const argValuesCount = argValues.length;
+  const bestOverload = getBestOverload(lambda, argValues);
+  const argValuesSize = size(argValues);
 
-  if (
-    canApplyAutoCurrying(lambda) &&
-    hasUnboundSymbols(lambda.args, argValues)
-  ) {
-    const boundFrame = mergeArgs(
-      lambda.args.slice(0, argValuesCount),
-      argValues
-    );
-    const unboundArgNames = lambda.args.slice(argValuesCount);
-
-    return new Lambda(
-      unboundArgNames,
-      lambda.body,
-      new Env(boundFrame, lambda.env)
+  if (bestOverload === null) {
+    throw new TypeError(
+      `Lambda doesn't contain variant for given number of arguments - ${argValuesSize}`
     );
   }
 
-  const frame = mergeArgs(lambda.args, argValues);
+  if (
+    canApplyAutoCurrying(bestOverload) &&
+    hasUnboundSymbols(bestOverload.args, argValues)
+  ) {
+    const boundFrame = mergeArgs(
+      bestOverload.args.slice(0, argValuesSize),
+      argValues
+    );
+    const unboundArgNames = bestOverload.args.slice(argValuesSize);
 
-  let result = new LambdaCall(lambda, frame);
+    return new Lambda(
+      unboundArgNames,
+      bestOverload.body,
+      new Env(boundFrame, bestOverload.env)
+    );
+  }
+
+  const frame = mergeArgs(bestOverload.args, argValues);
+
+  let result = new LambdaCall(bestOverload, frame);
 
   if (strict) {
     while (result instanceof LambdaCall) {

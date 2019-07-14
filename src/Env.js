@@ -1,5 +1,6 @@
 import { entries, uniq } from "lodash";
 import { fromArray } from "./List";
+import Lambda from "./types/Lambda";
 
 const ENV_KEYS_MAGIC_KEY = "envkeys";
 
@@ -10,6 +11,11 @@ export default class Env {
   }
 
   set(key, value) {
+    if (value instanceof Lambda && this.map[key] instanceof Lambda) {
+      this.map[key].overloads.push(value);
+      return;
+    }
+
     this.map[key] = value;
   }
 
