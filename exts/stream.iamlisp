@@ -39,7 +39,7 @@
 ; Operators
 (defun take (n sxs) (cond ((and (pos? n) 
                                 (not (empty? sxs)))
-                           (cons (scar sxs) (take (dec n) (cdr sxs)))) 
+                           (cons (car sxs) (take (dec n) (cdr sxs)))) 
                           (Nil)))
 
 (defun drop (n sxs) (cond ((empty? sxs) Nil)
