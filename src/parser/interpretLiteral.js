@@ -13,7 +13,7 @@ const looksLikeNull = exp => exp === "null";
 
 const looksLikeUndefined = exp => exp === "undefined";
 
-const looksLikeKeyword = exp => /^::[^:]+/.test(exp);
+const looksLikeKeyword = exp => /^:[^:]+/.test(exp);
 
 export default function interpretLiteral(value) {
   let literal;
