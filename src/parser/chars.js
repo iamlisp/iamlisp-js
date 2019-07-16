@@ -10,6 +10,7 @@ export const chars = {
   TAB: "\t",
   LINE_FEED: "\n",
   CARRIAGE_RETURN: "\r",
+  COLON: ":",
   SEMICOLON: ";",
   CARET: "^",
   SHARP: "#"

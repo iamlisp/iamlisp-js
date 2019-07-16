@@ -15,6 +15,7 @@ import Macro from "../types/Macro";
 import SpecialForm from "../types/SpecialForm";
 import DotPunctuator from "../types/DotPunctuator";
 import print from "../printer/print";
+import Keyword from "../types/Keyword";
 
 function evaluateList(exprs, env, strict) {
   const stackDepth = (evaluatorContext.get("stackDepth") || 0) + 1;
@@ -79,6 +80,13 @@ function evaluateSymbol({ name }, env) {
   return env.get(name);
 }
 
+function evaluateMap(map, env) {
+  return [...map.entries()].reduce((acc, [key, value]) => {
+    acc.set(evaluateExpression(key, env), evaluateExpression(value, env));
+    return acc;
+  }, new Map());
+}
+
 export function evaluateExpression(expr, env, strict = true) {
   const nowTime = Date.now();
   const { startTime = nowTime, timeout } = evaluatorContext.get("options");
@@ -92,6 +100,8 @@ export function evaluateExpression(expr, env, strict = true) {
 
   if (expr instanceof Symbl) {
     resExpr = evaluateSymbol(expr, env);
+  } else if (expr instanceof Map) {
+    return evaluateMap(expr, env);
   } else if (Array.isArray(expr)) {
     resExpr = evaluateList(expr, env, strict);
   } else if (expr instanceof DotPunctuator) {

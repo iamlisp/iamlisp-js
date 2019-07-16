@@ -1,10 +1,11 @@
-import { chunk } from "lodash";
+import { chunk, isEmpty } from "lodash";
 import createReader from "./reader";
 import { delimiters, reserved, chars, punctuators } from "./chars";
 import interpretLiteral from "./interpretLiteral";
 import withPlugins from "./plugins";
 import Symbl from "../types/Symbl";
 import DotPunctuator from "../types/DotPunctuator";
+import Keyword from "../types/Keyword";
 
 export default function parse(expr) {
   const { currentChar, isEof, nextChar } = createReader(expr);
@@ -50,6 +51,24 @@ export default function parse(expr) {
     return new Symbl(sym);
   };
 
+  const parseKeyword = () => {
+    let value = "";
+
+    while (!isEof()) {
+      if (reserved.has(currentChar())) {
+        break;
+      }
+
+      value += currentChar();
+      nextChar();
+    }
+
+    if (isEmpty(value)) {
+      throw new TypeError("Unexpected end of file while parsing Keyword");
+    }
+    return Keyword.for(value);
+  };
+
   const parseString = () => {
     let body = "";
     let escape = false;
@@ -93,6 +112,9 @@ export default function parse(expr) {
       nextChar();
       // skipDelimiters();
       expr = [new Symbl("quote"), parseExpression()];
+    } else if (currentChar() === chars.COLON) {
+      nextChar();
+      expr = parseKeyword();
     } else if (currentChar() === chars.CARET) {
       nextChar();
       // skipDelimiters();
@@ -145,15 +167,9 @@ export default function parse(expr) {
       if (currentChar() === chars.RIGHT_BRACKET) {
         nextChar();
         return chunk(expr, 2).reduce((acc, [key, value]) => {
-          if (key instanceof Symbl) {
-            acc[key.name] = value;
-          } else if (typeof key === "string") {
-            acc[key] = value;
-          } else {
-            throw new Error(`Map key should be of type symbol or string`);
-          }
+          acc.set(key, value);
           return acc;
-        }, {});
+        }, new Map());
       }
 
       const _expr = parseExpression();

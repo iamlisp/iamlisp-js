@@ -1,4 +1,3 @@
-import { entries } from "lodash";
 import Symbl from "../types/Symbl";
 import Macro from "../types/Macro";
 import Lambda from "../types/Lambda";
@@ -7,10 +6,20 @@ import MethodCall from "../types/MethodCall";
 import { punctuators } from "../parser/chars";
 import LambdaCall from "../types/LambdaCall";
 import { List } from "../List";
+import Keyword from "../types/Keyword";
+import printKeyword from "./printKeyword";
 
 export default function print(exp) {
   if (typeof exp === "string") {
     return `"${exp.replace('"', '\\"')}"`;
+  }
+  if (exp instanceof Keyword) {
+    return printKeyword(exp);
+  }
+  if (exp instanceof Map) {
+    return `{${[...exp.entries()]
+      .map(([key, value]) => `${print(key)} ${print(value)}`)
+      .join(" ")}}`;
   }
   if (exp instanceof Symbl) {
     return exp.name;
@@ -64,10 +73,6 @@ export default function print(exp) {
 
     return `(${items.map(print).join(" ")})`;
   }
-  if (typeof exp === "object") {
-    return `{${entries(exp)
-      .map(([key, value]) => `${print(key)} ${print(value)}`)
-      .join(" ")}}`;
-  }
+
   return exp;
 }
