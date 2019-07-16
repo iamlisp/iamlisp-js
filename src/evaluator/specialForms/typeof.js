@@ -38,10 +38,7 @@ const typeofForms = {
     if (typeof evaluatedExpr === "boolean") {
       return "Boolean";
     }
-    if (
-      typeof evaluatedExpr === "object" &&
-      evaluatedExpr.constructor.name === "Object"
-    ) {
+    if (evaluatedExpr instanceof Map) {
       return "Map";
     }
     return typeof evaluatedExpr;
