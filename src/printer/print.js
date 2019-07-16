@@ -8,6 +8,8 @@ import LambdaCall from "../types/LambdaCall";
 import { List } from "../List";
 import Keyword from "../types/Keyword";
 import printKeyword from "./printKeyword";
+import MultiMethod from "../types/MultiMethod";
+import printMultiMethod from "./printMultiMethod";
 
 export default function print(exp) {
   if (typeof exp === "string") {
@@ -15,6 +17,9 @@ export default function print(exp) {
   }
   if (exp instanceof Keyword) {
     return printKeyword(exp);
+  }
+  if (exp instanceof MultiMethod) {
+    return printMultiMethod(exp);
   }
   if (exp instanceof Map) {
     return `{${[...exp.entries()]

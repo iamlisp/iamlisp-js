@@ -4,6 +4,7 @@ import Lambda from "../../types/Lambda";
 import Macro from "../../types/Macro";
 import Symbl from "../../types/Symbl";
 import { List } from "../../List";
+import MultiMethod from "../../types/MultiMethod";
 
 const typeofForms = {
   typeof: new SpecialForm((env, [expr]) => {
@@ -40,6 +41,9 @@ const typeofForms = {
     }
     if (evaluatedExpr instanceof Map) {
       return "Map";
+    }
+    if (evaluatedExpr instanceof MultiMethod) {
+      return "MultiMethod";
     }
     return typeof evaluatedExpr;
   })

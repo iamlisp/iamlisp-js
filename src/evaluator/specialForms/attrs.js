@@ -29,9 +29,9 @@ const attrForms = {
   }),
   set: new SpecialForm((env, [name, value, obj]) => {
     const key = evaluateExpression(name, env);
-    const evalObject = evaluateExpression(obj, env);
     const evalValue = evaluateExpression(value, env);
-    if (evalValue instanceof Map) {
+    const evalObject = evaluateExpression(obj, env);
+    if (evalObject instanceof Map) {
       return evalObject.set(key, evalValue);
     }
     evalObject[key] = evalValue;

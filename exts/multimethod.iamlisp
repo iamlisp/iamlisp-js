@@ -1,0 +1,9 @@
+(defmacro defmulti (name dispatch-fn) (def name (multi dispatch-fn)))
+
+(defmacro defmethod (multifn dispatch-val args . body)
+  (where (methods-map (get "methods" multifn)
+          fun (lambda args . body))
+    ;; (if (lambda? (get dispatch-val methods-map))
+    ;;     (.push (get "overloads"
+    ;;                 (get dispatch-val methods-map)) fun)
+        (set dispatch-val fun methods-map)))

@@ -11,6 +11,7 @@ import evaluateArgs from "../spread/evaluateArgs";
 import evaluatorContext from "../evaluatorContext";
 import { Node, Nil } from "../../List";
 import print from "../../printer/print";
+import MultiMethod from "../../types/MultiMethod";
 
 const langForms = {
   "js/ListNode": Node,
@@ -90,6 +91,10 @@ const langForms = {
   }),
   throw: new SpecialForm((env, [throwable]) => {
     throw evaluateExpression(throwable, env);
+  }),
+  multi: new SpecialForm((env, [dispatchFn]) => {
+    const evaledDispatchFn = evaluateExpression(dispatchFn, env);
+    return new MultiMethod(evaledDispatchFn);
   })
 };
 

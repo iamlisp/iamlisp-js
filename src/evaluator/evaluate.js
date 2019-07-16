@@ -15,7 +15,8 @@ import Macro from "../types/Macro";
 import SpecialForm from "../types/SpecialForm";
 import DotPunctuator from "../types/DotPunctuator";
 import print from "../printer/print";
-import Keyword from "../types/Keyword";
+import MultiMethod from "../types/MultiMethod";
+import invokeMultiMethod from "./invokeMultiMethod";
 
 function evaluateList(exprs, env, strict) {
   const stackDepth = (evaluatorContext.get("stackDepth") || 0) + 1;
@@ -43,6 +44,8 @@ function evaluateList(exprs, env, strict) {
 
     if (headForm instanceof SpecialForm) {
       result = headForm.perform(env, tail, strict);
+    } else if (headForm instanceof MultiMethod) {
+      result = invokeMultiMethod(headForm, evaluateArgs(tail, env), strict);
     } else if (headForm instanceof Lambda) {
       result = invokeLambda(headForm, evaluateArgs(tail, env), strict);
     } else if (headForm instanceof Macro) {

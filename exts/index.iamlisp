@@ -1,2 +1,3 @@
 (import "core")
 (import "math")
+(import "multimethod")

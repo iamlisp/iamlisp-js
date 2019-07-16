@@ -14,6 +14,7 @@
 (defmacro map?        (v) (eq? (typeof v) "Map"))
 (defmacro null?       (v) (eq? (typeof v) "Null"))
 (defmacro boolean?    (v) (eq? (typeof v) "Boolean"))
+(defmacro lambda?     (v) (eq? (typeof v) "Lambda"))
 
 (defmacro if (cnd wt wf) (cond (cnd wt) 
                                (else wf)))
