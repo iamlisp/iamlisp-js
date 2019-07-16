@@ -51,24 +51,6 @@ export default function parse(expr) {
     return new Symbl(sym);
   };
 
-  const parseKeyword = () => {
-    let value = "";
-
-    while (!isEof()) {
-      if (reserved.has(currentChar())) {
-        break;
-      }
-
-      value += currentChar();
-      nextChar();
-    }
-
-    if (isEmpty(value)) {
-      throw new TypeError("Unexpected end of file while parsing Keyword");
-    }
-    return Keyword.for(value);
-  };
-
   const parseString = () => {
     let body = "";
     let escape = false;
@@ -112,9 +94,6 @@ export default function parse(expr) {
       nextChar();
       // skipDelimiters();
       expr = [new Symbl("quote"), parseExpression()];
-    } else if (currentChar() === chars.COLON) {
-      nextChar();
-      expr = parseKeyword();
     } else if (currentChar() === chars.CARET) {
       nextChar();
       // skipDelimiters();

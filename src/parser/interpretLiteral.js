@@ -1,3 +1,5 @@
+import Keyword from "../types/Keyword";
+
 const looksLikeBoolean = exp => ["true", "false"].includes(exp);
 
 const looksLikeNumber = exp => {
@@ -11,11 +13,16 @@ const looksLikeNull = exp => exp === "null";
 
 const looksLikeUndefined = exp => exp === "undefined";
 
+const looksLikeKeyword = exp => /^::[^:]+/.test(exp);
+
 export default function interpretLiteral(value) {
   let literal;
   let interpreted = false;
 
-  if (looksLikeBoolean(value)) {
+  if (looksLikeKeyword(value)) {
+    interpreted = true;
+    literal = Keyword.for(value.slice(1));
+  } else if (looksLikeBoolean(value)) {
     interpreted = true;
     literal = value === "true";
   } else if (looksLikeNumber(value)) {
