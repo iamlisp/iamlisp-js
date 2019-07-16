@@ -1,0 +1,5 @@
+(import "stream")
+
+(def fibsexp (cons 0 (cons 1 (zipwith + (cdr fibsexp) fibsexp))))
+
+(to-list (take 20 fibsexp))
