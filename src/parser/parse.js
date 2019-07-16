@@ -1,11 +1,10 @@
-import { chunk, isEmpty } from "lodash";
+import { chunk } from "lodash";
 import createReader from "./reader";
 import { delimiters, reserved, chars, punctuators } from "./chars";
 import interpretLiteral from "./interpretLiteral";
 import withPlugins from "./plugins";
 import Symbl from "../types/Symbl";
 import DotPunctuator from "../types/DotPunctuator";
-import Keyword from "../types/Keyword";
 
 export default function parse(expr) {
   const { currentChar, isEof, nextChar } = createReader(expr);
