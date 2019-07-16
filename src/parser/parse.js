@@ -29,7 +29,7 @@ export default function parse(expr) {
     let sym = "";
 
     while (!isEof()) {
-      if (reserved.has(currentChar())) {
+      if (reserved.has(currentChar()) && currentChar() !== chars.COLON) {
         break;
       }
 
