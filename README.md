@@ -1,6 +1,7 @@
 # iamlisp
 
 [![Build Status](https://travis-ci.org/pldin601/iamlisp.svg?branch=master)](https://travis-ci.org/pldin601/iamlisp)
+[![Coverage Status](https://coveralls.io/repos/github/pldin601/iamlisp/badge.svg?branch=master)](https://coveralls.io/github/pldin601/iamlisp?branch=master)
 
 Another one my LISP-like language interpreter hosted on JS.
 
