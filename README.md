@@ -1,5 +1,7 @@
 # iamlisp
 
+[![Build Status](https://travis-ci.org/pldin601/iamlisp.svg?branch=master)](https://travis-ci.org/pldin601/iamlisp)
+
 Another one my LISP-like language interpreter hosted on JS.
 
 ## Syntax examples
@@ -47,6 +49,7 @@ Another one my LISP-like language interpreter hosted on JS.
 ```
 
 ### Define variable using list destructuring
+
 ```
 ; Nested destructuring
 (def (a (b c)) '(2 '(4 6)))
