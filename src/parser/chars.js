@@ -3,6 +3,8 @@ export const chars = {
   RIGHT_PAREN: ")",
   LEFT_BRACKET: "{",
   RIGHT_BRACKET: "}",
+  LEFT_SQUARE_BRACKET: "[",
+  RIGHT_SQUARE_BRACKET: "]",
   DOUBLE_QUOTE: '"',
   SINGLE_QUOTE: "'",
   BACKSLASH: "\\",

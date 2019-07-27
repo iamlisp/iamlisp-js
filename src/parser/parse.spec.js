@@ -20,6 +20,7 @@ test.each`
   ${"string"}                  | ${'"eeny meeny miny moe"'} | ${"eeny meeny miny moe"}
   ${"empty list"}              | ${"()"}                    | ${[]}
   ${"list with content"}       | ${"(1 2 (3 4 5))"}         | ${[1, 2, [3, 4, 5]]}
+  ${"empty array"}             | ${"[]"}                    | ${[]}
   ${"empty map"}               | ${"{}"}                    | ${new Map()}
   ${"map with keyword as key"} | ${'{:foo "bar"}'}          | ${new Map([[Keyword.for("foo"), "bar"]])}
   ${"map with string as key"}  | ${'{"foo" "bar"}'}         | ${new Map([["foo", "bar"]])}

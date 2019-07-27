@@ -9,6 +9,7 @@ import readSharp from "./readSharp";
 import { chars, reserved } from "../chars";
 import withPlugins from "../plugins";
 import skipDelimiters from "../helpers/skipDelimiters";
+import readArray from "./readArray";
 
 export default function readExpression(reader) {
   const { currentChar, isEof, nextChar } = reader;
@@ -35,6 +36,9 @@ export default function readExpression(reader) {
   } else if (currentChar() === chars.LEFT_BRACKET) {
     nextChar();
     expr = readMap(reader);
+  } else if (currentChar() === chars.LEFT_SQUARE_BRACKET) {
+    nextChar();
+    expr = readArray(reader);
   } else if (currentChar() === chars.SEMICOLON) {
     nextChar();
     readComment(reader);
