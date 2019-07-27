@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+  - "10"
+os:
+  - "linux"
+  - "osx"
+  - "windows"
+script:
+  - npm test -- --coverage
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat ./coverage/lcov.info | npx coveralls; fi
+sudo: false
