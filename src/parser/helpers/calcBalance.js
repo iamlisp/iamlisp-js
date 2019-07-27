@@ -1,4 +1,4 @@
-import { chars } from "./chars";
+import { chars } from "../chars";
 
 export default function calcBalance(exprStr) {
   let balance = 0;

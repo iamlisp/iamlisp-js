@@ -1,4 +1,4 @@
-import Keyword from "../types/Keyword";
+import Keyword from "../../types/Keyword";
 
 const looksLikeBoolean = exp => ["true", "false"].includes(exp);
 

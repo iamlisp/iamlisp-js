@@ -1,7 +1,7 @@
 import { createInterface } from "readline";
 import styles from "ansi-styles";
 import createEvaluator from "../createEvaluator";
-import calcBalance from "../parser/calcBalance";
+import calcBalance from "../parser/helpers/calcBalance";
 
 const printResult = result => {
   // eslint-disable-next-line no-console
