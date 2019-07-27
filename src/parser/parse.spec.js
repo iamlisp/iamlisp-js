@@ -28,6 +28,7 @@ test.each`
   ${"expression with meta"}    | ${'^{:foo "bar"}(1 2 3)'}  | ${[new Symbl("with-meta"), new Map([[Keyword.for("foo"), "bar"]]), [1, 2, 3]]}
   ${"empty inline lambda"}     | ${"#()"}                   | ${[new Symbl("lambda"), [DotPunctuator.INSTANCE, new Symbl("%&")], []]}
   ${"inline lambda"}           | ${"#(/ (+ %1 %2) 2)"}      | ${[new Symbl("lambda"), [new Symbl("%1"), new Symbl("%2"), DotPunctuator.INSTANCE, new Symbl("%&")], [new Symbl("/"), [new Symbl("+"), new Symbl("%1"), new Symbl("%2")], 2]]}
+  ${"comment"}                 | ${";comment anything"}     | ${undefined}
 `("Should currectly parse $input as $type", ({ input, output }) => {
   expect(first(parse(input))).toEqual(output);
 });
