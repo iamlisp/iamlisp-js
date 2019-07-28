@@ -1,19 +1,30 @@
+import printKeyword from "./printKeyword";
+import printMultiMethod from "./printMultiMethod";
+import printString from "./printString";
+import printMap from "./printMap";
+import printSymbol from "./printSymbol";
+import printNull from "./printNull";
+import printQuote from "./printQuote";
+import printMeta from "./printMeta";
+import printArray from "./printArray";
+import printMacro from "./printMacro";
+import printLambda from "./printLambda";
+import printMethodCall from "./printMethodCall";
+import printList from "./printList";
 import Symbl from "../types/Symbl";
 import Macro from "../types/Macro";
 import Lambda from "../types/Lambda";
 import DotPunctuator from "../types/DotPunctuator";
-import MethodCall from "../types/MethodCall";
 import { punctuators } from "../parser/chars";
+import MultiMethod from "../types/MultiMethod";
+import Keyword from "../types/Keyword";
+import MethodCall from "../types/MethodCall";
 import LambdaCall from "../types/LambdaCall";
 import { List } from "../List";
-import Keyword from "../types/Keyword";
-import printKeyword from "./printKeyword";
-import MultiMethod from "../types/MultiMethod";
-import printMultiMethod from "./printMultiMethod";
 
 export default function print(exp) {
   if (typeof exp === "string") {
-    return `"${exp.replace('"', '\\"')}"`;
+    return printString(exp);
   }
   if (exp instanceof Keyword) {
     return printKeyword(exp);
@@ -22,61 +33,48 @@ export default function print(exp) {
     return printMultiMethod(exp);
   }
   if (exp instanceof Map) {
-    return `{${[...exp.entries()]
-      .map(([key, value]) => `${print(key)} ${print(value)}`)
-      .join(" ")}}`;
+    return printMap(exp);
   }
   if (exp instanceof Symbl) {
-    return exp.name;
+    return printSymbol(exp);
   }
   if (exp === null) {
-    return "null";
+    return printNull();
   }
   if (
     Array.isArray(exp) &&
     exp[0] instanceof Symbl &&
     exp[0].name === "quote"
   ) {
-    return `'${print(exp[1])}`;
+    return printQuote(exp);
   }
   if (
     Array.isArray(exp) &&
     exp[0] instanceof Symbl &&
     exp[0].name === "with-meta"
   ) {
-    return `^${print(exp[1])} ${print(exp[2])}`;
+    return printMeta(exp);
   }
   if (Array.isArray(exp)) {
-    return `(${exp.map(print).join(" ")})`;
+    return printArray(exp);
   }
   if (exp instanceof Macro) {
-    return `(macro ${print(exp.args)} ${exp.body.map(print).join(" ")})`;
+    return printMacro(exp);
   }
   if (exp instanceof Lambda) {
-    return `(lambda ${print(exp.args)} ${exp.body.map(print).join(" ")})`;
+    return printLambda(exp);
   }
   if (exp instanceof DotPunctuator) {
     return punctuators.DOT;
   }
   if (exp instanceof MethodCall) {
-    return `${punctuators.DOT}${exp.name}`;
+    return printMethodCall(exp);
   }
   if (exp instanceof LambdaCall) {
     return `#LambdaCall`;
   }
   if (exp instanceof List) {
-    if (exp.empty) {
-      return "Nil";
-    }
-
-    const items = [];
-    let list = exp;
-    while (!list.empty) {
-      items.push(list.head);
-      list = list.tail;
-    }
-
-    return `(${items.map(print).join(" ")})`;
+    return printList(exp);
   }
 
   return exp;
