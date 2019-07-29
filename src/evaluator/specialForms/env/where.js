@@ -1,6 +1,6 @@
 import SpecialForm from "../../../types/SpecialForm";
 import evaluateDefinitions from "../../helpers/evaluateDefinitions";
-import Env from "../../../Env";
+import Env from "../../env/Env";
 import evaluate from "../../evaluate";
 
 const where = new SpecialForm((env, [defs, ...exprs], strict) => {

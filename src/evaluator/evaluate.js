@@ -17,6 +17,8 @@ import DotPunctuator from "../types/DotPunctuator";
 import print from "../printer/print";
 import MultiMethod from "../types/MultiMethod";
 import invokeMultiMethod from "./invokeMultiMethod";
+import OverloadedLambda from "../types/OverloadedLambda";
+import invokeOverloadedLambda from "./invokeOverloadedLambda";
 
 function evaluateList(exprs, env, strict) {
   const stackDepth = (evaluatorContext.get("stackDepth") || 0) + 1;
@@ -48,6 +50,12 @@ function evaluateList(exprs, env, strict) {
       result = invokeMultiMethod(headForm, evaluateArgs(tail, env), strict);
     } else if (headForm instanceof Lambda) {
       result = invokeLambda(headForm, evaluateArgs(tail, env), strict);
+    } else if (headForm instanceof OverloadedLambda) {
+      result = invokeOverloadedLambda(
+        headForm,
+        evaluateArgs(tail, env),
+        strict
+      );
     } else if (headForm instanceof Macro) {
       result = invokeMacro(headForm, tail, env, strict);
     } else if (headForm instanceof MethodCall) {

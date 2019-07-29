@@ -1,6 +1,7 @@
 import { entries, uniq } from "lodash";
-import Lambda from "./types/Lambda";
-import { fromArray } from "./types/List";
+import Lambda from "../../types/Lambda";
+import { fromArray } from "../../types/List";
+import OverloadedLambda from "../../types/OverloadedLambda";
 
 const ENV_KEYS_MAGIC_KEY = "envkeys";
 
@@ -12,11 +13,18 @@ export default class Env {
 
   set(key, value) {
     if (value instanceof Lambda && this.map[key] instanceof Lambda) {
-      this.map[key].overloads.push(value);
-      return;
+      const overloadedLambda = new OverloadedLambda();
+      overloadedLambda.addVariant(this.map[key]);
+      overloadedLambda.addVariant(value);
+      this.map[key] = overloadedLambda;
+    } else if (
+      value instanceof Lambda &&
+      this.map[key] instanceof OverloadedLambda
+    ) {
+      this.map[key].addVariant(value);
+    } else {
+      this.map[key] = value;
     }
-
-    this.map[key] = value;
   }
 
   get(key) {

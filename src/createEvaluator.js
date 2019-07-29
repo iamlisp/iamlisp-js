@@ -1,11 +1,11 @@
 import { resolve } from "path";
-import Env from "./Env";
 import print from "./printer/print";
 import evaluate from "./evaluator/evaluate";
 import parse from "./parser/parse";
 import importModule from "./evaluator/importModule";
 import getAppDir from "./helpers/getAppDir";
 import evaluatorContext from "./evaluator/evaluatorContext";
+import Env from "./evaluator/env/Env";
 
 function withOptions(options, fn) {
   return evaluatorContext.runAndReturn(() => {

@@ -1,6 +1,6 @@
 import { isEmpty } from "lodash";
 import SpecialForm from "../../../types/SpecialForm";
-import Env from "../../../Env";
+import Env from "../../env/Env";
 import evaluate from "../../evaluate";
 import mergeArgs from "../../mergeArgs";
 import splitDefinition from "../../helpers/splitDefinitions";
