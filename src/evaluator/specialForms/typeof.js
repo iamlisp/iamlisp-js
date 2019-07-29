@@ -3,7 +3,7 @@ import SpecialForm from "../../types/SpecialForm";
 import Lambda from "../../types/Lambda";
 import Macro from "../../types/Macro";
 import Symbl from "../../types/Symbl";
-import { List } from "../../List";
+import { List } from "../../types/List";
 import MultiMethod from "../../types/MultiMethod";
 
 const typeofForms = {

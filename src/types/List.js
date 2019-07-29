@@ -8,6 +8,14 @@ export class List {
   prepend(value) {
     return new Node(value, this);
   }
+
+  *[Symbol.iterator]() {
+    let curr = this;
+    while (!curr.empty) {
+      yield curr.head;
+      curr = curr.tail;
+    }
+  }
 }
 
 export class Node extends List {

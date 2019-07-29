@@ -1,6 +1,6 @@
 import { entries, uniq } from "lodash";
-import { fromArray } from "./List";
 import Lambda from "./types/Lambda";
+import { fromArray } from "./types/List";
 
 const ENV_KEYS_MAGIC_KEY = "envkeys";
 

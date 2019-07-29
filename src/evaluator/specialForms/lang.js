@@ -9,7 +9,7 @@ import createObject from "../createObject";
 import DotPunctuator from "../../types/DotPunctuator";
 import evaluateArgs from "../spread/evaluateArgs";
 import evaluatorContext from "../evaluatorContext";
-import { Node, Nil } from "../../List";
+import { Node, Nil } from "../../types/List";
 import print from "../../printer/print";
 import MultiMethod from "../../types/MultiMethod";
 

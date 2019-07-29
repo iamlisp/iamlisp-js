@@ -20,7 +20,7 @@ import MultiMethod from "../types/MultiMethod";
 import Keyword from "../types/Keyword";
 import MethodCall from "../types/MethodCall";
 import LambdaCall from "../types/LambdaCall";
-import { List } from "../List";
+import { List } from "../types/List";
 
 export default function print(exp) {
   if (typeof exp === "string") {
