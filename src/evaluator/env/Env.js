@@ -12,13 +12,18 @@ export default class Env {
   }
 
   set(key, value) {
-    if (value instanceof Lambda && this.map[key] instanceof Lambda) {
+    if (
+      value instanceof Lambda &&
+      !value.isMultiarg &&
+      this.map[key] instanceof Lambda
+    ) {
       const overloadedLambda = new OverloadedLambda();
       overloadedLambda.addVariant(this.map[key]);
       overloadedLambda.addVariant(value);
       this.map[key] = overloadedLambda;
     } else if (
       value instanceof Lambda &&
+      !value.isMultiarg &&
       this.map[key] instanceof OverloadedLambda
     ) {
       this.map[key].addVariant(value);
