@@ -19,7 +19,6 @@ import DotPunctuator from "../types/DotPunctuator";
 import print from "../printer/print";
 import MultiMethod from "../types/MultiMethod";
 import OverloadedLambda from "../types/OverloadedLambda";
-import getExpressionId from "../persistence/getExpressionId";
 
 function evaluateList(exprs, env, strict) {
   const stackDepth = (evaluatorContext.get("stackDepth") || 0) + 1;
@@ -28,14 +27,10 @@ function evaluateList(exprs, env, strict) {
 
   const { debug } = evaluatorContext.get("options");
 
-  const expressionId = getExpressionId(exprs);
-
   if (debug) {
     // eslint-disable-next-line no-console
     console.log(
-      `${styles.gray.open}${expressionId}>${stackPadding}${print(exprs)}${
-        styles.gray.close
-      }`
+      `${styles.gray.open}>${stackPadding}${print(exprs)}${styles.gray.close}`
     );
   }
 
