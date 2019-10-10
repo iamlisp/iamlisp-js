@@ -160,3 +160,9 @@
          (cond ((zero? pivot) xs)
                ((merge (mergesort (take xs pivot))
                        (mergesort (drop xs pivot)))))))
+
+(defun chunk (xs n)
+    (defun iter (xs res)
+      (cond ((empty? xs) res)
+            ((iter (drop n xs) (+: (take n xs) res)))))
+    (reverse (iter xs Nil)))
