@@ -6,8 +6,6 @@ test("Treasure Hunter", () => {
   const code = `
     (import "list" as "l")
 
-    (def initial-coords (l/list 1 1))
-    (def map-width 5)
     (def input-map-data
       (l/list
         55 14 25 52 21
@@ -15,6 +13,10 @@ test("Treasure Hunter", () => {
         24 13 45 12 34
         42 22 43 32 41
         51 23 33 54 15))
+
+    (def map-width 5)
+
+    (def initial-coords (l/list 1 1))
 
     (defun find-treasure (map-data) 
       (def treasure-map (-> map-data (l/chunk map-width)))
