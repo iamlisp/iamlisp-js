@@ -161,7 +161,7 @@
                ((merge (mergesort (take xs pivot))
                        (mergesort (drop xs pivot)))))))
 
-(defun chunk (xs n)
+(defun chunk (n xs)
     (defun iter (xs res)
       (cond ((empty? xs) res)
             ((iter (drop n xs) (+: (take n xs) res)))))
