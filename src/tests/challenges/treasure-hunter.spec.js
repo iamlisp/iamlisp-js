@@ -1,12 +1,8 @@
 import createEvaluator from "../../createEvaluator";
 
-let evaluate;
-
-beforeEach(() => {
-  evaluate = createEvaluator({});
-});
-
 test("Treasure Hunter", () => {
+  const evaluate = createEvaluator({});
+
   const code = `
     (import "list" as "l")
 
