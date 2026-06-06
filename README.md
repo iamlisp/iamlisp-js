@@ -22,6 +22,12 @@ and operators with explicit frames. Less common special forms use the recursive
 evaluator as a compatibility fallback. Use `{ mode: "recursive" }` to opt into
 the original evaluator.
 
+## Layout syntax
+
+Programs can opt into tab-indented layout syntax with
+`#!iamlisp layout-v1`. Tabs replace outer parentheses while inline parentheses
+remain available. See [the layout-v1 specification](docs/layout-v1.md).
+
 ## Syntax examples
 
 ### Define variable
