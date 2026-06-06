@@ -1,0 +1,28 @@
+; Small end-to-end program for checking parser, evaluator, stdlib, and JS interop.
+
+(import "list")
+
+(defun classify (n)
+  (cond ((zero? (% n 15)) "fizzbuzz")
+        ((zero? (% n 3)) "fizz")
+        ((zero? (% n 5)) "buzz")
+        (else n)))
+
+(defun fib (n)
+  (loop (a 0 b 1 i n)
+    (cond ((zero? i) a)
+          ((recur b (+ a b) (dec i))))))
+
+(def values (until 1 16))
+(def labels (map classify values))
+(def squares (map #(* % %) (take 5 values)))
+
+(assert (eq? (nth 2 labels) "fizz"))
+(assert (eq? (nth 4 labels) "buzz"))
+(assert (eq? (nth 14 labels) "fizzbuzz"))
+(assert (eq? (nth 0 squares) 1))
+(assert (eq? (nth 4 squares) 25))
+(assert (eq? (fib 10) 55))
+(assert (eq? (.max js/Math 7 42 11) 42))
+
+(list labels squares (fib 10))

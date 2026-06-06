@@ -1,4 +1,4 @@
-import WebSocket from "ws";
+import { WebSocketServer } from "ws";
 import createEvaluator from "../createEvaluator";
 
 let requestId = 0;
@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 8080;
 const EVAL_TIMEOUT = process.env.EVAL_TIMEOUT || 30000;
 
 function startServer() {
-  const wss = new WebSocket.Server({ port: PORT });
+  const wss = new WebSocketServer({ port: PORT });
   const interval = setInterval(
     () =>
       wss.clients.forEach(ws => {
@@ -31,7 +31,7 @@ function startServer() {
     ws.on("message", message => {
       const id = getNextRequestId();
       try {
-        const result = evaluate(message);
+        const result = evaluate(message.toString());
         ws.send(JSON.stringify({ id, result }));
       } catch (e) {
         ws.send(JSON.stringify({ id, error: e.stack }));

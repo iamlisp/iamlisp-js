@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import styles from "ansi-styles";
+import styles from "../terminalStyles";
 import invokeLambda from "./invokeLambda";
 import invokeMethod from "./invokeMethod";
 import invokeFunction from "./invokeFunction";
@@ -28,7 +28,6 @@ function evaluateList(exprs, env, strict) {
   const { debug } = evaluatorContext.get("options");
 
   if (debug) {
-    // eslint-disable-next-line no-console
     console.log(
       `${styles.gray.open}>${stackPadding}${print(exprs)}${styles.gray.close}`
     );
@@ -69,7 +68,6 @@ function evaluateList(exprs, env, strict) {
   }
 
   if (debug) {
-    // eslint-disable-next-line no-console
     console.log(
       `${styles.gray.open}<${stackPadding}${print(result)}${styles.gray.close}`
     );

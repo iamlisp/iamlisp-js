@@ -1,20 +1,17 @@
 import { createInterface } from "readline";
-import styles from "ansi-styles";
+import styles from "../terminalStyles";
 import createEvaluator from "../createEvaluator";
 import calcBalance from "../parser/helpers/calcBalance";
 
 const printResult = result => {
-  // eslint-disable-next-line no-console
   console.log(`${styles.green.open}${result}${styles.green.close}`);
 };
 
 const printError = err => {
-  // eslint-disable-next-line no-console
   console.log(`${styles.red.open}${err.stack}${styles.red.close}`);
 };
 
 const startRepl = async () => {
-  // eslint-disable-next-line no-console
   const evaluate = createEvaluator({ printFn: console.log, debug: false });
 
   const rl = createInterface({
@@ -42,7 +39,6 @@ const startRepl = async () => {
       read();
     });
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     await Promise.resolve()
       .then(readRawExpr)

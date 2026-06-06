@@ -82,7 +82,6 @@ const langForms = {
   }),
   print: new SpecialForm((env, args) => {
     const { printFn } = evaluatorContext.get("options");
-    // eslint-disable-next-line no-console
     printFn(args.map(arg => evaluateExpression(arg, env)).join(" "));
   }),
   symbol: new SpecialForm((env, [name]) => {
