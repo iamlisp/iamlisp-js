@@ -47,9 +47,35 @@ def x 20 ; inline comment
     expect(result).toEqual(42);
   });
 
+  test("uses relative indentation instead of fixed widths", () => {
+    const layout = `#!iamlisp layout-v1
+defun fib (n)
+  cond
+       (<= n 1) n
+       else
+          + (fib (- n 1)) (fib (- n 2))
+fib 10`;
+
+    expect(createEvaluator()(layout)).toEqual(55);
+  });
+
+  test("allows tabs and spaces in the same program", () => {
+    const layout = `#!iamlisp layout-v1
+defun answer ()
+\tbegin
+\t  => 42
+answer`;
+
+    expect(createEvaluator()(layout)).toEqual(42);
+  });
+
   test.each([
-    ["space indentation", "#!iamlisp layout-v1\ndef x 1\n  + x 1", 3],
-    ["skipped level", "#!iamlisp layout-v1\ndef x 1\n\t\t+ x 1", 3],
+    ["indented first expression", "#!iamlisp layout-v1\n  def x 1", 2],
+    [
+      "unknown dedent width",
+      "#!iamlisp layout-v1\ndef x\n    + 1 2\n  + 3 4",
+      4
+    ],
     ["nested raw expression", "#!iamlisp layout-v1\ndef x\n\t=> 1\n\t\t+ 1 2", 3]
   ])("rejects %s", (name, program, lineNumber) => {
     expect(() => parse(program)).toThrow(

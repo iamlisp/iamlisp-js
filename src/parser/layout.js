@@ -59,6 +59,8 @@ export default function parseLayout(program, parseBracketSyntax) {
   const lines = program.replace(/^\uFEFF/, "").split(/\r?\n/);
   const roots = [];
   const parents = [];
+  const indentationWidths = [0];
+  let previousWidth = 0;
   let previousDepth = 0;
   let hasExpression = false;
 
@@ -70,18 +72,26 @@ export default function parseLayout(program, parseBracketSyntax) {
     }
 
     const indentation = line.match(/^[\t ]*/)[0];
-    if (indentation.includes(" ")) {
-      syntaxError(lineNumber, "indentation must use tabs only");
-    }
+    const width = indentation.length;
+    const content = line.slice(width);
 
-    const depth = indentation.length;
-    const content = line.slice(depth);
-
-    if (hasExpression && depth > previousDepth + 1) {
-      syntaxError(lineNumber, "cannot skip indentation levels");
-    }
-    if (!hasExpression && depth !== 0) {
+    if (!hasExpression && width !== 0) {
       syntaxError(lineNumber, "first expression must not be indented");
+    }
+
+    let depth;
+    if (width > previousWidth) {
+      depth = previousDepth + 1;
+      indentationWidths[depth] = width;
+      indentationWidths.length = depth + 1;
+    } else if (width === previousWidth) {
+      depth = previousDepth;
+    } else {
+      depth = indentationWidths.lastIndexOf(width);
+      if (depth === -1) {
+        syntaxError(lineNumber, "dedent must match a previous indentation width");
+      }
+      indentationWidths.length = depth + 1;
     }
 
     const node = createNode(parseBracketSyntax, content, depth, lineNumber);
@@ -98,6 +108,7 @@ export default function parseLayout(program, parseBracketSyntax) {
 
     parents[depth] = node;
     parents.length = depth + 1;
+    previousWidth = width;
     previousDepth = depth;
     hasExpression = true;
   });

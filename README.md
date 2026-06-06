@@ -24,9 +24,10 @@ the original evaluator.
 
 ## Layout syntax
 
-Programs can opt into tab-indented layout syntax with
-`#!iamlisp layout-v1`. Tabs replace outer parentheses while inline parentheses
-remain available. See [the layout-v1 specification](docs/layout-v1.md).
+Programs can opt into whitespace-indented layout syntax with
+`#!iamlisp layout-v1`. Relative indentation replaces outer parentheses while
+inline parentheses remain available. See
+[the layout-v1 specification](docs/layout-v1.md).
 
 ## Syntax examples
 

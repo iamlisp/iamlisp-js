@@ -10,10 +10,13 @@ exact header on the first line:
 ## Rules
 
 - Every non-empty code line is an implicit list.
-- Leading tabs define nesting. One tab is one level.
+- Leading tabs or spaces define nesting by relative indentation.
+- More leading whitespace than the previous code line opens exactly one level.
+- The same leading-whitespace width stays at the same level.
+- Less leading whitespace dedents and must match a previously used width.
 - Nested lines become trailing arguments of their parent line.
-- Spaces are token separators and cannot be used for indentation.
-- Indentation levels cannot be skipped.
+- Indentation has no required width. One, two, four, or any other increase all
+  open one level.
 - Blank lines and comment-only lines do not affect nesting.
 - Inline parentheses, arrays, maps, quotes, metadata, and sharp lambdas retain
   their existing syntax.
@@ -26,10 +29,10 @@ exact header on the first line:
 ```lisp
 #!iamlisp layout-v1
 defun fib (n)
-	cond
-		(<= n 1) n
-		else
-			+ (fib (- n 1)) (fib (- n 2))
+  cond
+       (<= n 1) n
+       else
+          + (fib (- n 1)) (fib (- n 2))
 
 fib 10
 ```
