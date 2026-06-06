@@ -2,6 +2,8 @@
 
 ; Determine whether the string contains pairs of opening/closing
 ; brackets (in that order), none of which mis-nest.
+(import "list")
+
 (defun brackets-balanced? (str)
   (where (left-brackets  { "{" 0 "(" 1 "[" 2 } 
           right-brackets { "}" 0 ")" 1 "]" 2 })

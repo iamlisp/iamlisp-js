@@ -1,6 +1,7 @@
 import { resolve } from "path";
 import print from "./printer/print";
 import evaluate from "./evaluator/evaluate";
+import evaluateIterative from "./evaluator/evaluateIterative";
 import parse from "./parser/parse";
 import importModule from "./evaluator/importModule";
 import getAppDir from "./helpers/getAppDir";
@@ -15,6 +16,7 @@ function withOptions(options, fn) {
 }
 
 export default function createEvaluator(options) {
+  options = options || {};
   const env = new Env();
 
   env.set("__modulePath", process.cwd());
@@ -27,7 +29,8 @@ export default function createEvaluator(options) {
     const optionsWithStartTime = { ...options, startTime: Date.now() };
     return withOptions(optionsWithStartTime, () => {
       const parsedTree = parse(code);
-      const result = evaluate(parsedTree, env, true);
+      const evaluator = options.mode === "recursive" ? evaluate : evaluateIterative;
+      const result = evaluator(parsedTree, env, true);
       return print(result);
     });
   };

@@ -5,6 +5,23 @@
 
 Another one my LISP-like language interpreter hosted on JS.
 
+## Evaluation modes
+
+The explicit-frame iterative evaluator is the default, allowing deeply
+recursive programs to run without growing the JavaScript call stack:
+
+```js
+const { createEvaluator } = require("iamlisp");
+
+const evaluate = createEvaluator();
+evaluate("(+ 20 22)"); // 42
+```
+
+The iterative evaluator handles core calls, lambdas, sequences, conditionals,
+and operators with explicit frames. Less common special forms use the recursive
+evaluator as a compatibility fallback. Use `{ mode: "recursive" }` to opt into
+the original evaluator.
+
 ## Syntax examples
 
 ### Define variable
