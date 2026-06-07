@@ -6,12 +6,14 @@
     "node": ">=22.13"
   },
   "bin": {
-    "iamlisp": "./bin/iamlisp.js"
+    "iamlisp": "./bin/iamlisp.js",
+    "iamlisp-lsp": "./bin/iamlisp-lsp.js"
   },
   "main": "dist/index.js",
   "scripts": {
     "start": "node ./dist/cli/index.js",
     "start-server": "node ./dist/server/index.js",
+    "start-lsp": "node ./dist/languageServer/index.js --stdio",
     "dev": "nodemon ./dev.js",
     "dev-server": "nodemon ./dev-server.js",
     "test": "jest",
@@ -25,6 +27,8 @@
   "license": "ISC",
   "dependencies": {
     "lodash": "^4.17.21",
+    "vscode-languageserver": "^10.0.0",
+    "vscode-languageserver-textdocument": "^1.0.12",
     "ws": "^8.18.3"
   },
   "devDependencies": {

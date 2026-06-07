@@ -79,6 +79,14 @@ Call JavaScript globals and methods:
 Other supported language ideas include macros, lexical scope, lambdas,
 destructuring, maps, arrays, multimethods, streams, and loop/recur.
 
+## Editor Support
+
+iamlisp includes a language server for diagnostics, completion, hover help, and
+document symbols, plus a TextMate grammar for syntax highlighting.
+
+See [editor setup instructions](docs/language-server.md), including WebStorm
+configuration.
+
 ## Layout Syntax
 
 Programs can opt into whitespace-indented layout syntax with an exact header:

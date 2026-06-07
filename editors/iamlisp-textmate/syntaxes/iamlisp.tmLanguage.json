@@ -1,0 +1,110 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "iamlisp",
+  "scopeName": "source.iamlisp",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#layout" },
+    { "include": "#definitions" },
+    { "include": "#keywords" },
+    { "include": "#operators" },
+    { "include": "#literals" },
+    { "include": "#interop" },
+    { "include": "#punctuation" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        { "name": "comment.line.semicolon.iamlisp", "match": ";.*$" }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.iamlisp",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            { "name": "constant.character.escape.iamlisp", "match": "\\\\." }
+          ]
+        }
+      ]
+    },
+    "layout": {
+      "patterns": [
+        {
+          "name": "meta.preprocessor.iamlisp",
+          "match": "^#!iamlisp\\s+layout-v1$"
+        },
+        {
+          "name": "keyword.operator.raw-expression.iamlisp",
+          "match": "^\\s*=>"
+        }
+      ]
+    },
+    "definitions": {
+      "patterns": [
+        {
+          "match": "(?:\\(|^)\\s*(defun|defmacro|defmulti|defmethod|def)\\s+([^\\s()\\[\\]{};]+)",
+          "captures": {
+            "1": { "name": "keyword.declaration.iamlisp" },
+            "2": { "name": "entity.name.function.iamlisp" }
+          }
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.iamlisp",
+          "match": "(?<![^\\s(])(?:cond|if|else|begin|where|loop|recur|lambda|macro|quote|eval|apply|import|throw)(?![^\\s)])"
+        },
+        {
+          "name": "storage.type.iamlisp",
+          "match": "(?<![^\\s(])(?:def|defun|defmacro|defmulti|defmethod|set!|def\\*|\\*set!)(?![^\\s)])"
+        },
+        {
+          "name": "support.function.iamlisp",
+          "match": "(?<![^\\s(])(?:print|typeof|array|list|map|filter|reduce|flatmap|foldl|foldr|head|tail|get|set|has|new|multi|macroexpand)(?![^\\s)])"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.iamlisp",
+          "match": "(?<![^\\s(])(?:\\+|-|\\*|/|//|%|>|<|>=|<=|=|!=|and|or|not)(?![^\\s)])"
+        }
+      ]
+    },
+    "literals": {
+      "patterns": [
+        {
+          "name": "constant.numeric.iamlisp",
+          "match": "(?<![^\\s(])-?\\d+(?:\\.\\d+)?(?:e[+-]?\\d+)?(?![^\\s)])"
+        },
+        {
+          "name": "constant.language.iamlisp",
+          "match": "(?<![^\\s(])(?:true|false|null|undefined)(?![^\\s)])"
+        },
+        {
+          "name": "constant.other.keyword.iamlisp",
+          "match": ":[^\\s()\\[\\]{};]+"
+        }
+      ]
+    },
+    "interop": {
+      "patterns": [
+        { "name": "support.class.iamlisp", "match": "js/[^\\s()\\[\\]{};]+" },
+        { "name": "support.function.iamlisp", "match": "\\.[^\\s()\\[\\]{};]+" }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        { "name": "punctuation.definition.quote.iamlisp", "match": "['^#]" },
+        { "name": "punctuation.section.iamlisp", "match": "[()\\[\\]{}]" }
+      ]
+    }
+  }
+}
