@@ -6,12 +6,11 @@ describe("evaluation hints", () => {
   test("evaluates primitives, variables, and functions", () => {
     expect(
       labels("(def x 5)\n(defun square (n) (* n n))\n(square x)")
-    ).toEqual([" => undefined", " => undefined", " => 25"]);
+    ).toEqual([" => 25"]);
   });
 
   test("evaluates side-effecting and JavaScript interop expressions", () => {
     expect(labels('(print "hello")\n(.toUpperCase "hello")')).toEqual([
-      " => undefined",
       ' => "HELLO"'
     ]);
   });
@@ -21,7 +20,7 @@ describe("evaluation hints", () => {
       labels(`(defun factorial (n)
         (if (= n 0) 1 (* n (factorial (- n 1)))))
       (factorial 10)`)
-    ).toEqual([" => undefined", " => 3628800"]);
+    ).toEqual([" => 3628800"]);
   });
 
   test("evaluates layout document prefixes", () => {
@@ -29,7 +28,32 @@ describe("evaluation hints", () => {
       labels(`#!iamlisp layout-v1
 def x 40
 + x 2`)
-    ).toEqual([" => undefined", " => 42"]);
+    ).toEqual([" => 42"]);
+  });
+
+  test("shows hints only after complete multiline layout expressions", () => {
+    expect(
+      evaluationHints(`#!iamlisp layout-v1
+import "stream"
+
+def fibsexp
+  cons 0
+    cons 1
+      zipwith +
+        cdr fibsexp
+        => fibsexp
+
+to-list
+  take 10 fibsexp`).map(hint => ({
+        line: hint.position.line,
+        label: hint.label
+      }))
+    ).toEqual([
+      {
+        line: 11,
+        label: " => (0 1 1 2 3 5 8 13 21 34)"
+      }
+    ]);
   });
 
   test("skips incomplete and invalid prefixes", () => {

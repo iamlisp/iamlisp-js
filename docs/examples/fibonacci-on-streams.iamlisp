@@ -1,3 +1,4 @@
+#!iamlisp layout-v1
 ; Infinite Fibonacci sequence built from lazy streams.
 ;
 ; A stream is a pair whose tail is deferred until cdr requests it. This lets
@@ -8,8 +9,14 @@
 ;
 ; zipwith adds both streams element by element, producing every value after
 ; the initial 0 and 1. Only values requested by take are evaluated.
-(import "stream")
+import "stream"
 
-(def fibsexp (cons 0 (cons 1 (zipwith + (cdr fibsexp) fibsexp))))
+def fibsexp
+  cons 0
+    cons 1
+      zipwith +
+        cdr fibsexp
+        => fibsexp
 
-(to-list (take 10 fibsexp))
+to-list
+  take 10 fibsexp

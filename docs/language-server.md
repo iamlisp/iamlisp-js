@@ -76,3 +76,6 @@ purity restrictions.
 
 This also means refreshing hints can repeat side effects, access the local
 machine, or hang forever. Only enable inlay hints for code you trust.
+
+Hints appear only at completed top-level expressions. Results equal to
+`undefined`, such as `def` and `import`, are hidden.
