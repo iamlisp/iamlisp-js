@@ -81,8 +81,9 @@ destructuring, maps, arrays, multimethods, streams, and loop/recur.
 
 ## Editor Support
 
-iamlisp includes a language server for diagnostics, completion, hover help, and
-document symbols, plus a TextMate grammar for syntax highlighting.
+iamlisp includes a language server for diagnostics, completion, hover help,
+document symbols, and safe expression-result hints, plus a TextMate grammar for
+syntax highlighting.
 
 See [editor setup instructions](docs/language-server.md), including WebStorm
 configuration.

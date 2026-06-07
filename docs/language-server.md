@@ -34,6 +34,8 @@ This makes the `iamlisp-lsp` executable available on your PATH.
 4. Use `iamlisp-lsp --stdio` as the command.
 5. Map the `*.iamlisp` file-name pattern to the server with language ID
    `iamlisp`.
+6. Enable LSP inlay hints under **Settings | Editor | Inlay Hints** if
+   expression results are hidden.
 
 ## Other Editors
 
@@ -52,4 +54,22 @@ Point TextMate-compatible editors at
 - Built-in form and operator completion
 - Hover descriptions for core forms
 - Document symbols for `def`, `defun`, `defmacro`, and `defmulti`
+- Safe expression-result inlay hints
 - TextMate syntax highlighting
+
+## Expression Results
+
+The language server shows inline results for one-line expressions whose
+dependencies can be evaluated without side effects:
+
+```lisp
+(def x 5)
+(defun square (n) (* n n))
+(square x) ; => 25
+```
+
+It supports document-local variables and functions composed from literals,
+pure variables, pure functions, arithmetic, comparisons, booleans, and `if`.
+Pure `begin` and `cond` expressions are also supported. It skips unknown calls,
+JavaScript interop, mutation, output, collections, quotes, and functions that
+depend on them. Evaluation has a step limit to stop unbounded recursion.

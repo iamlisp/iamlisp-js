@@ -12,6 +12,7 @@ import {
   validateDocument,
   wordAt
 } from "./analysis";
+import { safeEvaluationHints } from "./safeEvaluation";
 
 const connection = createConnection(ProposedFeatures.all);
 const documents = new TextDocuments(TextDocument);
@@ -21,7 +22,8 @@ connection.onInitialize(() => ({
     textDocumentSync: TextDocumentSyncKind.Incremental,
     completionProvider: { triggerCharacters: ["(", " "] },
     documentSymbolProvider: true,
-    hoverProvider: true
+    hoverProvider: true,
+    inlayHintProvider: true
   },
   serverInfo: {
     name: "iamlisp-lsp"
@@ -51,6 +53,10 @@ connection.onHover(params => {
   return document
     ? hoverForWord(wordAt(document.getText(), params.position))
     : null;
+});
+connection.languages.inlayHint.on(params => {
+  const document = documents.get(params.textDocument.uri);
+  return document ? safeEvaluationHints(document.getText(), params.range) : [];
 });
 
 documents.listen(connection);
