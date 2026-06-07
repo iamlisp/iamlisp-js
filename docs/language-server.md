@@ -54,13 +54,15 @@ Point TextMate-compatible editors at
 - Built-in form and operator completion
 - Hover descriptions for core forms
 - Document symbols for `def`, `defun`, `defmacro`, and `defmulti`
-- Safe expression-result inlay hints
+- Live expression-result inlay hints
+- Semantic highlighting for definitions, references, parameters, keywords,
+  operators, literals, and comments
 - TextMate syntax highlighting
 
 ## Expression Results
 
-The language server shows inline results for one-line expressions whose
-dependencies can be evaluated without side effects:
+The language server evaluates each complete document prefix and shows its
+result inline:
 
 ```lisp
 (def x 5)
@@ -68,8 +70,9 @@ dependencies can be evaluated without side effects:
 (square x) ; => 25
 ```
 
-It supports document-local variables and functions composed from literals,
-pure variables, pure functions, arithmetic, comparisons, booleans, and `if`.
-Pure `begin` and `cond` expressions are also supported. It skips unknown calls,
-JavaScript interop, mutation, output, collections, quotes, and functions that
-depend on them. Evaluation has a step limit to stop unbounded recursion.
+It uses the full iamlisp evaluator, including variables, functions, imports,
+mutation, output, and JavaScript interop. It has no language-server timeout or
+purity restrictions.
+
+This also means refreshing hints can repeat side effects, access the local
+machine, or hang forever. Only enable inlay hints for code you trust.

@@ -12,7 +12,11 @@ import {
   validateDocument,
   wordAt
 } from "./analysis";
-import { safeEvaluationHints } from "./safeEvaluation";
+import evaluationHints from "./evaluationHints";
+import semanticTokens, {
+  tokenModifiers,
+  tokenTypes
+} from "./semanticTokens";
 
 const connection = createConnection(ProposedFeatures.all);
 const documents = new TextDocuments(TextDocument);
@@ -23,7 +27,14 @@ connection.onInitialize(() => ({
     completionProvider: { triggerCharacters: ["(", " "] },
     documentSymbolProvider: true,
     hoverProvider: true,
-    inlayHintProvider: true
+    inlayHintProvider: true,
+    semanticTokensProvider: {
+      full: true,
+      legend: {
+        tokenTypes,
+        tokenModifiers
+      }
+    }
   },
   serverInfo: {
     name: "iamlisp-lsp"
@@ -56,7 +67,11 @@ connection.onHover(params => {
 });
 connection.languages.inlayHint.on(params => {
   const document = documents.get(params.textDocument.uri);
-  return document ? safeEvaluationHints(document.getText(), params.range) : [];
+  return document ? evaluationHints(document.getText(), params.range) : [];
+});
+connection.languages.semanticTokens.on(params => {
+  const document = documents.get(params.textDocument.uri);
+  return document ? semanticTokens(document.getText()) : { data: [] };
 });
 
 documents.listen(connection);
