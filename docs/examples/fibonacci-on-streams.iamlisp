@@ -12,5 +12,4 @@
 
 (def fibsexp (cons 0 (cons 1 (zipwith + (cdr fibsexp) fibsexp))))
 
-; Materialize the first 20 values from the otherwise infinite stream.
-(to-list (take 20 fibsexp))
+(to-list (take 10 fibsexp))
