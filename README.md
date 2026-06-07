@@ -140,9 +140,9 @@ Available options:
 
 ## Evaluation Model
 
-The default evaluator uses explicit frames, allowing deeply recursive programs
-to run without growing the JavaScript call stack. The original recursive
-evaluator remains available with `createEvaluator({ mode: "recursive" })`.
+The default evaluator uses explicit frames to evaluate deeply recursive
+programs iteratively. The original recursive evaluator remains available with
+`createEvaluator({ mode: "recursive" })`.
 
 Some less common special forms still use the recursive evaluator internally as
 a compatibility fallback.

@@ -1,3 +1,8 @@
+; Build every ordering of xs.
+;
+; For each index, remove that item with patch, recursively permute the
+; remainder, then prepend the removed item to every returned permutation.
+; flatmap combines all branches into one list.
 (defun permutations (xs)
   (cond ((or (empty? xs)
              (empty? (tail xs))) (list xs))

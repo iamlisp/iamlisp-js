@@ -1,4 +1,8 @@
-; Exercise 1.1
+; Selected examples from the opening chapter of SICP.
+; They progress from evaluating expressions to defining procedures and using
+; recursive numerical methods.
+
+; Exercise 1.1: evaluate expressions and conditionals.
 10 ; => 10
 
 (+ 5 3 4) ; => 12
@@ -31,7 +35,7 @@
    (+ a 1)) ; => 16
 
 
-; Exercise 1.2
+; Exercise 1.2: translate a mathematical expression into prefix notation.
 (/ (+ 5 
       4 
       (- 2 
@@ -43,7 +47,7 @@
       (- 2 7)))
 
 
-; Exercise 1.3
+; Exercise 1.3: compose small procedures.
 (defun square (n) (* n n))
 (defun sum-of-squares (x y) (+ (square x) (square y)))
 (defun foo (x y z)
@@ -52,7 +56,8 @@
         ((sum-of-squares x y))))
 
 
-; Sqrt by Newton
+; Square root by Newton's method.
+; Repeatedly improve a guess until its square is close enough to x.
 (defun sqrt-newton (x)
   (defun square (n) (* n n))
 

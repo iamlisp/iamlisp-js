@@ -1,17 +1,22 @@
-; Print numbers from 100 to 0
+; loop binds its initial values once. recur schedules the next iteration with
+; replacement values, avoiding a recursive JavaScript call for each step.
+
+; Print numbers from 100 to 0.
 
 (loop (x 100)
       (print x)
       (cond ((> x 0) (recur (- x 1)))))
 
 (defun print-range (from to)
-  (cond 
+  ; Ordinary recursive version for comparison with loop/recur.
+  (cond
     ((neq? from to)
     (begin
       (print from)
       (print-range (inc from) to)))))
 
-; Fibonacci using iterative loop and tail call optimization
+; Fibonacci using three loop bindings:
+; x = current value, y = next value, i = iterations remaining.
 
 (defun fib-loop (n)
   (loop (x 0 y 1 i n)

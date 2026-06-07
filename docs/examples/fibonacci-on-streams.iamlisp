@@ -1,5 +1,16 @@
+; Infinite Fibonacci sequence built from lazy streams.
+;
+; A stream is a pair whose tail is deferred until cdr requests it. This lets
+; fibsexp refer to itself before the full sequence exists:
+;
+;   fibsexp       = 0, 1, 1, 2, 3, 5, ...
+;   (cdr fibsexp) =    1, 1, 2, 3, 5, ...
+;
+; zipwith adds both streams element by element, producing every value after
+; the initial 0 and 1. Only values requested by take are evaluated.
 (import "stream")
 
 (def fibsexp (cons 0 (cons 1 (zipwith + (cdr fibsexp) fibsexp))))
 
+; Materialize the first 20 values from the otherwise infinite stream.
 (to-list (take 20 fibsexp))

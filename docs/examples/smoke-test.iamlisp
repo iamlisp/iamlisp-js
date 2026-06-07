@@ -1,4 +1,5 @@
 ; Small end-to-end program for checking parser, evaluator, stdlib, and JS interop.
+; Assertions make failures visible; the final list summarizes computed values.
 
 (import "list")
 
@@ -9,6 +10,7 @@
         (else n)))
 
 (defun fib (n)
+  ; loop/recur computes Fibonacci without recursive function calls.
   (loop (a 0 b 1 i n)
     (cond ((zero? i) a)
           ((recur b (+ a b) (dec i))))))
@@ -23,6 +25,7 @@
 (assert (eq? (nth 0 squares) 1))
 (assert (eq? (nth 4 squares) 25))
 (assert (eq? (fib 10) 55))
+; js/Math resolves the JavaScript global; .max invokes one of its methods.
 (assert (eq? (.max js/Math 7 42 11) 42))
 
 (list labels squares (fib 10))

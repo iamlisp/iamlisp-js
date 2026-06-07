@@ -1,5 +1,7 @@
 #!iamlisp layout-v1
-; Any indentation increase opens one level. Inline parentheses remain available.
+; Recursive Fibonacci using layout-v1 syntax.
+; Any indentation increase opens one level. Matching indentation stays at the
+; same level. Inline parentheses remain available for nested expressions.
 
 defun fib (n)
   cond
