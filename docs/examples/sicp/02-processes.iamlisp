@@ -1,42 +1,39 @@
+#!iamlisp layout-v1
 ; SICP 1.2: recursive processes, iterative processes, and tree recursion.
 
-(defun factorial-rec (n)
-  (if (<= n 1) 1 (* n (factorial-rec (dec n)))))
+defun factorial-rec (n)
+  if (<= n 1) 1 (* n (factorial-rec (dec n)))
 
-(defun factorial-iter (n)
-  (loop (product 1 counter 1)
-    (if (> counter n)
-        product
-        (recur (* product counter) (inc counter)))))
+defun factorial-iter (n)
+  loop (product 1 counter 1)
+    if (> counter n) product (recur (* product counter) (inc counter))
 
-(defun fib-tree (n)
-  (if (<= n 1)
-      n
-      (+ (fib-tree (- n 1)) (fib-tree (- n 2)))))
+defun fib-tree (n)
+  if (<= n 1) n (+ (fib-tree (- n 1)) (fib-tree (- n 2)))
 
-(defun fib-iter (n)
-  (loop (a 0 b 1 count n)
-    (if (zero? count)
-        a
-        (recur b (+ a b) (dec count)))))
+defun fib-iter (n)
+  loop (a 0 b 1 count n)
+    if (zero? count) a (recur b (+ a b) (dec count))
 
-(defun first-denomination (kinds)
-  (cond ((eq? kinds 1) 1)
-        ((eq? kinds 2) 5)
-        ((eq? kinds 3) 10)
-        ((eq? kinds 4) 25)
-        ((eq? kinds 5) 50)))
+defun first-denomination (kinds)
+  cond
+    (eq? kinds 1) 1
+    (eq? kinds 2) 5
+    (eq? kinds 3) 10
+    (eq? kinds 4) 25
+    (eq? kinds 5) 50
 
-(defun count-change (amount)
-  (defun cc (amount kinds)
-    (cond ((zero? amount) 1)
-          ((or (< amount 0) (zero? kinds)) 0)
-          ((+ (cc amount (dec kinds))
-              (cc (- amount (first-denomination kinds)) kinds)))))
-  (cc amount 5))
+defun count-change (amount)
+  defun cc (amount kinds)
+    cond
+      (zero? amount) 1
+      (or (< amount 0) (zero? kinds)) 0
+      else
+        + (cc amount (dec kinds)) (cc (- amount (first-denomination kinds)) kinds)
+  cc amount 5
 
-(assert (eq? (factorial-rec 6) 720))
-(assert (eq? (factorial-iter 6) 720))
-(assert (eq? (fib-tree 10) 55))
-(assert (eq? (fib-iter 10) 55))
-(count-change 100)
+assert (eq? (factorial-rec 6) 720)
+assert (eq? (factorial-iter 6) 720)
+assert (eq? (fib-tree 10) 55)
+assert (eq? (fib-iter 10) 55)
+count-change 100

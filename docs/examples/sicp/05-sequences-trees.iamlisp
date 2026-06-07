@@ -1,32 +1,29 @@
+#!iamlisp layout-v1
 ; SICP 2.2: sequence interfaces and recursive tree processing.
 
-(import "list")
+import "list"
 
-(defun enumerate-tree (tree)
-  (cond ((empty? tree) Nil)
-        ((not (list? (head tree)))
-         (+: (head tree) (enumerate-tree (tail tree))))
-        ((:: (enumerate-tree (head tree))
-             (enumerate-tree (tail tree))))))
+defun enumerate-tree (tree)
+  cond
+    (empty? tree) Nil
+    (not (list? (head tree))) (+: (head tree) (enumerate-tree (tail tree)))
+    else
+      :: (enumerate-tree (head tree)) (enumerate-tree (tail tree))
 
-(defun sum-odd-squares (tree)
-  (reduce + 0 (map #(* % %) (filter odd? (enumerate-tree tree)))))
+defun sum-odd-squares (tree)
+  reduce + 0 (map #(* % %) (filter odd? (enumerate-tree tree)))
 
-(defun scale-tree (tree factor)
-  (map (lambda (item)
-         (if (list? item)
-             (scale-tree item factor)
-             (* item factor)))
-       tree))
+defun scale-tree (tree factor)
+  map (lambda (item) (if (list? item) (scale-tree item factor) (* item factor))) tree
 
-(defun subsets (xs)
-  (if (empty? xs)
-      (list Nil)
-      (where (rest (subsets (tail xs)))
-        (:: rest (map #(+: (head xs) %) rest)))))
+defun subsets (xs)
+  if (empty? xs)
+    list Nil
+    where (rest (subsets (tail xs)))
+      :: rest (map #(+: (head xs) %) rest)
 
-(def tree (list 1 (list 2 (list 3 4)) 5))
+def tree (list 1 (list 2 (list 3 4)) 5)
 
-(assert (eq? (sum-odd-squares tree) 35))
-(scale-tree tree 10)
-(subsets (list 1 2 3))
+assert (eq? (sum-odd-squares tree) 35)
+scale-tree tree 10
+subsets (list 1 2 3)

@@ -1,21 +1,29 @@
+#!iamlisp layout-v1
 ; SICP 1.1: expressions, names, compound procedures, and Newton's method.
 
-(defun square (x) (* x x))
-(defun sum-of-squares (x y) (+ (square x) (square y)))
+defun square (x)
+  * x x
 
-(assert (eq? (sum-of-squares 3 4) 25))
+defun sum-of-squares (x y)
+  + (square x) (square y)
 
-(defun average (x y) (/ (+ x y) 2))
-(defun close-enough? (x y) (< (abs (- x y)) 0.00001))
+assert (eq? (sum-of-squares 3 4) 25)
 
-(defun sqrt-newton (x)
-  (defun improve (guess) (average guess (/ x guess)))
-  (defun iter (guess)
-    (where (next (improve guess))
-      (if (close-enough? guess next)
-          next
-          (iter next))))
-  (iter 1))
+defun average (x y)
+  / (+ x y) 2
 
-(assert (close-enough? (sqrt-newton 9) 3))
-(sqrt-newton 2)
+defun close-enough? (x y)
+  < (abs (- x y)) 0.00001
+
+defun sqrt-newton (x)
+  defun improve (guess)
+    average guess (/ x guess)
+  defun iter (guess)
+    where (next (improve guess))
+      if (close-enough? guess next)
+        => next
+        iter next
+  iter 1
+
+assert (close-enough? (sqrt-newton 9) 3)
+sqrt-newton 2

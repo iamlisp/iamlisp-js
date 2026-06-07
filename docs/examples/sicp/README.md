@@ -1,7 +1,7 @@
 # SICP Concept Path
 
-These executable examples follow the main ideas developed before and during
-SICP's metacircular evaluator. They are adaptations for iamlisp, not a
+These executable layout-v1 examples follow the main ideas developed before and
+during SICP's metacircular evaluator. They are adaptations for iamlisp, not a
 line-by-line reproduction of the book.
 
 Run each file in a fresh evaluator. The files progress in order:
