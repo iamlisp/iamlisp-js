@@ -1,84 +1,173 @@
 # iamlisp
 
-[![Build Status](https://travis-ci.org/pldin601/iamlisp.svg?branch=master)](https://travis-ci.org/pldin601/iamlisp)
-[![Coverage Status](https://coveralls.io/repos/github/pldin601/iamlisp/badge.svg?branch=master)](https://coveralls.io/github/pldin601/iamlisp?branch=master)
+[![Test](https://github.com/iamlisp/iamlisp-js/actions/workflows/test.yml/badge.svg)](https://github.com/iamlisp/iamlisp-js/actions/workflows/test.yml)
+[![npm](https://img.shields.io/npm/v/iamlisp)](https://www.npmjs.com/package/iamlisp)
+![License: ISC](https://img.shields.io/badge/license-ISC-blue.svg)
 
-Another one my LISP-like language interpreter hosted on JS.
+iamlisp is a small Lisp-like language interpreter written in JavaScript. It
+includes a REPL, macros, JavaScript interop, common collection helpers, and an
+optional whitespace-indented syntax.
 
-## Evaluation modes
+## Why iamlisp?
 
-The explicit-frame iterative evaluator is the default, allowing deeply
-recursive programs to run without growing the JavaScript call stack:
+iamlisp began as a learning project while I was studying
+[Structure and Interpretation of Computer Programs](https://mitpress.mit.edu/9780262510875/structure-and-interpretation-of-computer-programs/).
+
+I wanted to better understand Lisp by building my own interpreter and
+experimenting with language ideas.
+
+It remains a personal learning project and playground, not a production-ready
+programming language.
+
+## Quick Start
+
+Requires Node.js 22.13 or newer.
+
+```bash
+npm install --global iamlisp
+iamlisp
+```
+
+Try an expression in the REPL:
+
+```lisp
+> (+ 20 22)
+42
+
+> (defun square (x) (* x x))
+undefined
+
+> (square 12)
+144
+```
+
+## Language Tour
+
+Define values and functions:
+
+```lisp
+(def greeting "Hello")
+(defun greet (name) (+ greeting ", " name))
+
+(greet "world") ; => "Hello, world"
+```
+
+Use conditions and recursion:
+
+```lisp
+(defun fib (n)
+  (cond ((<= n 1) n)
+        ((+ (fib (- n 1)) (fib (- n 2))))))
+
+(fib 10) ; => 55
+```
+
+Import collection helpers:
+
+```lisp
+(import "list")
+
+(map #(* % %) (until 1 6)) ; => (1 4 9 16 25)
+```
+
+Call JavaScript globals and methods:
+
+```lisp
+(.max js/Math 7 42 11) ; => 42
+```
+
+Other supported language ideas include macros, lexical scope, lambdas,
+destructuring, maps, arrays, multimethods, streams, and loop/recur.
+
+## Layout Syntax
+
+Programs can opt into whitespace-indented layout syntax with an exact header:
+
+```lisp
+#!iamlisp layout-v1
+defun fib (n)
+  cond
+       (<= n 1) n
+       else
+          + (fib (- n 1)) (fib (- n 2))
+
+fib 10
+```
+
+Relative indentation replaces outer parentheses. Inline parentheses remain
+available. See [the layout-v1 specification](docs/layout-v1.md).
+
+## Embedding
+
+Install from npm:
+
+```bash
+npm install iamlisp
+```
+
+Create an evaluator with a persistent environment:
 
 ```js
 const { createEvaluator } = require("iamlisp");
 
 const evaluate = createEvaluator();
-evaluate("(+ 20 22)"); // 42
+
+evaluate("(def x 40)");
+evaluate("(+ x 2)"); // 42
 ```
 
-The iterative evaluator handles core calls, lambdas, sequences, conditionals,
-and operators with explicit frames. Less common special forms use the recursive
-evaluator as a compatibility fallback. Use `{ mode: "recursive" }` to opt into
-the original evaluator.
+Available options:
 
-## Layout syntax
+| Option | Purpose |
+| --- | --- |
+| `mode: "recursive"` | Use the original recursive evaluator instead of the default iterative evaluator |
+| `timeout` | Stop evaluation after the given number of milliseconds |
+| `printFn` | Receive values produced by the iamlisp `print` form |
+| `debug` | Print evaluator tracing information |
 
-Programs can opt into whitespace-indented layout syntax with
-`#!iamlisp layout-v1`. Relative indentation replaces outer parentheses while
-inline parentheses remain available. See
-[the layout-v1 specification](docs/layout-v1.md).
+## Examples
 
-## Syntax examples
+| Example | Description |
+| --- | --- |
+| [SICP exercises](docs/examples/sicp.iamlisp) | Early exercises and Newton's method from SICP |
+| [Layout Fibonacci](docs/examples/layout-fibonacci.iamlisp) | Whitespace-indented syntax |
+| [Tail-call optimization](docs/examples/tail-call-optimization.iamlisp) | Tail-recursive Fibonacci |
+| [Loop and recur](docs/examples/loop.iamlisp) | Iterative loops |
+| [Streams](docs/examples/fibonacci-on-streams.iamlisp) | Fibonacci sequence using streams |
+| [Permutations](docs/examples/permutations.iamlisp) | Recursive list processing |
+| [Balanced brackets](docs/examples/brackets-balanced.iamlisp) | Rosetta Code exercise |
+| [Smoke test](docs/examples/smoke-test.iamlisp) | End-to-end language feature sample |
 
-### Define variable
+## Evaluation Model
 
-```
-(def a 10 b 20)
-(def foo "Hello World")
-(def bar true)
-```
+The default evaluator uses explicit frames, allowing deeply recursive programs
+to run without growing the JavaScript call stack. The original recursive
+evaluator remains available with `createEvaluator({ mode: "recursive" })`.
 
-### Define function
+Some less common special forms still use the recursive evaluator internally as
+a compatibility fallback.
 
-```
-(defun sum (a b) (+ a b))
-```
+## Development
 
-### Define macro
-
-```
-(defmacro backwards (. body) (eval (cons 'begin (.reverse 'body))))
-```
-
-### Define lambda
-
-```
-(def my-lambda (lambda (a b) (+ a b)))
-```
-
-### Iterative loop
-
-```
-; Print numbers from 100 to 0
-
-(loop (x 100)
-      (print x)
-      (cond ((> x 0) (recur (dec x)))))
-
-; Fibonacci using iterative loop
-
-(defun fib (n)
-  (loop (x 0 y 1 i n)
-    (cond ((<= i 0) x) ((recur y (+ x y) (dec i))))))
+```bash
+git clone https://github.com/iamlisp/iamlisp-js.git
+cd iamlisp-js
+npm ci
+npm test -- --runInBand
+npm run lint
+npm run build
 ```
 
-### Define variable using list destructuring
+GitHub Actions runs tests, lint, and build on Node.js 22 and 24.
 
-```
-; Nested destructuring
-(def (a (b c)) '(2 '(4 6)))
+## Status and Limitations
 
-; Destructuring with rest
-(def (first . rest) '(1 2 3 4 5))
-```
+- iamlisp is an educational language and experiment.
+- The CLI currently provides an interactive REPL, not a file runner.
+- Layout syntax is opt-in and explicit bracket expressions must fit on one
+  physical line.
+- Language and embedding APIs may change as experiments continue.
+
+## License
+
+ISC
