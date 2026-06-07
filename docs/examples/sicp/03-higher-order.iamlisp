@@ -1,0 +1,40 @@
+; SICP 1.3: higher-order procedures and procedures returned as values.
+
+(defun sum (term a next b)
+  (if (> a b)
+      0
+      (+ (term a) (sum term (next a) next b))))
+
+(defun product (term a next b)
+  (if (> a b)
+      1
+      (* (term a) (product term (next a) next b))))
+
+(defun accumulate (combiner null-value term a next b)
+  (if (> a b)
+      null-value
+      (combiner (term a)
+                (accumulate combiner null-value term (next a) next b))))
+
+(defun identity (x) x)
+(defun cube (x) (* x x x))
+(defun add-dx (dx) (lambda (x) (+ x dx)))
+
+(defun integral (f a b dx)
+  (* (sum f (+ a (/ dx 2)) (add-dx dx) b) dx))
+
+(defun average-damp (f)
+  (lambda (x) (/ (+ x (f x)) 2)))
+
+(defun fixed-point (f first-guess)
+  (defun iter (guess)
+    (where (next (f guess))
+      (if (< (abs (- guess next)) 0.00001)
+          next
+          (iter next))))
+  (iter first-guess))
+
+(assert (eq? (sum identity 1 inc 10) 55))
+(assert (eq? (product identity 1 inc 5) 120))
+(assert (eq? (accumulate + 0 cube 1 inc 3) 36))
+(integral cube 0 1 0.01)

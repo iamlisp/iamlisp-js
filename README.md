@@ -129,7 +129,7 @@ Available options:
 
 | Example | Description |
 | --- | --- |
-| [SICP exercises](docs/examples/sicp.iamlisp) | Early exercises and Newton's method from SICP |
+| [SICP concept path](docs/examples/sicp/README.md) | Executable examples through a small metacircular evaluator |
 | [Layout Fibonacci](docs/examples/layout-fibonacci.iamlisp) | Whitespace-indented syntax |
 | [Tail-call optimization](docs/examples/tail-call-optimization.iamlisp) | Tail-recursive Fibonacci |
 | [Loop and recur](docs/examples/loop.iamlisp) | Iterative loops |

@@ -1,0 +1,101 @@
+; SICP 4.1: a small Lisp evaluator written in iamlisp.
+;
+; Quoted S-expressions are arrays in iamlisp, so this evaluator uses small
+; array selectors instead of the List extension.
+;
+; Supported language:
+; - numbers and booleans evaluate to themselves
+; - symbols are looked up in an environment Map
+; - (quote value)
+; - (if condition consequent alternative)
+; - (lambda (args...) body)
+; - procedure calls
+
+(defun first (xs) (get 0 xs))
+(defun second (xs) (get 1 xs))
+(defun third (xs) (get 2 xs))
+(defun fourth (xs) (get 3 xs))
+(defun rest (xs) (.slice xs 1))
+(defun empty-sequence? (xs) (zero? (get "length" xs)))
+(defun symbol-name (x) (get "name" x))
+
+(defun tagged-list? (expr tag)
+  (and (array? expr)
+       (not (empty-sequence? expr))
+       (symbol? (first expr))
+       (eq? (symbol-name (first expr)) tag)))
+
+(defun lookup (name env)
+  (where (key (symbol-name name))
+    (if (has key env)
+        (get key env)
+        (throw (new js/Error "Unbound variable")))))
+
+(defun bind (names values parent)
+  (def frame (new js/Map parent))
+  (defun iter (names values)
+    (cond ((empty-sequence? names) frame)
+          ((begin
+             (set (symbol-name (first names)) (first values) frame)
+             (iter (rest names) (rest values))))))
+  (iter names values))
+
+(defun make-procedure (parameters body env)
+  (array "procedure" parameters body env))
+
+(defun eval-list (exprs env)
+  (if (empty-sequence? exprs)
+      (array)
+      (concat (array (mini-eval (first exprs) env))
+              (eval-list (rest exprs) env))))
+
+(defun apply-primitive (name arguments)
+  (where (a (first arguments)
+          b (second arguments))
+    (cond ((eq? name "add") (+ a b))
+          ((eq? name "subtract")
+           (if (eq? (get "length" arguments) 1) (- a) (- a b)))
+          ((eq? name "multiply") (* a b))
+          ((eq? name "divide") (/ a b))
+          ((eq? name "less-than") (< a b))
+          ((eq? name "less-than-or-equal") (<= a b))
+          ((eq? name "equal") (= a b))
+          ((throw (new js/Error "Unknown primitive"))))))
+
+(defun apply-procedure (procedure arguments)
+  (if (and (array? procedure) (eq? (first procedure) "procedure"))
+      (mini-eval (third procedure)
+                 (bind (second procedure) arguments (fourth procedure)))
+      (apply-primitive procedure arguments)))
+
+(defun mini-eval (expr env)
+  (cond ((or (eq? (typeof expr) "Number")
+             (eq? (typeof expr) "Boolean")) expr)
+        ((symbol? expr) (lookup expr env))
+        ((tagged-list? expr "quote") (second expr))
+        ((tagged-list? expr "if")
+         (if (mini-eval (second expr) env)
+             (mini-eval (third expr) env)
+             (mini-eval (fourth expr) env)))
+        ((tagged-list? expr "lambda")
+         (make-procedure (second expr) (third expr) env))
+        ((apply-procedure
+           (mini-eval (first expr) env)
+           (eval-list (rest expr) env)))))
+
+(def global-env
+  { "+" "add"
+    "-" "subtract"
+    "*" "multiply"
+    "/" "divide"
+    "<" "less-than"
+    "<=" "less-than-or-equal"
+    "=" "equal" })
+
+(assert (eq? (mini-eval '(+ 20 22) global-env) 42))
+(assert (eq? (mini-eval '((lambda (x) (* x x)) 12) global-env) 144))
+(mini-eval
+  '((lambda (x)
+      (if (< x 0) (- x) x))
+    -10)
+  global-env)

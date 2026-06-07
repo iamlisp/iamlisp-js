@@ -1,0 +1,37 @@
+; SICP 2.3: quotation and symbolic differentiation.
+
+(defun variable? (x) (symbol? x))
+(defun symbol-name (x) (get "name" x))
+(defun same-variable? (x y)
+  (and (variable? x) (variable? y) (eq? (symbol-name x) (symbol-name y))))
+(defun sum? (x) (and (array? x) (eq? (symbol-name (get 0 x)) "+")))
+(defun product? (x) (and (array? x) (eq? (symbol-name (get 0 x)) "*")))
+(defun left (x) (get 1 x))
+(defun right (x) (get 2 x))
+
+(defun make-sum (a b)
+  (cond ((eq? a 0) b)
+        ((eq? b 0) a)
+        ((and (eq? (typeof a) "Number") (eq? (typeof b) "Number")) (+ a b))
+        ((array '+ a b))))
+
+(defun make-product (a b)
+  (cond ((or (eq? a 0) (eq? b 0)) 0)
+        ((eq? a 1) b)
+        ((eq? b 1) a)
+        ((and (eq? (typeof a) "Number") (eq? (typeof b) "Number")) (* a b))
+        ((array '* a b))))
+
+(defun deriv (expr variable)
+  (cond ((eq? (typeof expr) "Number") 0)
+        ((variable? expr) (if (same-variable? expr variable) 1 0))
+        ((sum? expr)
+         (make-sum (deriv (left expr) variable)
+                   (deriv (right expr) variable)))
+        ((product? expr)
+         (make-sum
+           (make-product (left expr) (deriv (right expr) variable))
+           (make-product (deriv (left expr) variable) (right expr))))
+        ((throw (new js/Error "Unknown expression type")))))
+
+(deriv '(* x (+ x 3)) 'x)

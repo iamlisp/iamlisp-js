@@ -1,0 +1,14 @@
+; SICP 3.5: delayed evaluation and infinite streams.
+
+(import "stream")
+
+(def integers (range 1))
+(def squares (map #(* % %) integers))
+(def even-squares (filter even? squares))
+
+; Only enough stream cells to satisfy take are forced.
+(to-list (take 10 even-squares))
+
+; A stream may define itself because cons delays its tail.
+(def fibs (cons 0 (cons 1 (zipwith + fibs (cdr fibs)))))
+(to-list (take 15 fibs))

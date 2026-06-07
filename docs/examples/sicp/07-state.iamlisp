@@ -1,0 +1,32 @@
+; SICP 3.1: local mutable state and message-passing objects.
+
+(defun make-withdraw (balance)
+  (lambda (amount)
+    (if (>= balance amount)
+        (begin
+          (set! balance (- balance amount))
+          balance)
+        "Insufficient funds")))
+
+(defun make-account (balance)
+  (defun withdraw (amount)
+    (if (>= balance amount)
+        (begin
+          (set! balance (- balance amount))
+          balance)
+        "Insufficient funds"))
+  (defun deposit (amount)
+    (set! balance (+ balance amount))
+    balance)
+  (lambda (message)
+    (cond ((eq? message "withdraw") withdraw)
+          ((eq? message "deposit") deposit)
+          ((throw (new js/Error "Unknown account request"))))))
+
+(def withdraw-a (make-withdraw 100))
+(assert (eq? (withdraw-a 25) 75))
+(assert (eq? (withdraw-a 25) 50))
+
+(def account (make-account 100))
+(assert (eq? ((account "deposit") 50) 150))
+((account "withdraw") 40)
