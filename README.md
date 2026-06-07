@@ -88,6 +88,22 @@ plus a TextMate grammar for fallback syntax highlighting.
 See [editor setup instructions](docs/language-server.md), including WebStorm
 configuration.
 
+## Workspace Packages
+
+This repository is an npm monorepo. Shared language-building blocks live under
+`packages/`.
+
+- [`@iamlisp/lexer`](packages/lexer) consumes a reader and produces immutable
+  lexer tokens with source locations.
+- [`@iamlisp/reader`](packages/reader) exposes a minimal byte reader through
+  `next`, `eof`, and `value`.
+
+Run both interpreter and workspace-package tests with:
+
+```bash
+npm run test:all
+```
+
 ## Layout Syntax
 
 Programs can opt into whitespace-indented layout syntax with an exact header:

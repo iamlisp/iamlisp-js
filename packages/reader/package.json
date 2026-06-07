@@ -1,0 +1,16 @@
+{
+  "name": "@iamlisp/reader",
+  "version": "0.1.0",
+  "description": "Minimal byte reader for iamlisp language tooling.",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "license": "ISC"
+}

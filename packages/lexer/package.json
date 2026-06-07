@@ -1,0 +1,19 @@
+{
+  "name": "@iamlisp/lexer",
+  "version": "0.1.0",
+  "description": "Reader-backed lexer and token declarations for iamlisp tooling.",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "dependencies": {
+    "@iamlisp/reader": "0.1.0"
+  },
+  "license": "ISC"
+}

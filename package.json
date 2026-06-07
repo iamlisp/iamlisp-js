@@ -2,6 +2,9 @@
   "name": "iamlisp",
   "version": "2.2.0",
   "description": "Another one LISP interpreter.",
+  "workspaces": [
+    "packages/*"
+  ],
   "engines": {
     "node": ">=22.13"
   },
@@ -17,6 +20,8 @@
     "dev": "nodemon ./dev.js",
     "dev-server": "nodemon ./dev-server.js",
     "test": "jest",
+    "test:workspaces": "npm test --workspaces --if-present",
+    "test:all": "npm test && npm run test:workspaces",
     "lint": "eslint src/",
     "prebuild": "rimraf dist",
     "build": "babel src/ --out-dir dist --source-maps inline",
